@@ -1,3 +1,8 @@
+/*
+
+   deliver the pages & the data to the user
+
+ */
 var url = require('url');
 var fs = require('fs');
 exports.MyLittleCmds = function () {

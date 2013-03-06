@@ -2,3 +2,4 @@
 - store hashes not plain passwords
 - check on small devices
 - find a better way to save human votes to file other than saving the whole file all the time
+- all available properties into one file

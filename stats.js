@@ -103,7 +103,7 @@ exports.MyLittleStats = function () {
 		result.kind = kind;
 		result.forcegenerate = forcegenerate;
 		return result;
-	}
+	};
 
 	/* welches Schweinderl hättens denn gern */
 

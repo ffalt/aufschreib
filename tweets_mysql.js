@@ -1,3 +1,9 @@
+/*
+
+    Storage for tweets & user-vites in a mysql-db
+
+*/
+
 var mysql = require('mysql');
 var consts = require('./consts');
 var SqlString = require('mysql/lib/protocol/SqlString');

@@ -1,3 +1,8 @@
+/*
+
+	train & apply the bayes clasifier
+
+ */
 var classifier = require('classifier');
 var tokenizer = require('./tweet_tokenizer').MyLittleTweetTokenizer();
 var consts = require('./consts');

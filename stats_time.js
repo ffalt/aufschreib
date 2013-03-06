@@ -1,6 +1,6 @@
 /*
 
- Generiert Daten für einen Zeitleiste
+ generates data for a timeline
 
  Format:
  {

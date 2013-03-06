@@ -1,3 +1,9 @@
+/*
+
+script to prepare the db/files and urls
+
+ */
+
 var reparse = true;
 var longifylinks = false;
 var fs = require('fs');

@@ -1,5 +1,6 @@
 var listento = '0.0.0.0',  // \o_ listen to ALL the adapters
 	port = 8081;
+
 console.log('[Server] start');
 var express = require('express')
 	, passport = require('passport')

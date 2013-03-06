@@ -1,6 +1,6 @@
 /*
 
- Generiert Daten für einen Anzahl-Statistik von Wörtern/Links/Hashtags...
+ Generates Data for a count-statistic words/links/hashtags...
 
  Format:
  {

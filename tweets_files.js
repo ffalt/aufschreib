@@ -1,3 +1,9 @@
+/*
+
+ Storage for tweets & votes in files
+ im path /data/users/
+
+ */
 var fs = require('fs');
 var consts = require('./consts');
 
