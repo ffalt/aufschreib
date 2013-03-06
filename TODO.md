@@ -1,4 +1,4 @@
 - finish multi-user-management (create/update/delete users)
 - store hashes not plain passwords
 - check on small devices
-
+- find a better way to save human votes to file other than saving the whole file all the time
