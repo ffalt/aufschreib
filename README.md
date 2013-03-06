@@ -39,14 +39,7 @@ optional: a mysql database
 
 modules for node js
 
-	npm install classifier
-	npm install ejs
-	npm install express
-	npm install fetch
-	npm install moment
-	npm install passport
-	npm install passport-local
-	npm install resolver
+	npm install
 
 optional
 
@@ -66,7 +59,6 @@ Edit **"consts.js"** and set
 Edit **"consts.js"** and set
 
 	const usedb = true;
- 
 
 now enter the connection details to **"tweets_mysql.js"**
 
