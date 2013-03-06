@@ -14,8 +14,9 @@ c) Produce some statistical representations based on it.
 
 *And why?*
 
-In February 2013 women on Twitter started to post personal stories of experienced sexism and harassment under the hashtag #aufschrei (#outcry).
-Soon many more people where using the hashtag to post opinions, links, troll comments, spam. I want to analyze this large amount of tweets and maybe contribute the results (if any usefull) to the [https://github.com/lenaschimmel/aufschreiStat/][1] project. 
+In February 2013  (mostly german speaking) women on Twitter started to post personal stories of experienced sexism and harassment under the hashtag #aufschrei (#outcry).
+Soon many more people where using the hashtag to post opinions, links, troll comments, spam. I want to analyze this large amount of tweets and maybe contribute the results (if any usefull) to the [aufschreiStat](https://github.com/lenaschimmel/aufschreiStat/) project. 
+
 
 ##Current state in words
 
@@ -23,25 +24,49 @@ The result data is NOT RELIABLE! yet.
 
 ##Current state in pictures
 
-[See yourself][3]
+[See yourself](https://github.com/ffalt/aufschreib/tree/master/pics)
+
+ 
+##Requirements
+
+[http://nodejs.org/](http://nodejs.org/)
+
+
+optional: a mysql database
+
+
+modules for node js
+
+	npm install classifier
+	npm install ejs
+	npm install express
+	npm install fetch
+	npm install moment
+	npm install passport
+	npm install passport-local
+	npm install resolver
+
+optional
+
+	npm install mysql
 
 ##Usage
 
 ### 1. Choose your storage
 **1.1 File-based storage**
 
-Edit "**consts.js**" and set
+Edit **"consts.js"** and set
 
 	const usedb = false;
 
 **1.2 *OR* mysql-based storage**
 
-Edit "**consts.js**" and set
+Edit **"consts.js"** and set
 
 	const usedb = true;
  
 
-now enter the connection details to "**tweets_mysql.js**"
+now enter the connection details to **"tweets_mysql.js"**
 
 	var dboptions = {
 		host: 'localhost',
@@ -53,11 +78,11 @@ now enter the connection details to "**tweets_mysql.js**"
 		connectionLimit: 100
 	};`
 
-## 2. Prepare
+### 2. Prepare
 
-Put your base JSON file named "**messages.json**" into the **/data/** folder
+Put your base JSON file named **"messages.json"** into the **/data/** folder
 
-the implemented format of a tweet is 
+the used format of a tweet is 
 
 	[
 	{
@@ -73,12 +98,12 @@ the implemented format of a tweet is
     ...
     ]
 
-or implement another in file "**1 prepare.js**"
+or implement another in file **"1 prepare.js"**
 
 
-## 3. Choose Categories
+### 3. Choose Categories
 
-Edit "**consts.js**"
+Edit **"consts.js"**
 
 	const cats = [
 	{
@@ -90,14 +115,15 @@ Edit "**consts.js**"
 	...
 	];    
 
-## 4. Prepare Script
+### 4. Prepare Script
 
-Edit "**1 prepare.js**"
+Edit **"1 prepare.js"**
 
 	var longifylinks = false;
 
 if you want to disable support for retrieveing expanded links from short link services like twitters t.co
-otherwise urls will be expanded through [http://www.longurlplease.com/][2]
+otherwise urls will be expanded through [http://www.longurlplease.com/](http://www.longurlplease.com/)
+
 
 now run
 
@@ -111,7 +137,7 @@ if you use files, files are created
 
 aaaaaaandddddd wait  
 
-## 5. Server
+### 5. Server
 
 We're nearly there
 
@@ -129,9 +155,3 @@ and open the adress with your browser
 e.g. **http://http://localhost:8081/**
 
 Happy classifing!
-
-
-
-  [1]: https://github.com/lenaschimmel/aufschreiStat/
-  [2]: http://www.longurlplease.com/
-  [3]: https://github.com/ffalt/aufschreib/tree/master/pics
