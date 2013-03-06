@@ -1,8 +1,8 @@
 /*
 
-    Storage for tweets & user-vites in a mysql-db
+ Storage for tweets & user-vites in a mysql-db
 
-*/
+ */
 
 var mysql = require('mysql');
 var consts = require('./consts');
@@ -27,8 +27,8 @@ exports.MyLittleTweets = function () {
 	function getConnection(callback) {
 		pool.getConnection(function (err, connection) {
 			if (err) {
-                throw err;
-            }
+				throw err;
+			}
 			connection.config.queryFormat = function (query, values) {
 				if (!values) {
 					return query;
@@ -538,8 +538,9 @@ exports.MyLittleTweets = function () {
 					if (err) throw err;
 					connection.end();
 					var data = {};
-					result.forEach(function(entry) {
-						data[entry.id] = entry[mode];
+					result.forEach(function (entry) {
+						if (entry[mode] !== consts.unknown)
+							data[entry.id] = entry[mode];
 					});
 					callback(data);
 				}
