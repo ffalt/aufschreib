@@ -21,6 +21,7 @@ Soon many more people where using the hashtag to post opinions, links, troll com
 ##Current state in words
 
 The result data is NOT RELIABLE! yet.
+
 [TODO-List](https://github.com/ffalt/aufschreib/tree/master/TODO.md)
 
 ##Current state in pictures
