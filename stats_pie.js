@@ -15,8 +15,6 @@ var consts = require('./consts');
 exports.MyLittlePieStat = function () {
 	var me = this;
 
-	/** Pie **/
-
 	function getPieData(params, callback) {
 		params.store.getCountsByCat(params.voteuserid, params.mode, function (stat) {
 			var data = [];

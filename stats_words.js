@@ -1,3 +1,25 @@
+/*
+
+ Generiert Daten für einen Anzahl-Statistik von Wörtern/Links/Hashtags...
+
+ Format:
+ {
+	 {
+		 "id": "#aufschrei",
+		 "count": 48232,
+		 "counts": {
+			 "unknown": 38193,
+			 "outcry": 1294,
+			 "comment": 2283,
+			 "troll": 5513,
+			 "report": 413,
+			 "spam": 536
+		 }
+	 },
+ ...
+ ]
+
+ */
 var tokenizer = require('./tweet_tokenizer').MyLittleTweetTokenizer();
 
 exports.MyLittleWordStat = function () {

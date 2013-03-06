@@ -3,8 +3,16 @@
  Generiert Daten für einen Zeitleiste
 
  Format:
- [
- {id: 'kategorie-id', value: anzahl),
+ {
+ {
+	 "time": "1359068400000",
+	 "count": 91,
+	 "counts": {
+		 "unknown": 73,
+		 "outcry": 17,
+		 "comment": 1
+	 }
+ },
  ...
  ]
 
@@ -40,7 +48,7 @@ exports.MyLittleTimeStat = function () {
 				var result = [];
 				for (var key in data) {
 					var total = 0;
-					for (subkey in data[key]) {
+					for (var subkey in data[key]) {
 						total += data[key][subkey];
 					}
 					result.push({time: key, count: total, counts: data[key]});
@@ -48,7 +56,7 @@ exports.MyLittleTimeStat = function () {
 				callback(result);
 			}
 		});
-	};
+	}
 
 	me.prepareData = function (params, data, callback) {
 		callback(data);
