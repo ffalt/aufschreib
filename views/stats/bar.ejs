@@ -1,0 +1,40 @@
+<% include stats_head %>
+
+<div class="navbar">
+	<div class="navbar-inner">
+
+		<ul class="nav">
+			<li><span class="brand">Max:</span></li>
+			<li>
+				<form class="navbar-form form-horizontal">
+					<input type="number" class="span1" id="bar_count" value="30" min="0">
+				</form>
+			</li>
+		</ul>
+		<ul class="nav" id="<%- container_id %>bars">
+			<li><span class="brand">Bars:</span></li>
+			<li><a title="Stacked" href="#" value="stacked">Stacked</a></li>
+			<li><a title="Grouped" href="#" value="grouped">Grouped</a></li>
+		</ul>
+		<ul class="nav" id="<%- container_id %>case">
+			<li><span class="brand">Case:</span></li>
+			<li><a title="Case Sensitive" href="#" value="false">Sensitive</a></li>
+		</ul>
+
+	</div>
+</div>
+
+<% include stats_content %>
+
+<% include stats_foot %>
+
+<script type="text/javascript">
+	$(function () {
+		$(document).ready(
+				function () {
+					var bars = new Bars();
+					bars.initBars('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>', new Stats(cats));
+				}
+		);
+	});
+</script>

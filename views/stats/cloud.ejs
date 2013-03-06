@@ -1,0 +1,86 @@
+<% include stats_head %>
+
+<div class="navbar">
+	<div class="navbar-inner">
+		<ul class="nav" id="<%- container_id %>spiral">
+			<li><span class="brand">Spiral:</span></li>
+			<li><a title="Archimedean" value="archimedean" href="#">Archimedean</a></li>
+			<li><a title="Rectangular" value="rectangular" href="#">Rectangular</a></li>
+		</ul>
+		<ul class="nav" id="<%- container_id %>scale">
+			<li><span class="brand">Scale:</span></li>
+			<li><a title="log n" href="#" value="log">log n</a></li>
+			<li><a title="√n" href="#" value="sqrt">√n</a></li>
+			<li><a title="n" href="#" value="linear">n</a></li>
+		</ul>
+
+		<ul class="nav">
+			<li><span class="brand">Font:</span></li>
+			<li>
+				<form class="navbar-form form-horizontal">
+					<input type="text" class="span2" id="cloud_font" value="Impact">
+				</form>
+			</li>
+		</ul>
+
+		<ul class="nav">
+			<li><span class="brand">Max:</span></li>
+			<li>
+				<form class="navbar-form form-horizontal">
+					<input type="number" class="span1" id="cloud_count" value="30" min="0">
+				</form>
+			</li>
+		</ul>
+
+		<ul class="nav" id="<%- container_id %>case">
+			<li><span class="brand">Case:</span></li>
+			<li><a title="Case Sensitive" href="#" value="false">Sensitive</a></li>
+		</ul>
+
+		<ul class="nav">
+			<li><span class="brand">Orientations:</span></li>
+			<li>
+				<form class="navbar-form form-horizontal">
+					<span class="input-prepend input-append">
+						<span class="add-on">How Much</span>
+						<input class="span1" type="number" id="cloud_angle-count" value="5" min="1">
+						<span class="add-on">#</span>
+					</span>
+
+					<div class="input-prepend input-append">
+						<span class="add-on">from</span>
+						<input class="span1" type="number" id="cloud_angle-from" width="30" value="-60" min="-90"
+							   max="90">
+						<span class="add-on">°</span>
+					</div>
+
+					<span class="cloud_angles inline" id="cloud_angles_view"></span>
+
+					<div class="input-prepend input-append">
+						<span class="add-on">to</span>
+						<input class="span1" type="number" id="cloud_angle-to" width="30" value="60" min="-90"
+							   max="90">°
+						<span class="add-on">°</span>
+					</div>
+				</form>
+			</li>
+		</ul>
+
+	</div>
+</div>
+
+<% include stats_content %>
+
+<% include stats_foot %>
+
+<script src="/static/d3/d3.layout.cloud.js"></script>
+<script type="text/javascript">
+	$(function () {
+		$(document).ready(
+				function () {
+					var cloudy = new Clouds();
+					cloudy.initCloud('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>', new Stats(cats));
+				}
+		);
+	});
+</script>

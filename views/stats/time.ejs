@@ -1,0 +1,27 @@
+<% include stats_head %>
+
+<div class="navbar">
+	<div class="navbar-inner">
+		<ul class="nav" id="<%- container_id %>view">
+			<li><span class="brand">View:</span></li>
+			<li><a title="Zero" value="zero" href="#">Zero</a></li>
+			<li><a title="Wiggle" value="wiggle" href="#">Wiggle</a></li>
+			<li><a title="Expand" value="expand" href="#">Expand</a></li>
+		</ul>
+	</div>
+</div>
+
+<% include stats_content %>
+
+<% include stats_foot %>
+
+<script type="text/javascript">
+    $(function () {
+        $(document).ready(
+                function () {
+					var times = new Times();
+					times.initTimes('<%- container_id %>','<%- chartparams.mode %>','<%- chartparams.kind %>', new Stats(cats));
+				}
+        );
+    });
+</script>

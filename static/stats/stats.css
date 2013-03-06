@@ -1,0 +1,62 @@
+#bbtree rect {
+	stroke: #f00;
+	fill: none;
+}
+
+#bbtree .collide rect {
+	stroke: #fc0;
+}
+
+#bbtree g, #vis text {
+	cursor: pointer;
+}
+
+#bbtree {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+.chart {
+	border: 1px groove #C3D3DA;
+}
+
+.navbar {
+	margin-bottom: 0;
+}
+
+pre, code {
+	font-family: "Menlo", monospace;
+}
+
+.html .value,
+.javascript .string,
+.javascript .regexp {
+	color: #756bb1;
+}
+
+.html .tag,
+.css .tag,
+.javascript .keyword {
+	color: #3182bd;
+}
+
+.comment {
+	color: #636363;
+}
+
+.html .doctype,
+.javascript .number {
+	color: #31a354;
+}
+
+.html .attribute,
+.css .attribute,
+.javascript .class,
+.javascript .special {
+	color: #e6550d;
+}

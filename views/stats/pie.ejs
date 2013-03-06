@@ -1,0 +1,16 @@
+<% include stats_head %>
+
+<% include stats_content %>
+
+<% include stats_foot %>
+
+<script type="text/javascript">
+	$(function () {
+		$(document).ready(
+				function () {
+					var pies = new Pies();
+					pies.initPie('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>', new Stats(cats));
+				}
+		);
+	});
+</script>

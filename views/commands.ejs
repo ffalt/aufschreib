@@ -1,0 +1,50 @@
+<div class="navbar nav-pills">
+	<div class="navbar-inner">
+		<ul class="nav">
+			<li>
+				<button class="btn btn-primary" onclick="return aufschreib.classify();" type="button">
+					Classify with the Machine
+				</button>
+			</li>
+			<% if (consts.debug) { %>
+			<li>
+				<button class="btn btn-primary" onclick="return aufschreib.updateCache();" type="button">
+					Update Cache
+				</button>
+			</li>
+			<% } %>
+		</ul>
+		<ul class="nav pull-right">
+			<li><span class="brand">Download:</span></li>
+			<% for (var i=0; i < consts.modes.length; i++) { var mode=consts.modes[i]; %>
+			<li><a target="_blank" title="Download <%= mode.name %> Classification JSON data"
+				   alt="Raw <%= mode.name %> JSON"
+				   href="?cmd=classifiction&mode=<%= mode.id %>"><i class="<%= mode.icon %>"></i></a></li>
+			<% } %>
+		</ul>
+	</div>
+</div>
+
+<div class="row">
+	<div class="span5"><h4>Before</h4><% include stats/pie_commands %></div>
+	<div class="span5"><h4>After</h4>
+
+		<div id="classify-result">Please press the Button to update</div>
+	</div>
+</div>
+
+
+<div id="command-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+	 aria-hidden="true">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">Hey you, FYI</h3>
+	</div>
+	<div class="modal-body">
+		<p>This can take very looooooooooooooooooooong…</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Ok then, nope</button>
+		<button class="btn btn-primary" data-dismiss="modal" onclick="aufschreib.requestClassify();">Do it</button>
+	</div>
+</div>

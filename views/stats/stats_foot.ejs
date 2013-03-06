@@ -1,0 +1,23 @@
+
+<div class="navbar nav-pills">
+	<div class="navbar-inner">
+		<ul class="nav">
+			<li><a id="<%- container_id %>download-json" href="#" target="_blank"><i class="icon-download-alt"></i>
+				Download Raw</a></li>
+			<li><a id="<%- container_id %>download-svg" href="#" target="_blank"><i class="icon-download-alt"></i>
+				Download SVG</a></li>
+			<li id="<%- container_id %>current-json"><a href="#">View current JSON</a></li>
+		</ul>
+	</div>
+</div>
+
+<pre id="<%- container_id %>json" style="display:none">></pre>
+
+<link type="text/css" href="/static/stats/stats.css" rel="stylesheet">
+<link type="text/css" href="/static/stats/<%- chartparams.type %>.css" rel="stylesheet">
+<script src="/static/d3/d3.v3.min.js"></script>
+<script src="/static/stats/stats.js"></script>
+<script src="/static/stats/<%- chartparams.type %>.js"></script>
+<script type="text/javascript">
+	var cats = <%- JSON.stringify(consts.cats) %>;
+</script>

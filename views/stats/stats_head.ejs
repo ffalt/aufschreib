@@ -1,0 +1,33 @@
+<% var statinfo = consts.tools.statinfo(chartparams.type); if ((statinfo) && (!hide_head)) { %>
+<div class="navbar nav-pills">
+	<div class="navbar-inner">
+
+		<% if (statinfo.kinds.length>0) { %>
+		<ul class="nav" id="<%- container_id %>kind">
+			<li><span class="brand">Data:</span></li>
+			<% statinfo.kinds.forEach(function(kind) { %>
+			<li><a href="#" value="<%- kind.id %>"><i class="<%= kind.icon %>"></i> <%= kind.name %></a></li>
+			<% });%>
+		</ul>
+		<% }%>
+
+		<ul class="nav" id="<%- container_id %>mode">
+			<li><span class="brand">Modes:</span></li>
+			<% consts.modes.forEach(function(mode) { %>
+			<li><a href="#" value="<%= mode.id %>" title="<%= mode.name %>"><i class="<%- mode.icon %>"></i></a></li>
+			<% }); %>
+		</ul>
+
+		<% if (statinfo.usesCats) { %>
+		<ul class="nav" id="<%- container_id %>cat">
+			<li><span class="brand">Classes:</span></li>
+			<li><a title="All" href="#" value="all">All</a></li>
+			<% consts.cats.forEach(function(cat) { %>
+			<li><a href="#" title="<%= cat.name %>" value="<%- cat.id %>"><i class="<%- cat.icon %>"></i></a></li>
+			<% }); %>
+		</ul>
+		<% } %>
+
+	</div>
+</div>
+<% }%>
