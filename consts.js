@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 const usedb = true;
 const basecats = [
 	{
