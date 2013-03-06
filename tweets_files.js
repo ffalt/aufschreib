@@ -94,7 +94,6 @@ exports.MyLittleTweets = function () {
 
 	function reportPackage(index, packages, last, callback) {
 		if (index >= packages.length) {
-			//console.log('last ' + last);
 			callback(null, last);
 		} else {
 			callback(packages[index].tweets, packages[index].count, function () {
@@ -164,7 +163,6 @@ exports.MyLittleTweets = function () {
 	me.getUserPackages = function (voteuserid, start, filter, search, maxtweets, callback) {
 		var userdata = getUserData(voteuserid);
 		start = (start || 0);
-		//console.log('start ' + start);
 		var written = 0,
 			checkedusers = [];
 		var packages = [];

@@ -222,7 +222,7 @@ exports.MyLittleStats = function () {
 	}
 
 	me.cacheStats = function (voteuserid, store, callback) {
-		console.log('[Classify] Creating Stats Cache');
+		console.log('[Stats] Creating Stats Cache');
 		var params = me.getParams(voteuserid, store);
 		params.mode = 'human';
 		writeCacheMode(params, function () {

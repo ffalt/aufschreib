@@ -154,7 +154,6 @@ function savelinks() {
 				) {
 				resolver.resolve(link, function (error, resolved) {
 					if (error) {
-						console.log(resolved);
 						console.log(index + 1 + '/' + keys.length + ' could not even deeper resolve ' + link + ' - ' + error);
 					} else {
 						links[org] = resolved[link];
