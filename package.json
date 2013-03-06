@@ -1,0 +1,17 @@
+{
+	"name": "aufschreib",
+	"description": "Examining #aufschrei tweets",
+	"version": "0.0.1",
+	"dependencies" : {
+		"classifier": ">= 0.1.0",
+		"ejs": ">= 0.8.3",
+		"express": ">= 3.1.0",
+		"fetch": ">= 0.1.5",
+		"moment": ">= 2.0.0",
+		"passport": ">= 0.1.16",
+		"passport-local": "0.1.6",
+		"resolver": ">= 0.1.8"
+	},
+	"engines": { "node": ">= 0.8.15" }
+}
+
