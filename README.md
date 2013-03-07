@@ -95,7 +95,7 @@ the used format of a tweet is
 or implement another in file **"1 prepare.js"**
 
 
-### 3. Choose Categories
+### 3. Choose Categories (optional)
 
 Edit **"consts.js"**
 
@@ -109,7 +109,7 @@ Edit **"consts.js"**
 	...
 	];    
 
-### 4. Prepare Script
+### 4. Prepare Script (mandatory!)
 
 Edit **"1 prepare.js"**
 
@@ -127,9 +127,9 @@ if you use longifylinks, a file **"urls.json"** with the expanded urls will be c
 
 if you use mysql, tables are created and data is filled
 
-if you use files, well, files are created ;)
+if you use files, well, only file **"tweetstore.json"** will be created ;)
 
-aaaaaaandddddd wait  
+aaaaaaandddddd wait until the process finishes
 
 ### 5. Server
 
