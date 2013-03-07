@@ -123,11 +123,11 @@ now run
 
 `node "1 prepare.js"`
 
-if you use longifylinks, a file "**urls.json**" the expanded urls will be created
+if you use longifylinks, a file **"urls.json"** with the expanded urls will be created
 
 if you use mysql, tables are created and data is filled
 
-if you use files, files are created
+if you use files, well, files are created ;)
 
 aaaaaaandddddd wait  
 
