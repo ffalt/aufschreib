@@ -1,16 +1,16 @@
 /*
 
-script to prepare the db/files and urls
+ script to prepare the db/files and urls
 
  */
 
-var reparse = true;
 var longifylinks = false;
+var reparse = true;
 var fs = require('fs');
-var tweets;
+var tweets = [];
 var tokenizer = require('./tweet_tokenizer.js').MyLittleTweetTokenizer();
 var consts = require('./consts');
-var storeurls = JSON.parse(fs.readFileSync('./data/urls.json', 'utf8'));
+var storeurls = {};
 
 function getLongUrls(text) {
 	var arr = tokenizer.extractLinks(text);
@@ -112,16 +112,32 @@ function saveStore() {
 	console.log('Tweets saved: ' + tweets.length);
 }
 
-function loadRaw() {
+function loadRaw(callback) {
 	console.log('Load Raw Tweets');
-	tweets = JSON.parse(fs.readFileSync('./data/messages.json', 'utf8'));
-	console.log('Raw Tweets loaded: ' + tweets.length);
+	var filename = './data/messages.json';
+	fs.exists(filename, function (exists) {
+		if (exists) {
+			tweets = JSON.parse(fs.readFileSync(filename, 'utf8'));
+		} else {
+			console.log('well, you need a messages.json file, this will not work');
+		}
+		callback();
+		console.log('Raw Tweets loaded: ' + tweets.length);
+	});
 }
 
-function loadStore() {
+function loadStore(callback) {
 	console.log('Load Tweets Store');
-	tweets = JSON.parse(fs.readFileSync('./data/tweetstore.json', 'utf8'));
-	console.log('Store Tweets loaded: ' + tweets.length);
+	var filename = './data/tweetstore.json';
+	fs.exists(filename, function (exists) {
+		if (exists) {
+			tweets = JSON.parse(fs.readFileSync(filename, 'utf8'));
+		} else {
+			console.log('well, you need to reparse and create tweetstore.json');
+		}
+		callback();
+		console.log('Store Tweets loaded: ' + tweets.length);
+	});
 }
 
 function savelinks() {
@@ -229,16 +245,35 @@ function savelinks() {
 	resolve(0);
 }
 
-if (reparse) {
-	loadRaw();
-	transform();
-	saveStore();
-} else {
-	loadStore();
+function loadUrls(callback) {
+	var filename = './data/urls.json';
+	fs.exists(filename, function (exists) {
+		if (exists) {
+			storeurls = JSON.parse(fs.readFileSync(filename, 'utf8'));
+		}
+		callback();
+	});
 }
-if (longifylinks) {
-	savelinks();
+
+function processTweets() {
+	if (longifylinks) {
+		savelinks();
+	}
+	if (consts.usedb) {
+		dbinsert();
+	}
 }
-if (consts.usedb) {
-	dbinsert();
-}
+
+loadUrls(function () {
+	if (reparse) {
+		loadRaw(function () {
+			transform();
+			saveStore();
+			processTweets();
+		});
+	} else {
+		loadStore(function () {
+			processTweets();
+		});
+	}
+});
