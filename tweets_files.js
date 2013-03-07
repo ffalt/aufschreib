@@ -9,8 +9,18 @@ var consts = require('./consts');
 
 exports.MyLittleTweets = function () {
 	var me = this;
-	var list = JSON.parse(fs.readFileSync('./data/tweetstore.json', 'utf8'));
-	console.log('[Files] Tweets loaded');
+
+	var list;
+	var filename = './data/tweetstore.json';
+	fs.exists(filename, function (exists) {
+		if (!exists) {
+			console.log('hey, you didn\'t run the prepare script!!!11!');
+			list = [];
+		} else {
+			list = JSON.parse(fs.readFileSync('./data/tweetstore.json', 'utf8'));
+			console.log('[Files] Tweets loaded');
+		}
+	});
 
 	function Tweet() {
 		this.id = 0;
