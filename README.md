@@ -123,7 +123,7 @@ now run
 
 `node "1 prepare.js"`
 
-if you use longifylinks, a file **"urls.json"** with the expanded urls will be created
+if you use longifylinks, a file **"urls.json"** with the expanded urls will be created and used
 
 if you use mysql, tables are created and data is filled
 
@@ -135,7 +135,7 @@ aaaaaaandddddd wait
 
 We're nearly there
 
-Edit "**app.js**" if you want to change where to access the server
+Edit **"app.js"** if you want to change where to access the server
 
 	var listento = '0.0.0.0', 
     	port = 8081;
