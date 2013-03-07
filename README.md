@@ -95,7 +95,7 @@ the used format of a tweet is
 or implement another in file **"1 prepare.js"**
 
 
-### 3. Choose Categories
+### 3. Choose Categories (optional)
 
 Edit **"consts.js"**
 
@@ -109,7 +109,7 @@ Edit **"consts.js"**
 	...
 	];    
 
-### 4. Prepare Script
+### 4. Prepare Script (mandatory!)
 
 Edit **"1 prepare.js"**
 
@@ -123,19 +123,19 @@ now run
 
 `node "1 prepare.js"`
 
-if you use longifylinks, a file "**urls.json**" the expanded urls will be created
+if you use longifylinks, a file **"urls.json"** with the expanded urls will be created and used
 
 if you use mysql, tables are created and data is filled
 
-if you use files, files are created
+if you use files, well, only file **"tweetstore.json"** will be created ;)
 
-aaaaaaandddddd wait  
+aaaaaaandddddd wait until the process finishes
 
 ### 5. Server
 
 We're nearly there
 
-Edit "**app.js**" if you want to change where to access the server
+Edit **"app.js"** if you want to change where to access the server
 
 	var listento = '0.0.0.0', 
     	port = 8081;
