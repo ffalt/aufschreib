@@ -13,6 +13,7 @@ var users = [
 	{ id: 1, username: 'admin', password: 'totalsupergehaim' }
 	// ,
 	//{ id: 2, username: 'yetzt', password: '<3' }
+	//{ id: 3, username: 'ffalt', password: '<3' }
 ];
 
 function findById(id, fn) {

@@ -121,8 +121,8 @@ function loadRaw(callback) {
 		} else {
 			console.log('well, you need a messages.json file, this will not work');
 		}
-		callback();
 		console.log('Raw Tweets loaded: ' + tweets.length);
+		callback();
 	});
 }
 

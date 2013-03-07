@@ -148,4 +148,8 @@ and open the adress with your browser
 
 e.g. **http://http://localhost:8081/**
 
+default username is: admin
+
+password is: totalsupergehaim
+
 Happy classifing!
