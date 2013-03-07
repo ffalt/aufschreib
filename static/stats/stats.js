@@ -1,7 +1,8 @@
 function Stats(cats, hashBangNotifyDisabeld) {
 	var
 		basedata = [], // the data from the server
-		data = []; // possibly filtered data by the chart
+		data = [], // possibly filtered data by the chart
+		svg; //the svg, duh!
 
 	function legendary(graph, catsInView, left, top, width) {
 		var legend = graph
@@ -76,7 +77,7 @@ function Stats(cats, hashBangNotifyDisabeld) {
 	}
 
 	function initSVG(id, width, height) {
-		var svg = d3.select('#' + id + 'vis').append('svg')
+		svg = d3.select('#' + id + 'vis').append('svg')
 				.attr('width', width)
 				.attr('height', height)
 				.attr('viewBox', '0 0 ' + width + ' ' + height)
