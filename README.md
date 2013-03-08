@@ -2,7 +2,7 @@
 
 ##Purpose
 
-This is my playground for learning using *node js* as a server and building svg charts with *d3*. It's not tested on production server, so be warned.
+This is my playground for learning to use *node js* as a server and build svg charts with *d3*. It's not tested on production server, so be warned.
   
 *What it should do:*
 
@@ -95,7 +95,7 @@ the used format of a tweet is
 or implement another in file **"1 prepare.js"**
 
 
-### 3. Choose Categories (optional)
+### 3. Edit Categories (optional)
 
 Edit **"consts.js"**
 
@@ -108,6 +108,19 @@ Edit **"consts.js"**
 	},
 	...
 	];    
+
+if you edit the categroies you need to set the parameter for the Bayesian filter, too.
+
+'Specify the classification thresholds for each category. To classify an item in a category with a threshold of x the probably that item is in the category has to be more than x times the probability that it's in any other category. Default value is 1.'
+[Source](https://npmjs.org/package/classifier)
+
+	const thresholds = {
+		spam: 3,
+		troll: 2,
+		report: 2,
+		comment: 1,
+		outcry: 1
+	};
 
 ### 4. Prepare Script (mandatory!)
 
