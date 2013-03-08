@@ -5,14 +5,18 @@ function Stats(cats, hashBangNotifyDisabeld) {
 		svg; //the svg, duh!
 
 	function legendary(graph, catsInView, left, top, width) {
-		var legend = graph
-			.append('g')
-			.attr('class', 'legend');
-		legend
-			.append('svg:rect')
-			.attr('class', 'legend-background')
-			.attr('opacity', 0.8)
-			.attr('fill', 'white')
+		var legend = graph.selectAll('.legend');
+		if (legend.empty()) {
+			graph
+				.append('g')
+				.attr('class', 'legend')
+				.append('svg:rect')
+				.attr('class', 'legend-background')
+				.attr('opacity', 0.8)
+				.attr('fill', 'white')
+			legend = graph.selectAll('.legend');
+		}
+		legend.select('.legend-background')
 			.attr('x', left - 10)
 			.attr('width', width)
 			.attr('height', (catsInView.length * 25) + 10);
@@ -20,13 +24,14 @@ function Stats(cats, hashBangNotifyDisabeld) {
 			.data(catsInView)
 			.enter()
 			.append('g')
-			.attr('class', 'legend-entry');
+			.attr('class', 'legend-entry')
 		legendentries.append('svg:rect')
 			.attr('fill', function (d) {
 				return d.color;
 			})
 			.attr('x', left)
 			.attr('y', function (d, i) {
+				console.log(i);
 				return top + (25 * i);
 			})
 			.attr('width', 10)
@@ -39,6 +44,13 @@ function Stats(cats, hashBangNotifyDisabeld) {
 			.text(function (d) {
 				return d.name;
 			});
+
+		legend
+			.selectAll('.legend-entry')
+			.data(catsInView)
+			.exit()
+			.remove();
+
 	}
 
 	function requestData(options, callback) {
@@ -78,11 +90,11 @@ function Stats(cats, hashBangNotifyDisabeld) {
 
 	function initSVG(id, width, height) {
 		svg = d3.select('#' + id + 'vis').append('svg')
-				.attr('width', width)
-				.attr('height', height)
-				.attr('viewBox', '0 0 ' + width + ' ' + height)
-				.attr('perserveAspectRatio', 'xMinYMid')
-			;
+			.attr('width', width)
+			.attr('height', height)
+			.attr('viewBox', '0 0 ' + width + ' ' + height)
+			.attr('perserveAspectRatio', 'xMinYMid')
+		;
 		var
 			aspect = width / height,
 			container = $('#' + id + 'vis').parent();
