@@ -4,18 +4,18 @@
 
  Format:
  {
-	 {
-		 "id": "#aufschrei",
-		 "count": 48232,
-		 "counts": {
-			 "unknown": 38193,
-			 "outcry": 1294,
-			 "comment": 2283,
-			 "troll": 5513,
-			 "report": 413,
-			 "spam": 536
-		 }
-	 },
+ {
+ "id": "#aufschrei",
+ "count": 48232,
+ "counts": {
+ "unknown": 38193,
+ "outcry": 1294,
+ "comment": 2283,
+ "troll": 5513,
+ "report": 413,
+ "spam": 536
+ }
+ },
  ...
  ]
 
@@ -24,6 +24,7 @@ var tokenizer = require('./tweet_tokenizer').MyLittleTweetTokenizer();
 
 exports.MyLittleWordStat = function () {
 	var me = this;
+	var THRESHOLD = 5;
 
 	function sortdDataByCat(data, cat) {
 		data.sort(
@@ -39,7 +40,7 @@ exports.MyLittleWordStat = function () {
 		return data;
 	}
 
-	function generateBarData(params, callback) {
+	function generateData(params, callback) {
 		var wordstat = {};
 		params.store.enumerateTweetsAndCats(params.voteuserid, function (tweet) {
 			if (tweet) {
@@ -92,7 +93,8 @@ exports.MyLittleWordStat = function () {
 					for (var cat in stat) {
 						total += stat[cat];
 					}
-					data.push({id: key, count: total, counts: stat});
+					if (total >= THRESHOLD)
+						data.push({id: key, count: total, counts: stat});
 				}
 				data.sort(
 					function (a, b) {
@@ -130,7 +132,7 @@ exports.MyLittleWordStat = function () {
 	};
 
 	me.getData = function (params, callback) {
-		generateBarData(params, function (data) {
+		generateData(params, function (data) {
 			me.prepareData(params, data, callback);
 		});
 	};

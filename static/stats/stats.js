@@ -13,7 +13,7 @@ function Stats(cats, hashBangNotifyDisabeld) {
 				.append('svg:rect')
 				.attr('class', 'legend-background')
 				.attr('opacity', 0.8)
-				.attr('fill', 'white')
+				.attr('fill', 'white');
 			legend = graph.selectAll('.legend');
 		}
 		legend.select('.legend-background')
@@ -24,7 +24,7 @@ function Stats(cats, hashBangNotifyDisabeld) {
 			.data(catsInView)
 			.enter()
 			.append('g')
-			.attr('class', 'legend-entry')
+			.attr('class', 'legend-entry');
 		legendentries.append('svg:rect')
 			.attr('fill', function (d) {
 				return d.color;
