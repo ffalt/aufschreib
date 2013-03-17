@@ -51,8 +51,12 @@ function dbinsert(cb) {
 		console.log('[DB] Pumping Tweets to DB');
 		dbstore.storeNewTweets(dbtweets, function () {
 			console.log('[DB] Tweets stored');
-			dbstore.closePool();
-			cb();
+			console.log('[DB] Creating default user');
+			dbstore.createUser('admin', function (userid) {
+				console.log('[DB] Default user created');
+				dbstore.closePool();
+				cb();
+			});
 		});
 	});
 }
@@ -255,13 +259,17 @@ function loadUrls(callback) {
 	});
 }
 
-function processTweets() {
+function processTweets(cb) {
 	if (longifylinks) {
 		savelinks();
 	}
 	if (consts.usedb) {
-		dbinsert();
+		dbinsert(cb);
 	}
+}
+
+function done() {
+	console.log('all done.');
 }
 
 loadUrls(function () {
@@ -269,11 +277,11 @@ loadUrls(function () {
 		loadRaw(function () {
 			transform();
 			saveStore();
-			processTweets();
+			processTweets(done);
 		});
 	} else {
 		loadStore(function () {
-			processTweets();
+			processTweets(done);
 		});
 	}
 });
