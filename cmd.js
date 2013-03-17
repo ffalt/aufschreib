@@ -1,6 +1,6 @@
 /*
 
-   deliver the pages & the data to the user
+ deliver the pages & the data to the user
 
  */
 var url = require('url');
@@ -51,7 +51,7 @@ exports.MyLittleCmds = function () {
 		var start = +new Date();
 		store.getUserPackages(req.user.id, startnr, filter, search, 100,
 			function (tweets, data, callback) {
-				if ((tweets) && (tweets.length>0)) {
+				if ((tweets) && (tweets.length > 0)) {
 					res.render('user', {
 						textutils: tokenizer,
 						consts: consts,
@@ -77,6 +77,7 @@ exports.MyLittleCmds = function () {
 						var end = +new Date();
 						console.log('[Server] Tweets: ' + written + ' spilled in ' + (end - start) + 'ms');
 					}
+
 					if (data) {
 						res.render('nextlink', {id: data}, endIt);
 					} else if (written === 0) {
@@ -180,13 +181,16 @@ exports.MyLittleCmds = function () {
 	function responseCmdClassify(req, res) {
 		classifier.classify(req.user.id, store, function (isdone) {
 				if (isdone) {
-					var params = stats.getParams(req.user.id, store, 'pie', 'machine', null, null, true);
-					res.render('stats/' + 'pie_commands', {
-						chartparams: params,
-						consts: consts,
-						hide_head: true,
-						container_id: params.getChartContainerId() + '_after'});
-					//stats.cacheStats(req.user.id, store, function () {});
+
+					stats.cacheStats(req.user.id, store, function () {
+						var params = stats.getParams(req.user.id, store, 'pie', 'machine', null, null, true);
+						res.render('stats/' + 'pie_commands', {
+							chartparams: params,
+							consts: consts,
+							hide_head: true,
+							container_id: params.getChartContainerId() + '_after'});
+					});
+
 				} else {
 					responseError(res, 'no data for classifying :.(');
 				}
@@ -213,7 +217,7 @@ exports.MyLittleCmds = function () {
 
 	function responseCmdJson(req, res, type, mode, cat, kind) {
 		var start = +new Date();
-		var params = stats.getParams(req.user.id, store, type, mode || consts.defaultmode, cat, kind,  false);
+		var params = stats.getParams(req.user.id, store, type, mode || consts.defaultmode, cat, kind, false);
 		if (!params.isValid()) {
 			responseError(res, 'Invalid Command type:' + type + ' mode:' + mode + ' kind:' + kind + ' cat:' + cat);
 			return;

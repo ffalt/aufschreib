@@ -9,7 +9,7 @@
 			<% if (consts.debug) { %>
 			<li>
 				<button class="btn btn-primary" onclick="return aufschreib.updateCache();" type="button">
-					Update Cache
+					Update Stats Cache only
 				</button>
 			</li>
 			<% } %>
@@ -26,8 +26,8 @@
 </div>
 
 <div class="row">
-	<div class="span5"><h4>Before</h4><% include stats/pie_commands %></div>
-	<div class="span5"><h4>After</h4>
+	<div class="span5"><h4>Machine Classification Before</h4><% include stats/pie_commands %></div>
+	<div class="span5"><h4>Machine Classification After</h4>
 
 		<div id="classify-result">Please press the Button to update</div>
 	</div>

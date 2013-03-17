@@ -31,7 +31,6 @@ function Stats(cats, hashBangNotifyDisabeld) {
 			})
 			.attr('x', left)
 			.attr('y', function (d, i) {
-				console.log(i);
 				return top + (25 * i);
 			})
 			.attr('width', 10)

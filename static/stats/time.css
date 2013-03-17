@@ -4,6 +4,20 @@
 	shape-rendering: crispEdges;
 }
 
+.layer {
+	fill-opacity: .9;
+	stroke-opacity: 0;
+
+	transition: fill-opacity 250ms linear, stroke-opacity 250ms linear;
+	-moz-transition: fill-opacity 250ms linear, stroke-opacity 250ms linear;
+	-webkit-transition: fill-opacity 250ms linear, stroke-opacity 250ms linear;
+
+}
+
+.layer:hover {
+	fill-opacity: .7;
+}
+
 .brush .extent {
 	stroke: #fff;
 	fill-opacity: .125;
