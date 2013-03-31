@@ -1,3 +1,4 @@
+- use the twitter json format as source data format 
 - finish multi-user-management (create/update/delete users)
 - store hashes not plain passwords
 - check on small devices
