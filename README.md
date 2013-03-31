@@ -135,11 +135,11 @@ run
 expand twitters short urls (t.co) through [http://www.longurlplease.com/](http://www.longurlplease.com/)
 expanded urls will then be checked for other short urls services, too.
 
+a file **"urls.json"** with the expanded urls will be created and used
+
 run
 
 `node "1 prepare.js"`
-
-if you use longifylinks, a file **"urls.json"** with the expanded urls will be created and used
 
 if you use mysql, tables are created and data is filled
 
