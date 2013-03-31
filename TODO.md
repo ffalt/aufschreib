@@ -1,6 +1,6 @@
-- use the twitter json format as source data format 
 - finish multi-user-management (create/update/delete users)
 - store hashes not plain passwords
 - check on small devices
-- find a better way to save human votes to file other than saving the whole file all the time
+- better response while classification is going on (socket.io?)
+- implement better way to save human votes to file other than saving the whole file all the time (append and use latest if duplicates occures)
 - all available properties into one file
