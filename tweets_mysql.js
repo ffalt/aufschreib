@@ -21,10 +21,10 @@ exports.MyLittleTweets = function () {
 		connectionLimit: 100
 	};
 
-	console.log('[Tweets] Connecting to DB');
+	console.log('[DB] Connecting to DB');
 	var pool = mysql.createPool(dboptions);
 
-	function getConnection(callback) {
+	function getConnection(cb) {
 		pool.getConnection(function (err, connection) {
 			if (err) {
 				throw err;
@@ -43,7 +43,7 @@ exports.MyLittleTweets = function () {
 					return txt;
 				}.bind(this));
 			};
-			callback(connection);
+			cb(connection);
 		});
 	}
 
@@ -68,85 +68,78 @@ exports.MyLittleTweets = function () {
 		pool.end();
 	};
 
-	function createTweetsTable(connection, callback) {
-		connection.query('DROP TABLE IF EXISTS tweets;', function (err) {
-			if (err) throw err;
-			connection.query('CREATE TABLE tweets (' +
-				'id BIGINT UNSIGNED NOT NULL,' +
-				'created_at DATETIME NOT NULL,' +
-				'user VARCHAR(30) NOT NULL,' +
-				'source VARCHAR(200),' +
-				'userimg VARCHAR(200),' +
-				'text VARCHAR(200),' +
-				'longurls VARCHAR(800),' +
-				'PRIMARY KEY(id),' +
-				'INDEX(user),' +
-				'FULLTEXT(text),' +
-				'FULLTEXT(longurls)' +
-				') ENGINE = MYISAM;',
-				function (err2) {
-					if (err2) throw err2;
+	function createTweetsTable(connection, maxlengths, cb) {
+		connection.query('CREATE TABLE IF NOT EXISTS tweets (' +
+			'id BIGINT UNSIGNED NOT NULL,' +
+			'created_at DATETIME NOT NULL,' +
+			'user VARCHAR(' + (maxlengths.user + 1) + ') NOT NULL,' +
+			'source VARCHAR(' + (maxlengths.source + 1) + '),' +
+			'userimg VARCHAR(' + (maxlengths.userimg + 1) + '),' +
+			'text VARCHAR(' + (maxlengths.text + 1) + '),' +
+			'longurls VARCHAR(' + (maxlengths.longurls + 1) + '),' +
+			'PRIMARY KEY(id),' +
+			'INDEX(user),' +
+			'FULLTEXT(text),' +
+			'FULLTEXT(longurls)' +
+			') ENGINE = MYISAM;',
+			function (err2, result) {
+				if (err2) throw err2;
+				if (result)
 					console.log('[DB] Tweet Table Created');
-					callback(true);
-				});
-		});
+				cb(true);
+			});
 	}
 
-	function createVotesTable(connection, callback) {
-		connection.query('DROP TABLE IF EXISTS votes;', function (err) {
-			if (err) throw err;
-			connection.query('CREATE TABLE votes (' +
-				'id BIGINT UNSIGNED NOT NULL,' +
-				'voteuser MEDIUMINT NOT NULL,' +
-				'human VARCHAR(10) DEFAULT "' + consts.unknown + '",' +
-				'machine VARCHAR(10) DEFAULT "' + consts.unknown + '",' +
-				'PRIMARY KEY(id, voteuser)' +
-				');',
-				function (err2) {
-					if (err2) throw err2;
+	function createVotesTable(connection, cb) {
+		connection.query('CREATE TABLE IF NOT EXISTS votes (' +
+			'id BIGINT UNSIGNED NOT NULL,' +
+			'voteuser MEDIUMINT NOT NULL,' +
+			'human VARCHAR(10) DEFAULT "' + consts.unknown + '",' +
+			'machine VARCHAR(10) DEFAULT "' + consts.unknown + '",' +
+			'PRIMARY KEY(id, voteuser)' +
+			');',
+			function (err2, result) {
+				if (err2) throw err2;
+				if (result)
 					console.log('[DB] Votes Table Created');
-					callback(true);
-				});
-		});
+				cb(true);
+			});
 	}
 
-	function createVoteUserTable(connection, callback) {
-		connection.query('DROP TABLE IF EXISTS voteusers;', function (err) {
-			if (err) throw err;
-			connection.query('CREATE TABLE voteusers (' +
-				'id MEDIUMINT NOT NULL AUTO_INCREMENT,' +
-				'voteuser VARCHAR(10) NOT NULL,' +
-				'PRIMARY KEY(id)' +
-				');',
-				function (err2) {
-					if (err2) throw err2;
+	function createVoteUserTable(connection, cb) {
+		connection.query('CREATE TABLE IF NOT EXISTS voteusers (' +
+			'id MEDIUMINT NOT NULL AUTO_INCREMENT,' +
+			'voteuser VARCHAR(10) NOT NULL,' +
+			'PRIMARY KEY(id)' +
+			');',
+			function (err2, result) {
+				if (err2) throw err2;
+				if (result)
 					console.log('[DB] VoteUsers Table Created');
-					callback(true);
-				});
-		});
+				cb(true);
+			});
 	}
 
-	function beginUpdate(connection, callback) {
+	function beginUpdate(connection, cb) {
 		connection.query('START TRANSACTION;', function (err) {
 			if (err) throw err;
-			callback();
+			cb();
 		});
 	}
 
-	function endUpdate(connection, callback) {
+	function endUpdate(connection, cb) {
 		connection.query('COMMIT;', function (err) {
 			if (err) throw err;
-			callback();
+			cb();
 		});
 	}
 
-	function dofillUser(connection, voteuserid, callback) {
+	function dofillUser(connection, voteuserid, cb) {
 		console.log('[DB] Pumping Default VoteUser Cats to DB');
 		connection.query('SELECT id FROM tweets', function (err, result) {
 			function storeDefault(index) {
 				if (index >= result.length) {
-					connection.end();
-					callback();
+					cb();
 				} else {
 					connection.query('INSERT INTO votes SET ?;', {id: result[index].id, voteuser: voteuserid}, function (err) {
 						if (err) throw err;
@@ -159,24 +152,24 @@ exports.MyLittleTweets = function () {
 		});
 	}
 
-	function doloadCatForTweet(connection, voteuserid, tweetid, callback) {
+	function doloadCatForTweet(connection, voteuserid, tweetid, cb) {
 		connection.query('SELECT human,machine FROM votes WHERE id=:id AND voteuser=:voteuser;',
 			{id: tweetid, voteuser: voteuserid}, function (err, result) {
 				if (err) throw err;
 				if (result.length === 0) {
-					callback(null);
+					cb(null);
 				} else {
 					var cat = new TweetCat();
 					cat.machine = result[0].machine;
 					cat.human = result[0].human;
 					cat.id = tweetid;
 					cat.voteuser = voteuserid;
-					callback(cat);
+					cb(cat);
 				}
 			});
 	}
 
-	function setCat(connection, voteuserid, mode, tweetid, value, callback) {
+	function setCat(connection, voteuserid, mode, tweetid, value, cb) {
 		doloadCatForTweet(connection, voteuserid, tweetid, function (result) {
 			if (!result) {
 				console.log('storing new cat for: ' + tweetid + ' ' + value);
@@ -184,7 +177,7 @@ exports.MyLittleTweets = function () {
 					(mode === 'human' ? value : consts.unknown),
 					(mode === 'machine' ? value : consts.unknown),
 					function (catresult) {
-						callback(catresult);
+						cb(catresult);
 					}
 				)
 			} else {
@@ -192,20 +185,19 @@ exports.MyLittleTweets = function () {
 				connection.query('UPDATE votes SET ' + mysql.escapeId(mode) + '=:cat WHERE id=:id AND voteuser=:voteuser;',
 					{cat: value, id: tweetid, voteuser: voteuserid}, function (err) {
 						if (err) throw err;
-						callback(result);
+						cb(result);
 					});
 			}
 		});
 	}
 
-	function setCats(voteuserid, votesarray, mode, callback) {
+	function setCats(voteuserid, votesarray, mode, cb) {
 		getConnection(function (connection) {
-
 			function storeCat(index) {
 				if (index >= votesarray.length) {
 					endUpdate(connection, function () {
 						connection.end();
-						callback();
+						cb();
 					});
 				} else {
 					setCat(connection, voteuserid, mode, votesarray[index].id, votesarray[index][mode], function () {
@@ -220,7 +212,7 @@ exports.MyLittleTweets = function () {
 		});
 	}
 
-	function doStoreNewCatData(connection, voteuserid, tweetid, human, machine, callback) {
+	function doStoreNewCatData(connection, voteuserid, tweetid, human, machine, cb) {
 		var cat = new TweetCat();
 		cat.id = tweetid;
 		cat.voteuser = voteuserid;
@@ -228,15 +220,15 @@ exports.MyLittleTweets = function () {
 		cat.machine = machine;
 		connection.query('INSERT INTO votes SET ?;', cat, function (err) {
 			if (err) throw err;
-			callback(cat);
+			cb(cat);
 		});
 	}
 
-	function doSetHumanCat(connection, voteuserid, tweetid, value, callback) {
-		setCat(connection, voteuserid, 'human', tweetid, value, callback);
+	function doSetHumanCat(connection, voteuserid, tweetid, value, cb) {
+		setCat(connection, voteuserid, 'human', tweetid, value, cb);
 	}
 
-	function doloadTweet(connection, tweetid, callback) {
+	function doloadTweet(connection, tweetid, cb) {
 		connection.query('SELECT * FROM tweets WHERE id=:id', {id: tweetid}, function (err, result) {
 			if (err) throw err;
 			if ((result) && (result.length === 1)) {
@@ -248,85 +240,83 @@ exports.MyLittleTweets = function () {
 				tweet.created_at = result[0].created_at;
 				tweet.userimg = result[0].userimg;
 				tweet.longurls = result[0].longurls;
-				callback(tweet);
+				cb(tweet);
 			} else {
-				callback(null);
+				cb(null);
 			}
 		});
 	}
 
-	function doLoadTweetAndCatsByIds(connection, voteuserid, ids, callback) {
+	function doLoadTweetAndCatsByIds(connection, voteuserid, ids, cb) {
 		connection.query('SELECT t.*, v.human, v.machine FROM tweets t, votes v WHERE t.id in (:ids) ' +
 			'AND t.id=v.id AND voteuser=:voteuser;', {ids: ids, voteuser: voteuserid}, function (err, result) {
 			if (err) throw err;
 			if ((result) && (result.length > 0)) {
-				callback(result);
+				cb(result);
 			} else {
-				callback(null);
+				cb(null);
 			}
 		});
 	}
 
 	//* used by prepare.js *//
 
-	me.createUser = function (voteusername, callback) {
-		getConnection(function (connection) {
-			connection.query('INSERT INTO voteusers SET ?;', {voteuser: voteusername}, function (err, result) {
-				if (err) throw err;
-				console.log('[DB] VoteUser inserted: ' + voteusername + ' ' + result.insertId);
-				beginUpdate(connection, function () {
-					dofillUser(connection, result.insertId, function () {
-						endUpdate(connection, function () {
-							connection.end();
-							console.log('[DB] VoteUser filled');
-							callback(result.insertId);
-						});
-					});
-				});
-			});
-		});
-	};
-
-	me.createTables = function (callback) {
-		getConnection(function (connection) {
-			createTweetsTable(connection, function () {
-				createVoteUserTable(connection, function () {
-					createVotesTable(connection, function () {
-						connection.end();
-						callback();
-					});
-				});
-			});
-		});
-	};
-
-	me.storeNewTweets = function (tweets, callback) {
-		getConnection(function (connection) {
+	function createUser(connection, voteusername, cb) {
+		connection.query('INSERT INTO voteusers SET ?;', {voteuser: voteusername}, function (err, result) {
+			if (err) throw err;
+			console.log('[DB] VoteUser inserted: ' + voteusername + ' ' + result.insertId);
 			beginUpdate(connection, function () {
-				function store(index) {
-					if (index >= tweets.length) {
-						endUpdate(connection, callback);
-						connection.end();
-					} else {
-						connection.query('INSERT INTO tweets SET ?', tweets[index], function (err) {
-							if (err) throw err;
-							store(index + 1);
-						});
-					}
-				}
-
-				store(0);
+				dofillUser(connection, result.insertId, function () {
+					endUpdate(connection, function () {
+						console.log('[DB] VoteUser filled');
+						cb(result.insertId);
+					});
+				});
 			});
+		});
+	}
+
+	me.createUser = function (voteusername, cb) {
+		getConnection(function (connection) {
+			createUser(connection, voteusername, function (id) {
+				connection.end();
+				cb(id);
+			})
 		});
 	};
 
-	me.setHumanCats = function (voteuserid, votesarray, callback) {
-		setCats(voteuserid, votesarray, 'human', callback);
+	function createTables(connection, maxlengths, cb) {
+		createTweetsTable(connection, maxlengths, function () {
+			createVoteUserTable(connection, function () {
+				createVotesTable(connection, cb);
+			});
+		});
+	}
+
+	function storeNewTweets(connection, tweets, cb) {
+		beginUpdate(connection, function () {
+			function store(index) {
+				if (index >= tweets.length) {
+					endUpdate(connection, cb);
+				} else {
+					connection.query('INSERT INTO tweets SET ?', tweets[index], function (err) {
+						if (err) throw err;
+						store(index + 1);
+					});
+				}
+			}
+
+			store(0);
+		});
+	}
+
+	me.setHumanCats = function (voteuserid, votesarray, cb) {
+		setCats(voteuserid, votesarray, 'human', cb);
 	};
 
 	//* api *//
 
-	me.enumerateTweetsAndCats = function (voteuserid, callback) {
+	me.enumerateTweetsAndCats = function (voteuserid, cb) {
 		getConnection(function (connection) {
 			var count = 0;
 			var query = connection.query('SELECT t.*, v.human, v.machine FROM tweets t, votes v WHERE t.id=v.id AND v.voteuser=:voteuser;', {voteuser: voteuserid});
@@ -344,20 +334,20 @@ exports.MyLittleTweets = function () {
 					//TODO: hotfix for null as string, check where does that come from?
 					if (row.longurls === 'null')
 						row.longurls = null;
-					callback(row);
+					cb(row);
 					count++;
 					//console.log(count);
 					connection.resume();
 				})
 				.on('end', function () {
 					connection.end();
-					callback(null);
+					cb(null);
 					// all rows have been received
 				});
 		});
 	};
 
-	me.setHumanCatByIds = function (voteuserid, tweetids, value, callback) {
+	me.setHumanCatByIds = function (voteuserid, tweetids, value, cb) {
 		getConnection(function (connection) {
 			var cats = [];
 
@@ -366,7 +356,7 @@ exports.MyLittleTweets = function () {
 					endUpdate(connection, function () {
 						doLoadTweetAndCatsByIds(connection, voteuserid, tweetids, function (tweets) {
 							connection.end();
-							callback(tweets);
+							cb(tweets);
 						});
 					})
 				}
@@ -384,24 +374,24 @@ exports.MyLittleTweets = function () {
 		});
 	};
 
-	me.setHumanCat = function (voteuserid, tweetid, value, callback) {
+	me.setHumanCat = function (voteuserid, tweetid, value, cb) {
 		getConnection(function (connection) {
 			doSetHumanCat(connection, voteuserid, tweetid, value, function (cat) {
 				doloadTweet(connection, tweetid, function (tweet) {
 					connection.end();
 					tweet.human = cat.human;
 					tweet.machine = cat.machine;
-					callback(tweet);
+					cb(tweet);
 				});
 			});
 		});
 	};
 
-	me.setMachineCats = function (voteuserid, votesarray, callback) {
-		setCats(voteuserid, votesarray, 'machine', callback);
+	me.setMachineCats = function (voteuserid, votesarray, cb) {
+		setCats(voteuserid, votesarray, 'machine', cb);
 	};
 
-	me.getUserPackages = function (voteuserid, start, filter, search, maxtweets, callback) {
+	me.getUserPackages = function (voteuserid, start, filter, search, maxtweets, cb) {
 		var humanfilter = [];
 		var machinefilter = [];
 		filter = filter.split(',');
@@ -451,10 +441,10 @@ exports.MyLittleTweets = function () {
 					function processUser(index) {
 						if (index >= result.length) {
 							connection.end();
-							callback()
+							cb()
 						} else if (written > maxtweets) {
 							connection.end();
-							callback(null, result[index].user);
+							cb(null, result[index].user);
 						} else {
 							var user = result[index].user;
 							if ((!canwrite) && (start === user)) {
@@ -476,7 +466,7 @@ exports.MyLittleTweets = function () {
 											connection.query('SELECT COUNT(user) as total FROM tweets WHERE user=:user;', {user: user}, function (err3, result3) {
 												if (err3) throw err3;
 												written += result2.length;
-												callback(result2, result3[0].total, function () {
+												cb(result2, result3[0].total, function () {
 													processUser(index + 1);
 												});
 											});
@@ -491,13 +481,13 @@ exports.MyLittleTweets = function () {
 						processUser(0);
 					else {
 						connection.end();
-						callback();
+						cb();
 					}
 				});
 		});
 	};
 
-	me.getUserPackage = function (voteuserid, user, callback) {
+	me.getUserPackage = function (voteuserid, user, cb) {
 		getConnection(function (connection) {
 			connection.query('SELECT t.*, v.human, v.machine ' +
 				'FROM tweets t, votes v WHERE t.user=:user AND v.id=t.id AND v.voteuser=:voteuser;',
@@ -505,13 +495,13 @@ exports.MyLittleTweets = function () {
 				function (err, result) {
 					if (err) throw err;
 					console.log(result);
-					callback(result);
+					cb(result);
 				}
 			);
 		});
 	};
 
-	me.getCountsByCat = function (voteuserid, mode, callback) {
+	me.getCountsByCat = function (voteuserid, mode, cb) {
 		getConnection(function (connection) {
 			connection.query('SELECT ' + mysql.escapeId(mode) + ', COUNT(' + mysql.escapeId(mode) + ') as total ' +
 				'FROM votes WHERE voteuser=:voteuser GROUP BY ' + mysql.escapeId(mode) + ';',
@@ -523,13 +513,13 @@ exports.MyLittleTweets = function () {
 						data[entry[mode]] = entry.total;
 					});
 					connection.end();
-					callback(data);
+					cb(data);
 				}
 			);
 		});
 	};
 
-	me.getCats = function (voteuserid, mode, callback) {
+	me.getCats = function (voteuserid, mode, cb) {
 		getConnection(function (connection) {
 			connection.query('SELECT id,' + mysql.escapeId(mode) +
 				' FROM votes WHERE voteuser=:voteuser;',
@@ -542,15 +532,162 @@ exports.MyLittleTweets = function () {
 						if (entry[mode] !== consts.unknown)
 							data[entry.id] = entry[mode];
 					});
-					callback(data);
+					cb(data);
 				}
 			);
 		});
 	};
 
-	me.initUser = function (user, callback) {
+	me.initUser = function (user, cb) {
 		//noop
-		callback();
+		cb();
+	};
+
+//	me.dropAllTables = function (connection, cb) {
+//		connection.query('DROP TABLE IF EXISTS tweets;', function (err) {
+//			if (err) throw err;
+//		});
+//		connection.query('DROP TABLE IF EXISTS votes;', function (err) {
+//			if (err) throw err;
+//		});
+//		connection.query('DROP TABLE IF EXISTS voteusers;', function (err) {
+//			if (err) throw err;
+//		});
+//	}
+
+	function dropTweetsTables(connection, cb) {
+		connection.query('DROP TABLE IF EXISTS tweets;', function (err) {
+			if (err) throw err;
+			cb();
+		});
+	}
+
+	function findUser(connection, voteusername, cb) {
+		connection.query('SELECT id FROM voteusers WHERE voteuser=:voteuser;',
+			{voteuser: voteusername},
+			function (err, result) {
+				if (err) throw err;
+				if (result.length === 0)
+					cb(null);
+				else
+					cb(result[0].id);
+			}
+		);
+	}
+
+	function updateUserTable(connection, tweets, voteuserid, cb) {
+		console.log('[DB] Filling VoteUser... ' + voteuserid);
+
+		connection.query('SELECT id FROM votes WHERE voteuser=:voteuser;', {voteuser: voteuserid}, function (err, tweetids) {
+			if (err) throw err;
+			tweetids = tweetids.map(function (entry) {
+				return entry.id;
+			});
+			tweets = tweets.filter(function (entry) {
+				return tweetids.indexOf(entry.id) < 0;
+			});
+
+			beginUpdate(connection, function () {
+
+				function updateVoteUserTweet(index) {
+					if (index >= tweets.length) {
+						endUpdate(connection, function () {
+							cb();
+						});
+					} else {
+						connection.query('INSERT INTO votes SET ?;', {id: tweets[index].id, voteuser: voteuserid}, function (err) {
+							if (err) throw err;
+							updateVoteUserTweet(index + 1);
+						});
+					}
+				}
+
+				updateVoteUserTweet(0);
+			});
+		});
+	}
+
+	function updateUserTables(connection, tweets, cb) {
+		connection.query('SELECT id FROM voteusers;',
+			function (err, result) {
+				if (err) throw err;
+
+				function updateUserTableID(index) {
+					if (index >= result.length) {
+						cb();
+					} else {
+						updateUserTable(connection, tweets, result[index].id, function () {
+							updateUserTableID(index + 1);
+						})
+					}
+				}
+
+				updateUserTableID(0);
+			}
+		);
+	}
+
+	me.prepare = function (tweets, cb) {
+		console.log('[DB] Preparing Tweets');
+		var dbtweets = [];
+		var maxlengths = {
+			user: 0,
+			source: 0,
+			text: 0,
+			userimg: 0,
+			longurls: 0
+		};
+		tweets.forEach(function (tweet) {
+			var longy = (typeof(tweet.longurls) == 'string' ? tweet.longurls : JSON.stringify(tweet.longurls));
+			maxlengths.longurls = Math.max(maxlengths.longurls, (longy ? longy.length : 0));
+			maxlengths.user = Math.max(maxlengths.user, tweet.user.length);
+			maxlengths.source = Math.max(maxlengths.source, tweet.source.length);
+			maxlengths.text = Math.max(maxlengths.text, tweet.text.length);
+			maxlengths.userimg = Math.max(maxlengths.userimg, tweet.userimg.length);
+			dbtweets.push({
+				id: tweet.id,
+				created_at: new Date(tweet.created_at),
+				source: tweet.source,
+				text: tweet.text,
+				user: tweet.user,
+				userimg: tweet.userimg,
+				longurls: longy
+			});
+		});
+		//console.log('Info: LongUrls Field must be at least ' + maxlongurl + 'long');
+		getConnection(function (connection) {
+			console.log('[DB] Cleaning Tweets-Table');
+			dropTweetsTables(connection, function () {
+				console.log('[DB] Creating Tables');
+				createTables(connection, maxlengths, function () {
+					console.log('[DB] Pumping Tweets to DB');
+					storeNewTweets(connection, dbtweets, function () {
+						findUser(connection, 'admin', function (userid) {
+							if (userid) {
+								console.log('[DB] Updating User Tables');
+								updateUserTables(connection, tweets, function () {
+									console.log('[DB] done.');
+									connection.end();
+									me.closePool();
+									cb();
+								});
+							} else {
+								console.log('[DB] Creating default user');
+								createUser(connection, 'admin', function (userid) {
+									console.log('[DB] Updating User Tables');
+									updateUserTables(connection, tweets, function () {
+										console.log('[DB] done.');
+										connection.end();
+										me.closePool();
+										cb();
+									});
+								});
+							}
+						});
+					});
+				});
+			});
+		});
 	};
 
 	return me;

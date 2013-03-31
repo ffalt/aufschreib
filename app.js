@@ -2,12 +2,18 @@ var listento = '0.0.0.0',  // \o_ listen to ALL the adapters
 	port = 8081;
 
 console.log('[Server] start');
-var express = require('express')
-	, passport = require('passport')
-	, util = require('util')
-	, url = require('url')
-	, LocalStrategy = require('passport-local').Strategy
-	, cmd = require('./cmd').MyLittleCmds();
+var express = require('express'),
+	app = express(),
+	server = require('http').createServer(app),
+//	io = require('socket.io').listen(server),
+//	passportSocketIo = require("passport.socketio"),
+	passport = require('passport'),
+	util = require('util'),
+	url = require('url'),
+	LocalStrategy = require('passport-local').Strategy,
+	cmd = require('./cmd').MyLittleCmds();
+var
+	sessionstore = new express.session.MemoryStore;
 
 var users = [
 	{ id: 1, username: 'admin', password: 'totalsupergehaim' }
@@ -26,7 +32,7 @@ function findById(id, fn) {
 }
 
 function findByUsername(username, fn) {
-	for (var i=0; i<users.length;i++) {
+	for (var i = 0; i < users.length; i++) {
 		var user = users[i];
 		if (user.username === username) {
 			return fn(null, user);
@@ -81,20 +87,19 @@ passport.use(new LocalStrategy(
 	}
 ));
 
-
-var app = express();
-
 // configure Express
-app.configure(function () {
+app.configure('all', function () {
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'ejs');
+	app.use(express.compress());
 	app.use(express.favicon(__dirname + '/static/images/favicon.ico'));
 	app.use('/static', express.static(__dirname + '/static'));
-	//app.use(express.logger());
+
+	app.use(express.logger());
 	app.use(express.cookieParser());
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
-	app.use(express.session({ secret: 'keyboard cat is happy' }));
+	app.use(express.session({ secret: 'keyboard cat is happy', store: sessionstore }));
 	// Initialize Passport!  Also use passport.session() middleware, to support
 	// persistent login sessions (recommended).
 	app.use(passport.initialize());
@@ -115,18 +120,36 @@ app.get('/', function (req, res) {
 	}
 });
 
-/*
-app.get('/account', ensureAuthenticated, function (req, res) {
-	res.render('account', { user: req.user });
+app.post('/bulk', function (req, res) {
+	if (!req.user) {
+		res.send(401);
+	} else {
+		cmd.bulkinsert(req, res);
+	}
 });
-*/
+
+app.post('/user/create', function (req, res) {
+	if (!req.user) {
+		res.send(401);
+	} else if (req.user.id > 1) {
+		res.send(401);
+	} else {
+		cmd.createuser(req, res);
+	}
+});
+
+
+/*
+ app.get('/account', ensureAuthenticated, function (req, res) {
+ res.render('account', { user: req.user });
+ });
+ */
 
 app.get('/login', function (req, res) {
 	res.render('login', { user: req.user, message: req.session.messages });
 });
 
-app.post('/login',
-	passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),
+app.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),
 	function (req, res) {
 		cmd.initUser(req, res, function () {
 			res.redirect('/');
@@ -137,19 +160,24 @@ app.get('/logout', function (req, res) {
 	req.logout();
 	res.redirect('/');
 });
-
-// Simple route middleware to ensure user is authenticated.
-//   Use this route middleware on any resource that needs to be protected.  If
-//   the request is authenticated (typically via a persistent login session),
-//   the request will proceed.  Otherwise, the user will be redirected to the
-//   login page.
-function ensureAuthenticated(req, res, next) {
-	if (req.isAuthenticated()) {
-		return next();
+/*
+io.set("authorization", passportSocketIo.authorize({
+	key: 'express.sid',       //the cookie where express (or connect) stores its session id.
+	secret: 'keyboard cat is happy', //the session secret to parse the cookie
+	store: sessionstore,     //the session store that express uses
+	fail: function (data, accept) {     // *optional* callbacks on success or fail
+		accept(null, false);             // second param takes boolean on whether or not to allow handshake
+	},
+	success: function (data, accept) {
+		accept(null, true);
 	}
-	res.redirect('/login')
-}
+}));
+io.sockets.on('connection', function (socket) {
+	console.log("user connected: ", socket.handshake.user.name);
+	cmd.socket(socket);
+});
+*/
+server.listen(port, listento);
 
-app.listen(port, listento);
-console.log('[Server] running away at http://'+listento+':'+port);
+console.log('[Server] running away at http://' + listento + ':' + port);
 

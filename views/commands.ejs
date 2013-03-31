@@ -1,3 +1,4 @@
+<!--<script src="/static/socket.io/socket.io.js"></script>-->
 <div class="navbar nav-pills">
 	<div class="navbar-inner">
 		<ul class="nav">
@@ -30,6 +31,45 @@
 	<div class="span5"><h4>Machine Classification After</h4>
 
 		<div id="classify-result">Please press the Button to update</div>
+	</div>
+</div>
+<br />
+<div class="row">
+	<div class="span12 well">
+		! Under construction !
+		<h4>Bulk insert User Votes Json File</h4>
+		<iframe id="upload_iframe" style="width:0; height:0; border:none;"></iframe>
+		<form action="/bulk"  method="post"
+			  class="form-inline" enctype="multipart/form-data"
+			  encoding="multipart/form-data"
+			  target="upload_iframe"
+			  id="form-file">
+				<input id="bulkfile" type="file" name="file" size="100" placeholder="Choose JSON file"/>
+				<button class="btn btn-primary" onclick="return aufschreib.sendFile()">Upload File</button>
+		</form>
+		<div id="output-upload"></div>
+	</div>
+
+	<div class="span12 well">
+		! Under construction !
+		<h4>Create User</h4>
+
+		<form method="post" name="form-newuser">
+			<fieldset>
+				<div class="input-prepend">
+					<span class="add-on"><i class="icon-user"></i></span>
+					<input type="text" name="username" placeholder="Username">
+				</div>
+				<div class="input-prepend">
+					<span class="add-on"><i class="icon-key"></i></span>
+					<input type="password" name="password" placeholder="Password">
+				</div>
+				<div class="input-prepend">
+					<button class="btn btn-primary" onclick="return aufschreib.createUser()">Create User</button>
+				</div>
+			</fieldset>
+		</form>
+		<div id="output-newuser"></div>
 	</div>
 </div>
 

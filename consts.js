@@ -1,5 +1,5 @@
 const debug = true;
-const usedb = false;
+const usedb = true;
 const basecats = [
 	{
 		id: 'outcry',

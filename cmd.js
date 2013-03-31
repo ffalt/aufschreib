@@ -19,10 +19,7 @@ exports.MyLittleCmds = function () {
 	}
 
 	function responseError(res, msg) {
-		res.writeHead(400, msg, {
-			'content-type': 'text/plain'
-		});
-		res.end(msg);
+		res.send(400, msg);
 	}
 
 	function responseUnknown(res) {
@@ -159,29 +156,20 @@ exports.MyLittleCmds = function () {
 	}
 
 	function responseCmdUpdateCache(req, res) {
-		res.writeHead(200, {
-			'Content-Type': 'text/html; charset=utf-8'
-		});
-		res.write('Well, it started. TODO: Notify Finish to User'); //TODO: Notify Finish to User
-		res.end();
+		res.send('Well, it started. TODO: Notify Finish to User'); //TODO: Notify Finish to User
 		stats.cacheStats(req.user.id, store, function () {
 		});
 	}
 
 	function responseCmdClassifiction(req, res, mode) {
 		store.getCats(req.user.id, mode, function (data) {
-			res.writeHead(200, {
-				'Content-Type': 'application/json; charset=utf-8'
-			});
-			res.write(JSON.stringify(data, null, '\t'));
-			res.end();
+			res.json(data);
 		});
 	}
 
 	function responseCmdClassify(req, res) {
 		classifier.classify(req.user.id, store, function (isdone) {
 				if (isdone) {
-
 					stats.cacheStats(req.user.id, store, function () {
 						var params = stats.getParams(req.user.id, store, 'pie', 'machine', null, null, true);
 						res.render('stats/' + 'pie_commands', {
@@ -223,11 +211,7 @@ exports.MyLittleCmds = function () {
 			return;
 		}
 		stats.getChartData(params, function (data) {
-			res.writeHead(200, {
-				'Content-Type': 'application/json; charset=utf-8'
-			});
-			res.write(JSON.stringify(data, null, '\t'));
-			res.end();
+			res.json(data);
 			var end = +new Date();
 			console.log('[Server] JSON ' + params.type + ' served in ' + (end - start) + 'ms');
 		});
@@ -282,8 +266,50 @@ exports.MyLittleCmds = function () {
 		store.initUser(req.user, callback);
 	};
 
+	me.bulkinsert = function (req, res) {
+		console.log(req.body);
+		res.send(200);
+		//processCmd(req, res);
+	};
+
+	me.createuser = function (req, res) {
+		console.log(req.body);
+		res.send(200);
+		//processCmd(req, res);
+	};
+
 	me.process = function (req, res) {
 		processCmd(req, res);
+	};
+
+	me.socket = function (socket) {
+		socket.emit('news', { msg: 'Connection established ' + socket.user.id });
+
+		socket.on('start', function (data) {
+			if (data['cmd'] === 'classify') {
+				socket.emit('news', { msg: 'Classify started' });
+				classifier.classify(socket.user.id, store, function (isdone) {
+						if (isdone) {
+							socket.emit('end', { msg: 'Classify done' });
+
+							/*stats.cacheStats(req.user.id, store, function () {
+							 var params = stats.getParams(req.user.id, store, 'pie', 'machine', null, null, true);
+							 res.render('stats/' + 'pie_commands', {
+							 chartparams: params,
+							 consts: consts,
+							 hide_head: true,
+							 container_id: params.getChartContainerId() + '_after'});
+							 });*/
+
+						} else {
+							socket.emit('end', { msg: 'No data for classifying :.(' });
+						}
+					}
+				);
+			} else {
+				socket.emit('end', { msg: 'unknown command' });
+			}
+		});
 	};
 
 	return me;

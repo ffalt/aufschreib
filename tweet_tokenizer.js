@@ -9,7 +9,7 @@ var moment = require('moment');
 moment.lang('de');
 exports.MyLittleTweetTokenizer = function () {
 	var me = this;
-	var validChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZïæàáäãåâÂÄçÇéèêøíìîòöôõóÖüûúûÜß';
+	var validChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZïæàáäãåâÂÄÃçÇéèêøñíìîòöôõóÖÓüûúûÜß¼';
 	var invalidChars = '#@ 0123456789,;.!?%$:_+-*/|(){}[]"&=<>\\¶£¢§\'– ´»«^¿°`~º²­©®·¨';
 	var allowedHandleChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_';
 	var validHashtagChars = validChars + '0123456789';

@@ -14,7 +14,7 @@ c) Produce some statistical representations based on it.
 
 *And why?*
 
-In February 2013  (mostly german speaking) women on Twitter started to post personal stories of experienced sexism and harassment under the hashtag #aufschrei (#outcry).
+In January/February 2013  (mostly german speaking) women on Twitter started to post personal stories of experienced sexism and harassment under the hashtag #aufschrei (#outcry).
 Soon many more people where using the hashtag to post opinions, links, troll comments, spam. I want to analyze this large amount of tweets and maybe contribute the results (if any usefull) to the [aufschreiStat](https://github.com/lenaschimmel/aufschreiStat/) project. 
 
 
@@ -76,12 +76,12 @@ now enter the connection details to **"tweets_mysql.js"**
 
 Put your base JSON file named **"messages.json"** into the **/data/** folder
 
-the used format of a tweet is 
+used format of a tweet must be the same twitter uses
 
 	[
 	{
 		"created_at": "Thu, 31 Jan 2013 18:22:47 +0000",
-		"id": "297047589672343473",
+		"id_str": "297047589672343473",
 		"source": "&lt;a href=&quot;http://client.url/&quot;&gt;Client&lt;/a&gt;",
 		"text": "Some Tweet text with #hashtags, @usernames and http/https-links",
 		"user": {
@@ -128,11 +128,14 @@ Edit **"1 prepare.js"**
 
 	var longifylinks = false;
 
-if you want to disable support for retrieveing expanded links from short link services like twitters t.co
-otherwise urls will be expanded through [http://www.longurlplease.com/](http://www.longurlplease.com/)
+run
 
+`node "0 longifyurls.js"`
 
-now run
+expand twitters short urls (t.co) through [http://www.longurlplease.com/](http://www.longurlplease.com/)
+expanded urls will then be checked for other short urls services, too.
+
+run
 
 `node "1 prepare.js"`
 
