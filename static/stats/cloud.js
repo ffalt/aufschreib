@@ -100,6 +100,10 @@ function Clouds() {
 		cloudgraph.layout.stop().words(tags.slice(0, howmuch)).start();
 	}
 
+	function prepareUrl(url) {
+		return url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i)[1];
+	}
+
 	function initSVG() {
 		svg = stats.initSVG(options.id, sizes.width, sizes.height);
 
@@ -108,13 +112,17 @@ function Clouds() {
 			.timeInterval(10)
 			.size([sizes.width, sizes.height])
 			.text(function (d) {
-				return d.key;
+				if (options.kind === 'link')
+					return prepareUrl(d.key);
+				else
+					return d.key;
+
 			})
 			.fontSize(function (d) {
-				if (options.kind === 'link')
-					return cloudgraph.fontSize(+d.value / 10);
-				else
-					return cloudgraph.fontSize(+d.value);
+//				if (options.kind === 'link')
+//					return cloudgraph.fontSize(+d.value / 10);
+//				else
+				return cloudgraph.fontSize(+d.value);
 			})
 			.on('word', notifyprogress)
 			.on('end', draw);
@@ -208,14 +216,13 @@ function Clouds() {
 			.style('opacity', 1e-6)
 			.transition()
 			.duration(1000)
-			.style('opacity', 1)
-			.attr('title', function (d, i) {
-				return 'Eintrag:' + "\t" + d.text + "\n" +
-					'Anzahl:' + "\t" + d.value;
-			});
-		text.style('font-family',function (d) {
-			return d.font;
-		}).style('fill',function (d) {
+			.style('opacity', 1);
+		text.attr('title',function (d) {
+			return 'Eintrag:' + "\t" + d.key + "\n" +
+				'Anzahl:' + "\t" + d.value;
+		}).style('font-family',function (d) {
+				return d.font;
+			}).style('fill',function (d) {
 				return cloudgraph.fill(d.text);
 			}).text(function (d) {
 				return d.text;
@@ -243,7 +250,7 @@ function Clouds() {
 		canvas.height = sizes.height;
 		c.translate(sizes.width >> 1, sizes.height >> 1);
 		c.scale(cloudgraph.zoomscale, cloudgraph.zoomscale);
-		words.forEach(function (word, i) {
+		words.forEach(function (word) {
 			c.save();
 			c.translate(word.x, word.y);
 			c.rotate(word.rotate * Math.PI / 180);

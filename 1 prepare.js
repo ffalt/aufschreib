@@ -7,6 +7,7 @@
 var fs = require('fs');
 var tokenizer = require('./tweet_tokenizer.js').MyLittleTweetTokenizer();
 var consts = require('./consts');
+var async = require('async');
 var storeurls = {};
 
 function getLongUrls(tweet) {
@@ -55,6 +56,7 @@ function transform(rawTweets) {
 		return true;
 	});
 	tweets = tweets.map(function (tweet) {
+		var longurls = getLongUrls(tweet);
 		return {
 			id: tweet.id_str,
 			created_at: new Date(tweet.created_at),
@@ -62,7 +64,7 @@ function transform(rawTweets) {
 			userimg: tweet.user.profile_image_url,
 			user: tweet.user.screen_name,
 			text: tweet.text,
-			longurls: getLongUrls(tweet)
+			longurls: longurls
 		}
 	});
 	console.log('[Prepare] Sorting Tweets ' + tweets.length);
@@ -74,12 +76,6 @@ function transform(rawTweets) {
 		return 0;
 	});
 	return tweets;
-}
-
-function saveStore(tweets) {
-	console.log('[Prepare] Saving Tweets ' + tweets.length);
-	fs.writeFileSync('./data/tweetstore.json', JSON.stringify(tweets, null, '\t'), 'utf8');
-	console.log('[Prepare] Tweets saved: ' + tweets.length);
 }
 
 function loadRaw(cb) {
@@ -108,18 +104,29 @@ function loadUrls(cb) {
 	});
 }
 
-loadUrls(function () {
-	loadRaw(function (rawTweets) {
+var
+	storage = require('./tweets_' + consts.storage).MyLittleTweets();
+
+async.waterfall([
+	function (callback) {
+		loadUrls(callback);
+	},
+	function (callback) {
+		storage.init(callback);
+	},
+	function (callback) {
+		loadRaw(function (rawTweets) {
+			callback(null, rawTweets);
+		});
+	},
+	function (rawTweets, callback) {
 		var tweets = transform(rawTweets);
-		if (consts.usedb) {
-			var dbstore = require('./tweets_mysql').MyLittleTweets();
-			dbstore.prepare(tweets, function () {
-					console.log('[Prepare] all done.');
-				}
-			);
-		} else {
-			saveStore(tweets);
-			console.log('[Prepare] all done.');
-		}
-	});
+		storage.prepare(tweets, function () {
+				callback(null);
+			}
+		);
+	}
+], function () {
+	storage.deinit();
+	console.log('[Prepare] all done.');
 });

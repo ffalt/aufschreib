@@ -1,24 +1,15 @@
 <div class="row">
-	<div class="span5 pagination-centered" id="stats-content">
+	<div class="span5 pagination-centered">
 		<div id="<%= container_id %>vis" class="<%- chartparams.type %> chart"></div>
 	</div>
 </div>
-
-<link type="text/css" href="/static/stats/stats.css" rel="stylesheet">
-<link type="text/css" href="/static/stats/<%- chartparams.type %>.css" rel="stylesheet">
-<script src="/static/d3/d3.v3.min.js"></script>
-<script src="/static/stats/stats.js"></script>
-<script src="/static/stats/<%- chartparams.type %>.js"></script>
-<script type="text/javascript">
-	var cats = <%- JSON.stringify(consts.cats) %>;
-</script>
-
 <script type="text/javascript">
 	$(function () {
 		$(document).ready(
 				function () {
 					var pies = new Pies();
-					pies.initPie('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>', new Stats(cats, true));
+					pies.initPie('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>',
+							'<%- chartparams.forcegenerate %>', new Stats(cats, true));
 				}
 		);
 	});

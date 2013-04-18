@@ -34,8 +34,7 @@ The result data is NOT RELIABLE! yet.
 [http://nodejs.org/](http://nodejs.org/)
 
 
-optional: a mysql database
-
+optional: a mysql or mongo database
 
 modules for node js
 
@@ -45,6 +44,10 @@ optional
 
 	npm install mysql
 
+optional
+
+	npm install mongodb
+
 ##Usage
 
 ### 1. Choose your storage
@@ -52,17 +55,17 @@ optional
 
 Edit **"consts.js"** and set
 
-	const usedb = false;
+const storage = 'files';
 
 **1.2 *OR* mysql-based storage**
 
 Edit **"consts.js"** and set
 
-	const usedb = true;
+	const usedb = 'mysql';
 
-now enter the connection details to **"tweets_mysql.js"**
+now change the connection details
 
-	var dboptions = {
+	const mysql_settings = {
 		host: 'localhost',
 		user: 'aufschreib',
 		password: 'ohsosecret',
@@ -71,6 +74,24 @@ now enter the connection details to **"tweets_mysql.js"**
 		debug: false,
 		connectionLimit: 100
 	};`
+
+**1.3 *OR* mongodb-based storage**
+
+Edit **"consts.js"** and set
+
+	const usedb = 'mongo';
+
+now change the connection details
+
+	const mongo_settings = {
+		"hostname": "localhost",
+		"port": 27017,
+		"username": "aufschreib",
+		"password": "ohsosecret",
+		"name": "aufschreib",
+		"db": "aufschreib"
+	};
+
 
 ### 2. Prepare
 
@@ -122,11 +143,7 @@ if you edit the categroies you need to set the parameter for the Bayesian filter
 		outcry: 1
 	};
 
-### 4. Prepare Script (mandatory!)
-
-Edit **"1 prepare.js"**
-
-	var longifylinks = false;
+### 3. Longify Urls (optional)
 
 run
 
@@ -137,11 +154,14 @@ expanded urls will then be checked for other short urls services, too.
 
 a file **"urls.json"** with the expanded urls will be created and used
 
+### 4. Prepare Script (mandatory!)
+
 run
 
 `node "1 prepare.js"`
 
 if you use mysql, tables are created and data is filled
+if you use mongo, collections are created and data is filled
 
 if you use files, well, only file **"tweetstore.json"** will be created ;)
 
@@ -151,10 +171,12 @@ aaaaaaandddddd wait until the process finishes
 
 We're nearly there
 
-Edit **"app.js"** if you want to change where to access the server
+Edit **"consts.js"** if you want to change where to access the server
 
-	var listento = '0.0.0.0', 
-    	port = 8081;
+	const server_settings = {
+		listento: '0.0.0.0',
+		port: 8081
+	};
 
 now run
 

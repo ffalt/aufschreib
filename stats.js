@@ -1,20 +1,20 @@
 /*
 
-    API für Stats-Data, liefert wenn vorhanden aus dem File-basierten Cache
+ API für Stats-Data, liefert wenn vorhanden aus dem File-basierten Cache
 
-    in Pfad /data/stats
+ in Pfad /data/stats
 
-	Parameter: (siehe auch consts.js)
-	type - Typ der Daten (für Kuchen, Zeitleiste, etc)
-	mode - die menschliche Bewertung oder die des Algorithmus
-	cat - Kategorie zum Filtern (wird aber auch von den d3-charts im Client-Browser gemaacht, damit dafür nicht neu geholt werden muss)
-	kind - ggf. Untertyp der Daten, z.B. Wortstatistik für Twitterclients|Links|Hashtags
+ Parameter: (siehe auch consts.js)
+ type - Typ der Daten (für Kuchen, Zeitleiste, etc)
+ mode - die menschliche Bewertung oder die des Algorithmus
+ cat - Kategorie zum Filtern (wird aber auch von den d3-charts im Client-Browser gemaacht, damit dafür nicht neu geholt werden muss)
+ kind - ggf. Untertyp der Daten, z.B. Wortstatistik für Twitterclients|Links|Hashtags
 
-	store - die Tweet-Daten-Ablage (DB|Files)
- 	voteuserid - UserID der Bewertungen
- 	forcegenerate - Daten nicht aus dem Cache nehmen
+ store - die Tweet-Daten-Ablage (DB|Files)
+ voteuserid - UserID der Bewertungen
+ forcegenerate - Daten nicht aus dem Cache nehmen
 
-*/
+ */
 
 var fs = require('fs');
 var consts = require('./consts');
@@ -141,16 +141,20 @@ exports.MyLittleStats = function () {
 	/* Cache-Dateinamen kleben */
 
 	function getFileName(params) {
-		return './data/stats/' + params.voteuserid + '_' +
+		return params.voteuserid + '_' +
 			(params.type === 'cloud' ? 'bar' : params.type) + '_' + params.mode
 			+ (params.kind ? '_' + params.kind : '')
 			+ '.json';
 	}
 
+	function getFilePath(params) {
+		return './data/stats/' + getFileName(params);
+	}
+
 	/** API **/
 
 	me.getChartData = function (params, callback) {
-		var file = getFileName(params);
+		var file = getFilePath(params);
 		loadDataFromCache(file, function (rawdata) {
 			if ((!params.forcegenerate) && (rawdata)) {
 				getStat(params).prepareData(params, rawdata, function (data) {
@@ -166,14 +170,14 @@ exports.MyLittleStats = function () {
 
 	/* Cache erstellen */
 
-	function writeCacheFile(params, callback) {
-		var file = getFileName(params);
+	function writeCacheFile(params, logcb, callback) {
+		var file = getFilePath(params);
 		getStat(params).getData(params, function (data) {
 			fs.writeFile(file, JSON.stringify(data, null, '\t'), 'utf8', function (err) {
 				if (err) {
-					console.log('[Stats] Error:' + err);
+					logcb('Error:' + err);
 				} else {
-					console.log('[Stats] ' + file + " was saved!");
+					logcb(getFileName(params) + " saved!");
 				}
 				callback();
 			});
@@ -181,54 +185,52 @@ exports.MyLittleStats = function () {
 
 	}
 
-	function writeCacheModeWhatTypeKindNr(nr, params, callback) {
+	function writeCacheModeWhatTypeKindNr(nr, params, logcb, callback) {
 		if (nr >= consts.tools.statinfo(params.type).kinds.length) {
 			params.kind = null;
 			callback();
 		} else {
 			params.kind = consts.tools.statinfo(params.type).kinds[nr].id;
-			writeCacheFile(params, function () {
-				writeCacheModeWhatTypeKindNr(nr + 1, params, callback);
+			writeCacheFile(params, logcb, function () {
+				writeCacheModeWhatTypeKindNr(nr + 1, params, logcb, callback);
 			})
 		}
 	}
 
-	function writeCacheModeWhatType(params, callback) {
+	function writeCacheModeWhatType(params, logcb, callback) {
 		if (consts.tools.statinfo(params.type).kinds.length > 0) {
-			writeCacheModeWhatTypeKindNr(0, params, callback);
+			writeCacheModeWhatTypeKindNr(0, params, logcb, callback);
 		} else {
-			writeCacheFile(params, function () {
-				callback();
-			});
+			writeCacheFile(params, logcb, callback);
 		}
 	}
 
-	function writeCacheModeWhat(index, params, callback) {
+	function writeCacheModeWhat(index, params, logcb, callback) {
 		if (index >= consts.stats.length)
 			callback();
 		else {
 			params.type = consts.stats[index].id;
 			if (params.type === 'cloud') { //skip, same as 'bar'
-				writeCacheModeWhat(index + 1, params, callback);
+				writeCacheModeWhat(index + 1, params, logcb, callback);
 			} else
-				writeCacheModeWhatType(params, function () {
-					writeCacheModeWhat(index + 1, params, callback);
+				writeCacheModeWhatType(params, logcb, function () {
+					writeCacheModeWhat(index + 1, params, logcb, callback);
 				});
 		}
 	}
 
-	function writeCacheMode(params, callback) {
-		writeCacheModeWhat(0, params, callback);
+	function writeCacheMode(params, logcb, callback) {
+		writeCacheModeWhat(0, params, logcb, callback);
 	}
 
-	me.cacheStats = function (voteuserid, store, callback) {
-		console.log('[Stats] Creating Stats Cache');
+	me.cacheStats = function (voteuserid, store, logcb, callback) {
+		logcb('Creating Stats Cache');
 		var params = me.getParams(voteuserid, store);
 		params.mode = 'human';
-		writeCacheMode(params, function () {
+		writeCacheMode(params, logcb, function () {
 			params.mode = 'machine';
-			writeCacheMode(params, function () {
-				console.log('[Stats] Cache created');
+			writeCacheMode(params, logcb, function () {
+				logcb('Cache created');
 				callback();
 			});
 		});

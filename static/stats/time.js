@@ -85,6 +85,7 @@ function Times() {
 			.attr("height", height);
 
 		var
+			formatDate = d3.time.format("%d"),
 			formatHour = d3.time.format("%H"),
 			formatDay = d3.time.format("%a %d"),
 			formatTime = function (d) {
@@ -102,7 +103,8 @@ function Times() {
 		xAxis2 = d3.svg.axis()
 			.scale(x2)
 			.orient("bottom")
-			.ticks(d3.time.days);
+			.ticks(d3.time.days)
+			.tickFormat(formatDate);
 		yAxis = d3.svg.axis()
 			.scale(y)
 			.orient("left");
@@ -139,6 +141,9 @@ function Times() {
 		stats.setData(data);
 		var catsInView = [];
 		var usedCat = [];
+		var collect = {};
+		var mi = data[0].time;
+		var ma = data[0].time;
 		data.forEach(function (entry) {
 			for (var key in entry.counts) {
 				if (usedCat.indexOf(key) < 0) {
@@ -146,6 +151,22 @@ function Times() {
 					catsInView.push(stats.getCatInfo(key));
 				}
 			}
+			entry.time = parseInt(entry.time);
+			collect[entry.time] = entry;
+			mi = Math.min(mi, entry.time);
+			ma = Math.max(ma, entry.time);
+		});
+		for (var i = mi; i < ma; i += 3600000) {
+			if (!collect[i]) {
+				data.push({time: i, count: 0, counts: {}});
+			}
+		}
+		data.sort(function (a, b) {
+			if (a.time < b.time)
+				return -1;
+			else if (a.time > b.time)
+				return 1;
+			return 0;
 		});
 
 		var stack = d3.layout.stack().offset(options.view);
@@ -155,7 +176,7 @@ function Times() {
 				function (layernr) {
 					var cat = catsInView[layernr].id;
 					return data.map(function (d) {
-						return {x: parseInt(d.time), y0: 0, y: (d.counts[cat] || 0)};
+						return {x: d.time, y0: 0, y: (d.counts[cat] || 0)};
 					});
 				}
 			);
@@ -166,7 +187,7 @@ function Times() {
 				return d.x;
 			});
 		});
-		var xGroupMin = d3.max(layers, function (layer) {
+		var xGroupMin = d3.min(layers, function (layer) {
 			return d3.min(layer, function (d) {
 				return d.x;
 			});

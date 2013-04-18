@@ -41,16 +41,21 @@ var aufschreib = {
 			$('#overlay').fadeOut('fast');
 		}
 	},
-	getJson: function (sender, type, mode, kind, successcallback) {
+	getJson: function (sender, type, mode, kind, forceregenerate, successcallback) {
 		var timeout = setTimeout(function () {
 			aufschreib.blendProgressIn(sender);
 		}, 2000);
 		var params = {
 			cmd: 'json',
 			type: type,
-			mode: mode,
-			kind: (kind || '')
+			mode: mode
 		};
+		if (kind) {
+			params.kind = kind;
+		}
+		if (forceregenerate) {
+			params.force = true;
+		}
 		$.ajax({
 			url: '',
 			dataType: 'json',
@@ -111,6 +116,11 @@ var aufschreib = {
 		}
 		return false;
 	},
+	setActiveCat: function (div, cat) {
+		div.find('a[class*=active]').removeClass('active');
+		div.find('a[value*=' + cat + ']').addClass('active');
+		div.find('.tweet-human').text(cat);     //todo: get cat name
+	},
 	voteTweet: function (sender, cat) {
 		var div = $(sender).closest(".tweet");
 		var tweetid = $(div).attr('id');
@@ -121,20 +131,22 @@ var aufschreib = {
 		};
 		aufschreib.get(div, '', params,
 			function (data) {
-				var pdiv = div.parent();
-				div.replaceWith(data);
-				aufschreib.connectCatChange(pdiv);
-				if (aufschreib.closethings) {
-					aufschreib.checkVoted(pdiv);
+				if (data) {
+					aufschreib.setActiveCat(div, cat);
+					if (aufschreib.closethings) {
+						aufschreib.checkVoted($(sender).closest(".user"));
+					}
 				}
 			});
 		return false;
 	},
 	voteAll: function (sender, cat) {
 		var ids = [];
+		var divs = [];
 		var div = $(sender).closest(".user");
 		$(div).find('div[class=tweet]').each(
 			function () {
+				divs.push($(this));
 				ids.push($(this).attr('id'));
 			}
 		);
@@ -145,11 +157,13 @@ var aufschreib = {
 		};
 		aufschreib.get(div, '', params,
 			function (data) {
-				var tweetsdiv = $(div).children('.tweets').eq(0);
-				$(tweetsdiv).html(data);
-				aufschreib.connectCatChange(div);
-				if (aufschreib.closethings) {
-					aufschreib.checkVoted(div);
+				if (data) {
+					divs.forEach(function (div) {
+						aufschreib.setActiveCat(div, cat);
+					});
+					if (aufschreib.closethings) {
+						aufschreib.checkVoted(div);
+					}
 				}
 			});
 		return false;
@@ -267,28 +281,32 @@ var aufschreib = {
 		});
 		return false;
 	},
+	connectIo: function (cmd, logdiv, cb) {
+		var socket = io.connect('http://localhost');
+		socket.emit('start', { cmd: cmd });
+		socket.on('news', function (data) {
+			logdiv.append(data['msg'] + '<br />');
+			//socket.emit('my other event', { my: 'data' });
+		});
+		socket.on('success', function (data) {
+			cb(data['msg']);
+			socket.disconnect();
+		});
+		socket.on('fail', function (data) {
+			logdiv.append(data['msg'] + '<br />');
+			socket.disconnect();
+		});
+	},
 	requestClassify: function () {
-		/*	var content = $('#classify-result');
-		 var socket = io.connect('http://localhost');
-		 socket.emit('start', { cmd: 'classify' });
-
-		 socket.on('news', function (data) {
-		 content.append('<br />' + data['msg']);
-		 console.log(data);
-		 //socket.emit('my other event', { my: 'data' });
-		 });
-		 socket.on('end', function (data) {
-		 content.append('<br />' + data['msg']);
-		 console.log(data);
-		 socket.close();
-		 //socket.emit('my other event', { my: 'data' });
-		 });
-		 */
-		var params = {cmd: 'classify'};
-		aufschreib.get(null, '', params, function (data) {
-			var content = $('#classify-result');
+		var content = $('#classify-result');
+		content.empty();
+		aufschreib.connectIo('classify', content, function (data) {
 			content.html(data);
 		});
+//		var params = {cmd: 'classify'};
+//		aufschreib.get(null, '', params, function (data) {
+//			$('#classify-result').html(data);
+//		});
 		return false;
 	},
 	classify: function () {
@@ -296,10 +314,14 @@ var aufschreib = {
 		return false;
 	},
 	updateCache: function () {
-		var params = {cmd: 'updatecache'};
-		aufschreib.get(null, '', params, function (data) {
-			$('#classify-result').html(data);
+		var content = $('#statcache-result');
+		content.empty();
+		aufschreib.connectIo('updatecache', content, function (data) {
 		});
+//		var params = {cmd: 'updatecache'};
+//		aufschreib.get(null, '', params, function (data) {
+//			$('#classify-result').html(data);
+//		});
 		return false;
 	},
 	createUser: function () {
@@ -325,43 +347,10 @@ var aufschreib = {
 			oOutput.text("Please choose a .json file!");
 			return false;
 		}
-		$("#upload_iframe").load(function () {
-			var html = $("#upload_iframe")[0].contentWindow.document.body.innerHTML;
-			if (html !== '') {
-				oOutput.text("Uploaded!");
-			} else {
-				oOutput.text("Error");
-			}
+		$("#form-file").ajaxSubmit({
+			target: '#output-upload'
 		});
-		$("#form-file").submit();
-
-		/*
-		 var oData = new FormData();
-		 oData.append('file', bulkfile);
-		 console.log(oData);
-
-		 //oData.append("fileToUpload", bulkfile);
-		 //var oData = new FormData(document.forms.namedItem("form-file"));
-		 //oData.append("CustomField", "This is some extra data");
-
-		 $.ajax({
-		 url: ,
-		 type: "POST",
-		 data: oData,
-		 processData: false,
-		 contentType: false,
-		 success: function (data, status) {
-		 oOutput.text("Uploaded!");
-		 },
-		 error: function (jqXHR, textStatus, errorMessage) {
-		 oOutput.text("Error " + textStatus);
-		 }
-		 });
-
-		 form.submit();
-
-		 */
-		return true;
+		return false;
 	},
 	setMode: function (mode) {
 		$('li', '#nav-site').removeClass('active');

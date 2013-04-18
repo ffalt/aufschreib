@@ -1,5 +1,27 @@
 const debug = true;
-const usedb = true;
+const storages = ('files', 'mysql', 'mongo');
+const storage = 'mysql';
+const mongo_settings = {
+	"hostname": "localhost",
+	"port": 27017,
+	"username": "aufschreib",
+	"password": "aufschreib",
+	"name": "aufschreib",
+	"db": "aufschreib"
+};
+const mysql_settings = {
+	host: 'localhost',
+	user: 'aufschreib',
+	password: 'secret',
+	database: 'aufschreib',
+	supportBigNumbers: true,
+	debug: false,
+	connectionLimit: 100
+};
+const server_settings = {
+	listento: '0.0.0.0',  // \o_ listen to ALL the adapters
+	port: 8081
+};
 const basecats = [
 	{
 		id: 'outcry',
@@ -193,5 +215,8 @@ module.exports = {
 	tools: tools,
 	modes: modes,
 	debug: debug,
-	usedb: usedb
+	storage: storage,
+	mongo_settings: mongo_settings,
+	mysql_settings: mysql_settings,
+	server_settings: server_settings
 };

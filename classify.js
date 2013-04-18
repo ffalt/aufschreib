@@ -1,6 +1,6 @@
 /*
 
-	train & apply the bayes clasifier
+ train & apply the bayes clasifier
 
  */
 var classifier = require('classifier');
@@ -10,18 +10,21 @@ var consts = require('./consts');
 exports.MyLittleClassifier = function () {
 	var me = this;
 
-	function fight(voteuserid, classi, store, callback) {
+	function fight(voteuserid, classi, store, logcb, callback) {
 		var count = 0;
 		var result = [];
 		store.enumerateTweetsAndCats(voteuserid, function (tweet) {
 			if (!tweet) {
-				console.log('[Classify] Classified ' + count);
+				logcb('Saving ' + result.length + ' Classifications ');
 				store.setMachineCats(voteuserid, result, function () {
-					console.log('[Classify] New Classify saved ' + result.length);
+					logcb('Classified ' + count + ' Tweets');
 					callback(true);
 				});
 			} else {
 				count++;
+				if (count % 10000 === 0) {
+					logcb('...' + count + ' Tweets');
+				}
 				var newclass;
 				if (tweet.human === consts.unknown) {
 					newclass = classi.classify(tokenizer.cleanKeepLinks(tweet.text));
@@ -37,8 +40,8 @@ exports.MyLittleClassifier = function () {
 		});
 	}
 
-	me.classify = function (voteuserid, store, callback) {
-		console.log('[Classify] Training');
+	me.classify = function (voteuserid, store, logcb, callback) {
+		logcb('Training');
 		var count = 0,
 			classi = new classifier.Bayesian({
 				thresholds: consts.thresholds
@@ -48,8 +51,8 @@ exports.MyLittleClassifier = function () {
 				if (count === 0) {
 					callback(false);
 				} else {
-					console.log('[Classify] Fighting based on ' + count + ' entries');
-					fight(voteuserid, classi, store, callback);
+					logcb('Fighting based on ' + count + ' Tweets');
+					fight(voteuserid, classi, store, logcb, callback);
 				}
 			} else if (tweet.human != consts.unknown) {
 				var cleantext = tokenizer.cleanKeepLinks(tweet.text);

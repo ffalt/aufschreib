@@ -10,19 +10,14 @@ var SqlString = require('mysql/lib/protocol/SqlString');
 
 exports.MyLittleTweets = function () {
 	var me = this;
+	var pool;
 
-	var dboptions = {
-		host: 'localhost',
-		user: 'aufschreib',
-		password: 'secret',
-		database: 'aufschreib',
-		supportBigNumbers: true,
-		debug: false,
-		connectionLimit: 100
+	me.init = function (cb) {
+		// Connect to the db
+		console.log('[DB] Connecting to DB');
+		pool = mysql.createPool(consts.mysql_settings);
+		cb();
 	};
-
-	console.log('[DB] Connecting to DB');
-	var pool = mysql.createPool(dboptions);
 
 	function getConnection(cb) {
 		pool.getConnection(function (err, connection) {
@@ -64,7 +59,7 @@ exports.MyLittleTweets = function () {
 		this.longurls = '';
 	}
 
-	me.closePool = function () {
+	function closePool() {
 		pool.end();
 	};
 
@@ -176,17 +171,12 @@ exports.MyLittleTweets = function () {
 				doStoreNewCatData(connection, voteuserid, tweetid,
 					(mode === 'human' ? value : consts.unknown),
 					(mode === 'machine' ? value : consts.unknown),
-					function (catresult) {
-						cb(catresult);
-					}
-				)
+					cb
+				);
 			} else {
 				result[mode] = value;
 				connection.query('UPDATE votes SET ' + mysql.escapeId(mode) + '=:cat WHERE id=:id AND voteuser=:voteuser;',
-					{cat: value, id: tweetid, voteuser: voteuserid}, function (err) {
-						if (err) throw err;
-						cb(result);
-					});
+					{cat: value, id: tweetid, voteuser: voteuserid}, cb);
 			}
 		});
 	}
@@ -218,46 +208,45 @@ exports.MyLittleTweets = function () {
 		cat.voteuser = voteuserid;
 		cat.human = human;
 		cat.machine = machine;
-		connection.query('INSERT INTO votes SET ?;', cat, function (err) {
-			if (err) throw err;
-			cb(cat);
-		});
+		connection.query('INSERT INTO votes SET ?;', cat, cb);
 	}
 
 	function doSetHumanCat(connection, voteuserid, tweetid, value, cb) {
 		setCat(connection, voteuserid, 'human', tweetid, value, cb);
 	}
 
-	function doloadTweet(connection, tweetid, cb) {
-		connection.query('SELECT * FROM tweets WHERE id=:id', {id: tweetid}, function (err, result) {
-			if (err) throw err;
-			if ((result) && (result.length === 1)) {
-				var tweet = new Tweet();
-				tweet.id = tweetid;
-				tweet.source = result[0].source;
-				tweet.text = result[0].text;
-				tweet.user = result[0].user;
-				tweet.created_at = result[0].created_at;
-				tweet.userimg = result[0].userimg;
-				tweet.longurls = result[0].longurls;
-				cb(tweet);
-			} else {
-				cb(null);
-			}
-		});
-	}
+	/*
+	 function doloadTweet(connection, tweetid, cb) {
+	 connection.query('SELECT * FROM tweets WHERE id=:id', {id: tweetid}, function (err, result) {
+	 if (err) throw err;
+	 if ((result) && (result.length === 1)) {
+	 var tweet = new Tweet();
+	 tweet.id = tweetid;
+	 tweet.source = result[0].source;
+	 tweet.text = result[0].text;
+	 tweet.user = result[0].user;
+	 tweet.created_at = result[0].created_at;
+	 tweet.userimg = result[0].userimg;
+	 tweet.longurls = result[0].longurls;
+	 cb(tweet);
+	 } else {
+	 cb(null);
+	 }
+	 });
+	 }
 
-	function doLoadTweetAndCatsByIds(connection, voteuserid, ids, cb) {
-		connection.query('SELECT t.*, v.human, v.machine FROM tweets t, votes v WHERE t.id in (:ids) ' +
-			'AND t.id=v.id AND voteuser=:voteuser;', {ids: ids, voteuser: voteuserid}, function (err, result) {
-			if (err) throw err;
-			if ((result) && (result.length > 0)) {
-				cb(result);
-			} else {
-				cb(null);
-			}
-		});
-	}
+	 function doLoadTweetAndCatsByIds(connection, voteuserid, ids, cb) {
+	 connection.query('SELECT t.*, v.human, v.machine FROM tweets t, votes v WHERE t.id in (:ids) ' +
+	 'AND t.id=v.id AND voteuser=:voteuser;', {ids: ids, voteuser: voteuserid}, function (err, result) {
+	 if (err) throw err;
+	 if ((result) && (result.length > 0)) {
+	 cb(result);
+	 } else {
+	 cb(null);
+	 }
+	 });
+	 }
+	 */
 
 	//* used by prepare.js *//
 
@@ -310,10 +299,6 @@ exports.MyLittleTweets = function () {
 		});
 	}
 
-	me.setHumanCats = function (voteuserid, votesarray, cb) {
-		setCats(voteuserid, votesarray, 'human', cb);
-	};
-
 	//* api *//
 
 	me.enumerateTweetsAndCats = function (voteuserid, cb) {
@@ -347,23 +332,23 @@ exports.MyLittleTweets = function () {
 		});
 	};
 
-	me.setHumanCatByIds = function (voteuserid, tweetids, value, cb) {
+	me.setHumanCats = function (voteuserid, tweetids, value, cb) {
 		getConnection(function (connection) {
-			var cats = [];
 
 			function saveCat(index) {
 				if (index >= tweetids.length) {
 					endUpdate(connection, function () {
-						doLoadTweetAndCatsByIds(connection, voteuserid, tweetids, function (tweets) {
-							connection.end();
-							cb(tweets);
-						});
+						connection.end();
+						cb();
 					})
 				}
 				else {
-					doSetHumanCat(connection, voteuserid, tweetids[index], value, function (err, cat) {
-						cats.push(cat);
-						saveCat(index + 1);
+					doSetHumanCat(connection, voteuserid, tweetids[index], value, function (err) {
+						if (err) {
+							cb(err);
+						} else {
+							saveCat(index + 1);
+						}
 					});
 				}
 			}
@@ -376,19 +361,24 @@ exports.MyLittleTweets = function () {
 
 	me.setHumanCat = function (voteuserid, tweetid, value, cb) {
 		getConnection(function (connection) {
-			doSetHumanCat(connection, voteuserid, tweetid, value, function (cat) {
-				doloadTweet(connection, tweetid, function (tweet) {
-					connection.end();
-					tweet.human = cat.human;
-					tweet.machine = cat.machine;
-					cb(tweet);
-				});
+			doSetHumanCat(connection, voteuserid, tweetid, value, function (err) {
+				cb(err);
 			});
 		});
 	};
 
 	me.setMachineCats = function (voteuserid, votesarray, cb) {
 		setCats(voteuserid, votesarray, 'machine', cb);
+	};
+
+	me.importHumanCats = function (voteuserid, votes, cb) {
+		var votesarray = [];
+		for (var key in votes) {
+			if (votes.hasOwnProperty(key)) {
+				votesarray.push({id: key, human: votes[key]});
+			}
+		}
+		setCats(voteuserid, votesarray, 'human', cb);
 	};
 
 	me.getUserPackages = function (voteuserid, start, filter, search, maxtweets, cb) {
@@ -668,7 +658,7 @@ exports.MyLittleTweets = function () {
 								updateUserTables(connection, tweets, function () {
 									console.log('[DB] done.');
 									connection.end();
-									me.closePool();
+									closePool();
 									cb();
 								});
 							} else {
@@ -678,7 +668,7 @@ exports.MyLittleTweets = function () {
 									updateUserTables(connection, tweets, function () {
 										console.log('[DB] done.');
 										connection.end();
-										me.closePool();
+										closePool();
 										cb();
 									});
 								});
@@ -688,6 +678,9 @@ exports.MyLittleTweets = function () {
 				});
 			});
 		});
+	};
+
+	me.deinit = function () {
 	};
 
 	return me;

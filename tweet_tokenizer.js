@@ -1,16 +1,16 @@
 /*
 
-   Crunsh Tweets
+ Crunsh Tweets
 
-*/
+ */
 
 var fs = require('fs');
 var moment = require('moment');
 moment.lang('de');
 exports.MyLittleTweetTokenizer = function () {
 	var me = this;
-	var validChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZïæàáäãåâÂÄÃçÇéèêøñíìîòöôõóÖÓüûúûÜß¼';
-	var invalidChars = '#@ 0123456789,;.!?%$:_+-*/|(){}[]"&=<>\\¶£¢§\'– ´»«^¿°`~º²­©®·¨';
+	var validChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZïæàáäãåâÂÄÃçÇéèêøñíìîòöôõóÖÓüûúûÜß';
+	var invalidChars = '#@ 0123456789,;.!?%$:_+-*/|(){}[]"&=<>\\¶£¢§\'– ´»«^¿°`~º²­©®·¨¼';
 	var allowedHandleChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_';
 	var validHashtagChars = validChars + '0123456789';
 	var specials = ['+1', '<3', ':)', ';)', ':-)', ':D', ':p', ':P', ':(', ':-(', 'm(', 'm|', 'm)'];
@@ -59,13 +59,10 @@ exports.MyLittleTweetTokenizer = function () {
 	};
 
 	me.validateLongUrls = function (longurls) {
-		if (longurls) {
-			if (typeof(longurls) === 'string')
-				longurls = JSON.parse(longurls);
-		} else {
-			longurls = null;
-		}
-		return longurls;
+		var result = longurls;
+		if ((typeof longurls) === 'string')
+			result = JSON.parse(longurls);
+		return result;
 	};
 
 	function longifyHTMLUrl(text, longurls) {
@@ -85,6 +82,9 @@ exports.MyLittleTweetTokenizer = function () {
 	}
 
 	me.prettyPrintTweetText = function (text, longurls) {
+		if (typeof longurls === "string") {
+			longurls = JSON.parse(longurls);
+		}
 		return linkifyTags(linkifyUsers(longifyHTMLUrl(text, longurls)));
 	};
 

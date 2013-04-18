@@ -1,78 +1,130 @@
-<!--<script src="/static/socket.io/socket.io.js"></script>-->
-<div class="navbar nav-pills">
-	<div class="navbar-inner">
-		<ul class="nav">
-			<li>
-				<button class="btn btn-primary" onclick="return aufschreib.classify();" type="button">
-					Classify with the Machine
-				</button>
-			</li>
-			<% if (consts.debug) { %>
-			<li>
-				<button class="btn btn-primary" onclick="return aufschreib.updateCache();" type="button">
-					Update Stats Cache only
-				</button>
-			</li>
-			<% } %>
-		</ul>
-		<ul class="nav pull-right">
-			<li><span class="brand">Download:</span></li>
-			<% for (var i=0; i < consts.modes.length; i++) { var mode=consts.modes[i]; %>
-			<li><a target="_blank" title="Download <%= mode.name %> Classification JSON data"
-				   alt="Raw <%= mode.name %> JSON"
-				   href="?cmd=classifiction&mode=<%= mode.id %>"><i class="<%= mode.icon %>"></i></a></li>
-			<% } %>
-		</ul>
-	</div>
-</div>
+<link type="text/css" href="/static/stats/stats.css" rel="stylesheet">
+<link type="text/css" href="/static/stats/pie.css" rel="stylesheet">
+<script src="/static/d3/d3.v3.min.js"></script>
+<script src="/static/stats/stats.js"></script>
+<script src="/static/stats/pie.js"></script>
+<script src="/static/socket.io/socket.io.js"></script>
+<script src="/static/jquery/jquery.form.js"></script>
 
-<div class="row">
-	<div class="span5"><h4>Machine Classification Before</h4><% include stats/pie_commands %></div>
-	<div class="span5"><h4>Machine Classification After</h4>
+<ul id="cmd-tabs" class="nav nav-tabs">
+	<li class="active"><a href="#" data-target="cmd-machine" data-toggle="tab">Machine</a></li>
+	<li><a href="#" data-target="cmd-stats" data-toggle="tab">Stats Cache</a></li>
+	<li><a href="#" data-target="cmd-import" data-toggle="tab">Import</a></li>
+	<li><a href="#" data-target="cmd-export" data-toggle="tab">Export</a></li>
+	<% if (user.id === 1) { %>
+	<li><a href="#" data-target="cmd-admin" data-toggle="tab">Admin area</a></li>
+	<% } %>
+</ul>
 
-		<div id="classify-result">Please press the Button to update</div>
+<div class="tab-content">
+	<div id="div-cmd-machine">
+		<div class="well">
+			<h4>Apply Bayesian</h4>
+			<button class="btn btn-primary" onclick="return aufschreib.classify();" type="button">
+				Classify
+			</button>
+			<br/>
+		</div>
+		<div class="row">
+			<% var container_id = chart_machine_params.getChartContainerId() + '_before' %>
+			<% var chartparams = chart_machine_params; %>
+			<div class="span5"><h4>Machine Classification Before</h4><% include stats/pie_commands %></div>
+			<div class="span5"><h4>Machine Classification After</h4>
+
+				<div id="classify-result">Please press the Button to update</div>
+			</div>
+		</div>
 	</div>
-</div>
-<br />
-<div class="row">
-	<div class="span12 well">
-		! Under construction !
-		<h4>Bulk insert User Votes Json File</h4>
-		<iframe id="upload_iframe" style="width:0; height:0; border:none;"></iframe>
-		<form action="/bulk"  method="post"
-			  class="form-inline" enctype="multipart/form-data"
-			  encoding="multipart/form-data"
-			  target="upload_iframe"
-			  id="form-file">
-				<input id="bulkfile" type="file" name="file" size="100" placeholder="Choose JSON file"/>
+	<div class="off-left-hidden" id="div-cmd-stats">
+		<div class="well">
+			<h4>Create/Update Cache for faster Statistics</h4>
+			<button class="btn btn-primary" onclick="return aufschreib.updateCache();"
+					type="button">
+				Update Stats Cache
+			</button>
+			<br/>
+		</div>
+		<div class="row">
+			<div class="span12">
+				<div id="statcache-result"></div>
+			</div>
+		</div>
+	</div>
+	<div class="off-left-hidden" id="div-cmd-import">
+		<div class="well">
+			<h4>Bulk insert User Classification Json File</h4>
+			<form action="/bulk" method="post"
+				  class="form-inline" enctype="multipart/form-data"
+				  encoding="multipart/form-data"
+				  id="form-file">
+				<input id="bulkfile" type="file" name="file" size="40" placeholder="Choose JSON file"/>
 				<button class="btn btn-primary" onclick="return aufschreib.sendFile()">Upload File</button>
-		</form>
-		<div id="output-upload"></div>
-	</div>
+			</form>
+		</div>
+		<div class="row">
+			<% var container_id = chart_human_params.getChartContainerId() + '_before'; %>
+			<% var chartparams = chart_human_params; %>
+			<div class="span6"><h4>Human Classification Before</h4><% include stats/pie_commands %></div>
+			<div class="span5"><h4>Human Classification After</h4>
 
-	<div class="span12 well">
-		! Under construction !
-		<h4>Create User</h4>
-
-		<form method="post" name="form-newuser">
-			<fieldset>
-				<div class="input-prepend">
-					<span class="add-on"><i class="icon-user"></i></span>
-					<input type="text" name="username" placeholder="Username">
-				</div>
-				<div class="input-prepend">
-					<span class="add-on"><i class="icon-key"></i></span>
-					<input type="password" name="password" placeholder="Password">
-				</div>
-				<div class="input-prepend">
-					<button class="btn btn-primary" onclick="return aufschreib.createUser()">Create User</button>
-				</div>
-			</fieldset>
-		</form>
-		<div id="output-newuser"></div>
+				<div id="output-upload"></div>
+			</div>
+		</div>
 	</div>
+	<div class="off-left-hidden" id="div-cmd-export">
+		<div class="well">
+			<h4>Download Classification JSON</h4>
+						<% for (var i=0; i < consts.modes.length; i++) { var mode=consts.modes[i]; %>
+						<a target="_blank" title="Download <%= mode.name %> Classification JSON data"
+							class="btn" alt="Raw <%= mode.name %> JSON"
+							   href="?cmd=classifiction&mode=<%= mode.id %>"><i class="<%= mode.icon %>"></i> <%= mode.name %></a>
+						<% } %>
+		</div>
+		<div class="row">
+		</div>
+	</div>
+	<% if (user.id === 1) { %>
+	<div class="off-left-hidden" id="div-cmd-admin">
+		<div class="row">
+			<div class="span12">
+				! Not implemented. Under construction !
+				<h4>Create User</h4>
+
+				<form method="post" name="form-newuser">
+					<fieldset>
+						<div class="input-prepend">
+							<span class="add-on"><i class="icon-user"></i></span>
+							<input type="text" name="username" placeholder="Username">
+						</div>
+						<div class="input-prepend">
+							<span class="add-on"><i class="icon-key"></i></span>
+							<input type="password" name="password" placeholder="Password">
+						</div>
+						<div class="input-prepend">
+							<button class="btn btn-primary" onclick="return aufschreib.createUser()">Create User
+							</button>
+						</div>
+					</fieldset>
+				</form>
+				<div id="output-newuser"></div>
+			</div>
+		</div>
+	</div>
+	<% } %>
 </div>
-
+<script>
+	$(function () {
+		//workaround for d3 bug, where getBBox() causes the graph not to render in previously hidden div
+		//using off-left-hidden technique to simulate tab behaviour
+		$('#cmd-tabs a[data-toggle="tab"]').on('show', function (e) {
+			console.log(e);
+			var divid = "#div-" + $(e.target).attr("data-target");
+			$(divid).removeClass("off-left-hidden");
+			divid = "#div-" + $(e.relatedTarget).attr("data-target");
+			$(divid).addClass("off-left-hidden");
+		});
+	});
+</script>
 
 <div id="command-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
 	 aria-hidden="true">

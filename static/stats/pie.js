@@ -20,11 +20,12 @@ function Pies() {
 		legendwidth = 120,
 		radius = Math.min(width - margin, height - margin) / 2;
 
-	function initPie(id, mode, kind, statshelper) {
+	function initPie(id, mode, kind, forceregenerate, statshelper) {
 		stats = statshelper;
 		options.id = id;
 		options.mode = mode;
 		options.kind = kind;
+		options.forceregenerate = forceregenerate;
 		initSVG();
 		linkUI();
 		stats.selectActives(options, ['mode']);

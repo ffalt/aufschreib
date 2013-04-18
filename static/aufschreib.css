@@ -210,3 +210,8 @@ a:hover {
 	margin: 0;
 	padding: 0;
 }
+
+.off-left-hidden {
+	position: absolute;
+	left: -10000px;
+}

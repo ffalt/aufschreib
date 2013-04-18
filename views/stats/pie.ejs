@@ -9,7 +9,8 @@
 		$(document).ready(
 				function () {
 					var pies = new Pies();
-					pies.initPie('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>', new Stats(cats));
+					pies.initPie('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>',
+							'<%- chartparams.forcegenerate %>', new Stats(cats));
 				}
 		);
 	});

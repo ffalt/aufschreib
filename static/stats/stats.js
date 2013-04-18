@@ -53,7 +53,7 @@ function Stats(cats, hashBangNotifyDisabeld) {
 	}
 
 	function requestData(options, callback) {
-		aufschreib.getJson('#' + options.id + 'vis', options.type, options.mode, options.kind, function (rawdata) {
+		aufschreib.getJson('#' + options.id + 'vis', options.type, options.mode, options.kind, options.forceregenerate, function (rawdata) {
 			if (!hashBangNotifyDisabeld)
 				aufschreib.setStatsSilent(options.type, options.mode, options.kind, (options.cat === 'all' ? null : options.cat));
 			basedata = rawdata;

@@ -10,17 +10,23 @@ var consts = require('./consts');
 exports.MyLittleTweets = function () {
 	var me = this;
 
-	var list;
+	var list = [];
 	var filename = './data/tweetstore.json';
-	fs.exists(filename, function (exists) {
-		if (!exists) {
-			console.log('hey, you didn\'t run the prepare script!!!11!');
-			list = [];
-		} else {
-			list = JSON.parse(fs.readFileSync('./data/tweetstore.json', 'utf8'));
-			console.log('[Files] Tweets loaded');
-		}
-	});
+
+	me.init = function (cb) {
+		fs.exists(filename, function (exists) {
+			if (exists) {
+				list = JSON.parse(fs.readFileSync(filename, 'utf8'));
+				console.log('[Files] Tweets loaded');
+			}
+			cb();
+		});
+	}
+
+
+	me.deinit = function () {
+		//nop
+	};
 
 	function Tweet() {
 		this.id = 0;
@@ -144,7 +150,7 @@ exports.MyLittleTweets = function () {
 			} else {
 				console.log('[Files] Human Opinion stored');
 			}
-			callback();
+			callback(err);
 		});
 	}
 
@@ -168,12 +174,9 @@ exports.MyLittleTweets = function () {
 	};
 
 	me.setHumanCat = function (voteuserid, tweetid, value, callback) {
-		var tweet = getTweetByID(tweetid);
 		var userdata = getUserData(voteuserid);
-		userdata.human[tweet.id] = value;
-		saveHuman(voteuserid, userdata, function () {
-			callback(prepareVoteUserTweet(userdata, tweet));
-		});
+		userdata.human[tweetid] = value;
+		saveHuman(voteuserid, userdata, callback);
 	};
 
 	me.getUserPackages = function (voteuserid, start, filter, search, maxtweets, callback) {
@@ -210,17 +213,12 @@ exports.MyLittleTweets = function () {
 		callback(result);
 	};
 
-	me.setHumanCatByIds = function (voteuserid, tweetids, value, callback) {
-		var result = [];
+	me.setHumanCats = function (voteuserid, tweetids, value, callback) {
 		var userdata = getUserData(voteuserid);
-		var tweets = getTweetsByIDs(tweetids);
-		tweets.forEach(function (tweet) {
-			userdata.human[tweet.id] = value;
-			result.push(prepareVoteUserTweet(userdata, tweet));
+		tweetids.forEach(function (tweetid) {
+			userdata.human[tweetid] = value;
 		});
-		saveHuman(voteuserid, userdata, function () {
-			callback(result);
-		});
+		saveHuman(voteuserid, userdata, callback);
 	};
 
 	me.setMachineCats = function (voteuserid, votesarray, callback) {
@@ -232,6 +230,16 @@ exports.MyLittleTweets = function () {
 			callback();
 		})
 	};
+
+	me.importHumanCats = function (voteuserid, votes, cb) {
+		var userdata = getUserData(voteuserid);
+		for (var key in votes) {
+			if (votes.hasOwnProperty(key)) {
+				userdata.human[key] = votes[key];
+			}
+		}
+		saveHuman(voteuserid, userdata, cb);
+	}
 
 	me.enumerateTweetsAndCats = function (voteuserid, callback) {
 		var userdata = getUserData(voteuserid);
@@ -257,6 +265,11 @@ exports.MyLittleTweets = function () {
 	me.getCats = function (voteuserid, mode, callback) {
 		var userdata = getUserData(voteuserid);
 		callback(userdata[mode]);
+	};
+
+	me.prepare = function (newtweets) {
+		fs.writeFileSync(filename, JSON.stringify(newtweets, null, '\t'), 'utf8');
+		console.log('[Files] Tweets saved: ' + newtweets.length);
 	};
 
 	return me;

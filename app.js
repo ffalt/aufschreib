@@ -1,15 +1,13 @@
-var listento = '0.0.0.0',  // \o_ listen to ALL the adapters
-	port = 8081;
-
 console.log('[Server] start');
 var express = require('express'),
 	app = express(),
 	server = require('http').createServer(app),
-//	io = require('socket.io').listen(server),
-//	passportSocketIo = require("passport.socketio"),
+	io = require('socket.io').listen(server),
+	passportSocketIo = require("passport.socketio"),
 	passport = require('passport'),
 	util = require('util'),
 	url = require('url'),
+	consts = require('./consts'),
 	LocalStrategy = require('passport-local').Strategy,
 	cmd = require('./cmd').MyLittleCmds();
 var
@@ -94,8 +92,7 @@ app.configure('all', function () {
 	app.use(express.compress());
 	app.use(express.favicon(__dirname + '/static/images/favicon.ico'));
 	app.use('/static', express.static(__dirname + '/static'));
-
-	app.use(express.logger());
+	app.use(express.logger('dev'));
 	app.use(express.cookieParser());
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
@@ -104,7 +101,6 @@ app.configure('all', function () {
 	// persistent login sessions (recommended).
 	app.use(passport.initialize());
 	app.use(passport.session());
-	app.use(app.router);
 	app.use(function (err, req, res, next) {
 		console.error(err.stack);
 		res.render('gurumeditation', { status: 404, url: req.url, stack: err.stack, message: 'Something broke!' });
@@ -115,7 +111,7 @@ app.get('/', function (req, res) {
 	if (!req.user) {
 		res.render('login', { user: req.user, url: req.url, message: null});
 	} else {
-		console.log('[Server] Processing: ' + req.url);
+		//console.log('[Server] Processing: ' + req.url);
 		cmd.process(req, res);
 	}
 });
@@ -138,13 +134,6 @@ app.post('/user/create', function (req, res) {
 	}
 });
 
-
-/*
- app.get('/account', ensureAuthenticated, function (req, res) {
- res.render('account', { user: req.user });
- });
- */
-
 app.get('/login', function (req, res) {
 	res.render('login', { user: req.user, message: req.session.messages });
 });
@@ -160,9 +149,20 @@ app.get('/logout', function (req, res) {
 	req.logout();
 	res.redirect('/');
 });
-/*
+
+io.enable('browser client minification');  // send minified client
+io.enable('browser client etag');          // apply etag caching logic based on version number
+io.enable('browser client gzip');          // gzip the file
+io.set('log level', 1);                    // reduce logging
+io.set('transports', [
+	'websocket'
+	, 'flashsocket'
+	, 'htmlfile'
+	, 'xhr-polling'
+	, 'jsonp-polling'
+]);
 io.set("authorization", passportSocketIo.authorize({
-	key: 'express.sid',       //the cookie where express (or connect) stores its session id.
+	key: 'connect.sid',       //the cookie where express (or connect) stores its session id.
 	secret: 'keyboard cat is happy', //the session secret to parse the cookie
 	store: sessionstore,     //the session store that express uses
 	fail: function (data, accept) {     // *optional* callbacks on success or fail
@@ -172,12 +172,14 @@ io.set("authorization", passportSocketIo.authorize({
 		accept(null, true);
 	}
 }));
+
 io.sockets.on('connection', function (socket) {
-	console.log("user connected: ", socket.handshake.user.name);
+	console.log("user connected: ", socket.handshake.user.id);
 	cmd.socket(socket);
 });
-*/
-server.listen(port, listento);
 
-console.log('[Server] running away at http://' + listento + ':' + port);
 
+cmd.init(function () {
+	server.listen(consts.server_settings.port, consts.server_settings.listento);
+	console.log('[Server] running away at http://' + consts.server_settings.listento + ':' + consts.server_settings.port);
+});
