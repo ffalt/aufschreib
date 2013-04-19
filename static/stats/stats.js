@@ -93,6 +93,7 @@ function Stats(cats, hashBangNotifyDisabeld) {
 			.attr('height', height)
 			.attr('viewBox', '0 0 ' + width + ' ' + height)
 			.attr('perserveAspectRatio', 'xMinYMid')
+			.style("background-color", "white");
 		;
 		var
 			aspect = width / height,

@@ -165,6 +165,7 @@ run
 `node "1 prepare.js"`
 
 if you use mysql, tables are created and data is filled
+
 if you use mongo, collections are created and data is filled
 
 if you use files, well, only file **"tweetstore.json"** will be created ;)
