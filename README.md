@@ -50,16 +50,20 @@ optional
 
 ##Usage
 
+### 0. Prepare Config File
+
+Copy **"config.dist.js"** and rename it to **"config.js"**
+
 ### 1. Choose your storage
 **1.1 File-based storage**
 
-Edit **"consts.js"** and set
+Edit **"config.js"** and set
 
 const storage = 'files';
 
 **1.2 *OR* mysql-based storage**
 
-Edit **"consts.js"** and set
+Edit **"config.js"** and set
 
 	const usedb = 'mysql';
 
@@ -77,7 +81,7 @@ now change the connection details
 
 **1.3 *OR* mongodb-based storage**
 
-Edit **"consts.js"** and set
+Edit **"config.js"** and set
 
 	const usedb = 'mongo';
 
@@ -171,7 +175,7 @@ aaaaaaandddddd wait until the process finishes
 
 We're nearly there
 
-Edit **"consts.js"** if you want to change where to access the server
+Edit **"config.js"** if you want to change where to access the server
 
 	const server_settings = {
 		listento: '0.0.0.0',

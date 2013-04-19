@@ -7,6 +7,7 @@
 var fs = require('fs');
 var tokenizer = require('./tweet_tokenizer.js').MyLittleTweetTokenizer();
 var consts = require('./consts');
+var config = require('./config');
 var async = require('async');
 var storeurls = {};
 
@@ -80,7 +81,7 @@ function transform(rawTweets) {
 
 function loadRaw(cb) {
 	console.log('[Prepare] Load Raw Tweets');
-	var filename = consts.datapath() + 'messages.json';
+	var filename = config.datapath() + 'messages.json';
 	fs.exists(filename, function (exists) {
 		var tweets;
 		if (exists) {
@@ -95,7 +96,7 @@ function loadRaw(cb) {
 }
 
 function loadUrls(cb) {
-	var filename = consts.datapath() + 'urls.json';
+	var filename = config.datapath() + 'urls.json';
 	fs.exists(filename, function (exists) {
 		if (exists) {
 			storeurls = JSON.parse(fs.readFileSync(filename, 'utf8'));
@@ -105,7 +106,7 @@ function loadUrls(cb) {
 }
 
 var
-	storage = require('./tweets_' + consts.storage).MyLittleTweets();
+	storage = require('./tweets_' + config.storage).MyLittleTweets();
 
 async.waterfall([
 	function (callback) {

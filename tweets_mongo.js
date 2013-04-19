@@ -5,6 +5,7 @@
  */
 
 var consts = require('./consts');
+var config = require('./config');
 var async = require('async');
 
 exports.MyLittleTweets = function () {
@@ -26,7 +27,7 @@ exports.MyLittleTweets = function () {
 		}
 	};
 
-	var mongourl = generate_mongo_url(consts.mongo_settings);
+	var mongourl = generate_mongo_url(config.mongo_settings);
 	var MongoClient = require('mongodb').MongoClient;
 
 	me.init = function (cb) {
@@ -106,6 +107,7 @@ exports.MyLittleTweets = function () {
 		var founddata = false;
 		for (var key in votes) {
 			if (votes.hasOwnProperty(key) && (votes[key] !== consts.unknown)) {
+				//console.log('Importing2 ' + key + ' = ' + votes[key]);
 				q.push({id: key, human: votes[key]});
 				founddata = true;
 			}

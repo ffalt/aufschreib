@@ -2,12 +2,12 @@ var fs = require('fs');
 var tokenizer = require('./tweet_tokenizer.js').MyLittleTweetTokenizer();
 var fetchUrl = require("fetch").fetchUrl;
 var resolver = require("resolver");
-var consts = require('./consts.js');
+var config = require('./config.js');
 var storeurls = {};
 
 function loadRawTweets(cb) {
 	console.log('Load Raw Tweets');
-	var filename = consts.datapath() + 'messages.json';
+	var filename = config.datapath() + 'messages.json';
 	fs.exists(filename, function (exists) {
 		var tweets;
 		if (exists) {
@@ -71,14 +71,14 @@ function isShortUrlSupportedExt(url) {
 
 function saveUrls(links) {
 	console.log('Saving Links');
-	fs.writeFileSync(consts.datapath() + 'urls.json', JSON.stringify(links, null, '\t'), 'utf8');
+	fs.writeFileSync(config.datapath() + 'urls.json', JSON.stringify(links, null, '\t'), 'utf8');
 //	var urlsonly = [];
 //	for (var key in links) {
 //		if (links.hasOwnProperty(key)) {
 //			urlsonly.push(links[key]);
 //		}
 //	}
-//	fs.writeFileSync(consts.datapath() + 'urls_end.json', urlsonly.join("\n"), 'utf8');
+//	fs.writeFileSync(config.datapath() + 'urls_end.json', urlsonly.join("\n"), 'utf8');
 }
 
 function longifyUrls(tweets) {
@@ -200,7 +200,7 @@ function longifyUrls(tweets) {
 }
 
 function loadUrls(cb) {
-	var filename = consts.datapath() + 'urls.json';
+	var filename = config.datapath() + 'urls.json';
 	fs.exists(filename, function (exists) {
 		if (exists) {
 			storeurls = JSON.parse(fs.readFileSync(filename, 'utf8'));

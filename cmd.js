@@ -9,10 +9,11 @@ var ejs = require('ejs');
 exports.MyLittleCmds = function () {
 	var me = this;
 	var consts = require('./consts');
+	var config = require('./config');
 	var tokenizer = require('./tweet_tokenizer.js').MyLittleTweetTokenizer();
 	var classifier = require('./classify').MyLittleClassifier();
 	var stats = require('./stats').MyLittleStats();
-	var store = require('./tweets_' + consts.storage).MyLittleTweets();
+	var store = require('./tweets_' + config.storage).MyLittleTweets();
 
 	me.init = function (cb) {
 		store.init(cb);
@@ -137,8 +138,8 @@ exports.MyLittleCmds = function () {
 	}
 
 	function responseCmdCommands(req, res) {
-		var params_machine = stats.getParams(req.user.id, store, 'pie', 'machine', null, null, false);
-		var params_human = stats.getParams(req.user.id, store, 'pie', 'human', null, null, false);
+		var params_machine = stats.getParams(req.user.id, store, 'pie', 'machine', null, null, true);
+		var params_human = stats.getParams(req.user.id, store, 'pie', 'human', null, null, true);
 		res.render('commands', {
 			user: req.user,
 			chart_machine_params: params_machine,
@@ -186,9 +187,9 @@ exports.MyLittleCmds = function () {
 		);
 	}
 
-	function responseChart(req, res, type, mode, cat, kind) {
+	function responseChart(req, res, type, mode, cat, kind, force) {
 		var start = +new Date();
-		var params = stats.getParams(req.user.id, store, type, mode || consts.defaultmode, cat, kind, false);
+		var params = stats.getParams(req.user.id, store, type, mode || consts.defaultmode, cat, kind, force);
 		if (!params.isValid()) {
 			responseError(res, 'Invalid Command');
 			return;
@@ -203,9 +204,9 @@ exports.MyLittleCmds = function () {
 		console.log('[Server] Stat ' + params.type + ' served in ' + (end - start) + 'ms');
 	}
 
-	function responseCmdJson(req, res, type, mode, cat, kind) {
+	function responseCmdJson(req, res, type, mode, cat, kind, force) {
 		var start = +new Date();
-		var params = stats.getParams(req.user.id, store, type, mode || consts.defaultmode, cat, kind, false);
+		var params = stats.getParams(req.user.id, store, type, mode || consts.defaultmode, cat, kind, force);
 		if (!params.isValid()) {
 			responseError(res, 'Invalid Command type:' + type + ' mode:' + mode + ' kind:' + kind + ' cat:' + cat);
 			return;
@@ -232,7 +233,7 @@ exports.MyLittleCmds = function () {
 					responseVoteAll(req, res, query.cat, query.ids);
 					break;
 				case 'chart':
-					responseChart(req, res, query.type, query.mode, query.cat, query.kind);
+					responseChart(req, res, query.type, query.mode, query.cat, query.kind, query.force);
 					break;
 				case 'list':
 					responseTweetList(req, res, query.id, query.filter, query.search);
@@ -253,7 +254,7 @@ exports.MyLittleCmds = function () {
 					responseCmdUpdateCache(req, res);
 					break;
 				case 'json':
-					responseCmdJson(req, res, query.type, query.mode, query.cat, query.kind);
+					responseCmdJson(req, res, query.type, query.mode, query.cat, query.kind, query.force);
 					break;
 				default:
 					responseUnknown(res);

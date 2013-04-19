@@ -6,6 +6,7 @@
 
 var mysql = require('mysql');
 var consts = require('./consts');
+var config = require('./config');
 var SqlString = require('mysql/lib/protocol/SqlString');
 
 exports.MyLittleTweets = function () {
@@ -15,7 +16,7 @@ exports.MyLittleTweets = function () {
 	me.init = function (cb) {
 		// Connect to the db
 		console.log('[DB] Connecting to DB');
-		pool = mysql.createPool(consts.mysql_settings);
+		pool = mysql.createPool(config.mysql_settings);
 		cb();
 	};
 

@@ -8,6 +8,7 @@ var express = require('express'),
 	util = require('util'),
 	url = require('url'),
 	consts = require('./consts'),
+	config = require('./config'),
 	LocalStrategy = require('passport-local').Strategy,
 	cmd = require('./cmd').MyLittleCmds();
 var
@@ -92,7 +93,9 @@ app.configure('all', function () {
 	app.use(express.compress());
 	app.use(express.favicon(__dirname + '/static/images/favicon.ico'));
 	app.use('/static', express.static(__dirname + '/static'));
-	app.use(express.logger('dev'));
+	if (config.debug) {
+		app.use(express.logger('dev'));
+	}
 	app.use(express.cookieParser());
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
@@ -180,6 +183,6 @@ io.sockets.on('connection', function (socket) {
 
 
 cmd.init(function () {
-	server.listen(consts.server_settings.port, consts.server_settings.listento);
-	console.log('[Server] running away at http://' + consts.server_settings.listento + ':' + consts.server_settings.port);
+	server.listen(config.server_settings.port, config.server_settings.listento);
+	console.log('[Server] running away at http://' + config.server_settings.listento + ':' + config.server_settings.port);
 });

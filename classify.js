@@ -32,6 +32,7 @@ exports.MyLittleClassifier = function () {
 				} else {
 					newclass = tweet.human;
 				}
+			//	console.log(newclass);
 				if (tweet.machine !== newclass) {
 					tweet.machine = newclass;
 					result.push(tweet);

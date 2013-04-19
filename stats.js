@@ -18,6 +18,7 @@
 
 var fs = require('fs');
 var consts = require('./consts');
+var config = require('./config');
 var wordstat = require('./stats_words').MyLittleWordStat();
 var timestat = require('./stats_time').MyLittleTimeStat();
 var piestat = require('./stats_pie').MyLittlePieStat();
@@ -148,7 +149,7 @@ exports.MyLittleStats = function () {
 	}
 
 	function getFilePath(params) {
-		return consts.datapath() + 'stats/' + getFileName(params);
+		return config.datapath() + 'stats/' + getFileName(params);
 	}
 
 	/** API **/
