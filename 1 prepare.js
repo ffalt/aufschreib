@@ -80,7 +80,7 @@ function transform(rawTweets) {
 
 function loadRaw(cb) {
 	console.log('[Prepare] Load Raw Tweets');
-	var filename = './data/messages.json';
+	var filename = consts.datapath() + 'messages.json';
 	fs.exists(filename, function (exists) {
 		var tweets;
 		if (exists) {
@@ -95,7 +95,7 @@ function loadRaw(cb) {
 }
 
 function loadUrls(cb) {
-	var filename = './data/urls.json';
+	var filename = consts.datapath() + 'urls.json';
 	fs.exists(filename, function (exists) {
 		if (exists) {
 			storeurls = JSON.parse(fs.readFileSync(filename, 'utf8'));

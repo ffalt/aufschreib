@@ -117,7 +117,6 @@
 		//workaround for d3 bug, where getBBox() causes the graph not to render in previously hidden div
 		//using off-left-hidden technique to simulate tab behaviour
 		$('#cmd-tabs a[data-toggle="tab"]').on('show', function (e) {
-			console.log(e);
 			var divid = "#div-" + $(e.target).attr("data-target");
 			$(divid).removeClass("off-left-hidden");
 			divid = "#div-" + $(e.relatedTarget).attr("data-target");

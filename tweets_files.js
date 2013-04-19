@@ -11,7 +11,7 @@ exports.MyLittleTweets = function () {
 	var me = this;
 
 	var list = [];
-	var filename = './data/tweetstore.json';
+	var filename = consts.datapath() + 'tweetstore.json';
 
 	me.init = function (cb) {
 		fs.exists(filename, function (exists) {
@@ -133,7 +133,7 @@ exports.MyLittleTweets = function () {
 	}
 
 	function saveMachine(voteuserid, userdata, callback) {
-		fs.writeFile('./data/users/' + voteuserid + '-tweets-bayes.json', JSON.stringify(userdata.machine, null, '\t'), 'utf8', function (err) {
+		fs.writeFile(consts.datapath() + 'users/' + voteuserid + '-tweets-bayes.json', JSON.stringify(userdata.machine, null, '\t'), 'utf8', function (err) {
 			if (err) {
 				console.log('[Files] Machine Opinion could not be written');
 			} else {
@@ -144,7 +144,7 @@ exports.MyLittleTweets = function () {
 	}
 
 	function saveHuman(voteuserid, userdata, callback) {
-		fs.writeFile('./data/users/' + voteuserid + '-tweets-human.json', JSON.stringify(userdata.human, null, '\t'), 'utf8', function (err) {
+		fs.writeFile(consts.datapath() + 'users/' + voteuserid + '-tweets-human.json', JSON.stringify(userdata.human, null, '\t'), 'utf8', function (err) {
 			if (err) {
 				console.log('[Files] Human Opinion could not be written');
 			} else {
@@ -162,9 +162,9 @@ exports.MyLittleTweets = function () {
 
 	me.initUser = function (user, callback) {
 		var userdata = new Userdata();
-		loadData('./data/users/' + user.id + '-tweets-human.json', function (data) {
+		loadData(consts.datapath() + 'users/' + user.id + '-tweets-human.json', function (data) {
 			userdata.human = (data || {});
-			loadData('./data/users/' + user.id + '-tweets-bayes.json', function (data2) {
+			loadData(consts.datapath() + 'users/' + user.id + '-tweets-bayes.json', function (data2) {
 				userdata.machine = (data2 || {});
 				usersdata['_' + user.id] = userdata;
 				console.log('[Files] User loaded');

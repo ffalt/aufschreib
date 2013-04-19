@@ -1,7 +1,7 @@
 {
 	"name": "aufschreib",
 	"description": "Examining #aufschrei tweets",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"dependencies" : {
 		"async": ">= 0.2.7",
 		"classifier": ">= 0.1.0",

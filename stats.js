@@ -148,7 +148,7 @@ exports.MyLittleStats = function () {
 	}
 
 	function getFilePath(params) {
-		return './data/stats/' + getFileName(params);
+		return consts.datapath() + 'stats/' + getFileName(params);
 	}
 
 	/** API **/

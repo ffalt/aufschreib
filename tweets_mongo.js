@@ -75,7 +75,7 @@ exports.MyLittleTweets = function () {
 		var q = async.queue(function (tweet, callback) {
 			votescollection.update({voteuserid: voteuserid, tweetid: tweet.id}, {$set: {machine: tweet.machine}}, function (err) {
 					if (err)
-						console.log("Error on saving votes " + err);
+						console.log("[MongoDB] Error on saving votes " + err);
 					count++;
 					callback();
 				}
@@ -94,9 +94,8 @@ exports.MyLittleTweets = function () {
 	me.importHumanCats = function (voteuserid, votes, cb) {
 		var q = async.queue(function (entry, callback) {
 			votescollection.update({voteuserid: voteuserid, tweetid: entry.id}, {$set: {human: entry.human}}, function (err) {
-					console.log(entry.id + ' ' + entry.human);
 					if (err)
-						console.log("Error on saving vote " + entry.id + " " + err);
+						console.log("[MongoDB] Error on saving vote " + entry.id + " " + err);
 					callback();
 				}
 			);
@@ -140,12 +139,12 @@ exports.MyLittleTweets = function () {
 		if (!search) {
 			cb()
 		} else {
-			console.log('Searching Text');
+			console.log('[MongoDB] Searching Text');
 			tweetcollection.find({}, function (err, cursor) {
 				var ids = [];
 				cursor.each(function (err, tweet) {
 						if (!tweet) {
-							console.log('Found Tweets: ' + ids.length);
+							console.log('[MongoDB] Found Tweets: ' + ids.length);
 							cb(ids)
 						} else if ((tweet.text.indexOf(search) >= 0) ||
 							((tweet.longurls) && (tweet.longurls.indexOf(search) >= 0))) {
@@ -197,7 +196,6 @@ exports.MyLittleTweets = function () {
 							processUsers(index + 1);
 						} else {
 							var entry = entries[index];
-							//console.log(index + ' ' + entry.tweetuser);
 							doneusers.push(entry.tweetuser);
 							var votes = entries.filter(function (testentry) {
 								return testentry.tweetuser === entry.tweetuser;

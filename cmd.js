@@ -62,7 +62,7 @@ exports.MyLittleCmds = function () {
 						if (str)
 							res.write(str);
 						else
-							console.log('warning, something is wrong with: ' + JSON.stringify(str));
+							console.log('[Server] warning, something is wrong with: ' + JSON.stringify(str));
 						written += tweets.length;
 						callback();
 					});

@@ -282,7 +282,8 @@ var aufschreib = {
 		return false;
 	},
 	connectIo: function (cmd, logdiv, cb) {
-		var socket = io.connect('http://localhost');
+		var url = window.location.protocol + "//" + window.location.host;
+		var socket = io.connect(url);//'http://localhost');
 		socket.emit('start', { cmd: cmd });
 		socket.on('news', function (data) {
 			logdiv.append(data['msg'] + '<br />');

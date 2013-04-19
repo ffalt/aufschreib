@@ -167,7 +167,7 @@ exports.MyLittleTweets = function () {
 	function setCat(connection, voteuserid, mode, tweetid, value, cb) {
 		doloadCatForTweet(connection, voteuserid, tweetid, function (result) {
 			if (!result) {
-				console.log('storing new cat for: ' + tweetid + ' ' + value);
+				console.log('[DB] storing new cat for: ' + tweetid + ' ' + value);
 				doStoreNewCatData(connection, voteuserid, tweetid,
 					(mode === 'human' ? value : consts.unknown),
 					(mode === 'machine' ? value : consts.unknown),
@@ -315,13 +315,11 @@ exports.MyLittleTweets = function () {
 				.on('result', function (row) {
 					// Pausing the connnection is useful if your processing involves I/O
 					connection.pause();
-					//console.log(row);
 					//TODO: hotfix for null as string, check where does that come from?
 					if (row.longurls === 'null')
 						row.longurls = null;
 					cb(row);
 					count++;
-					//console.log(count);
 					connection.resume();
 				})
 				.on('end', function () {
@@ -423,7 +421,6 @@ exports.MyLittleTweets = function () {
 				{voteuser: voteuserid, human: humanfilter, machine: machinefilter, search: '%' + search + '%'},
 				function (err, result) {
 					if (err) throw err;
-					//console.log('result: ' + result.length);
 
 					var written = 0;
 					var canwrite = (!start);
@@ -484,7 +481,6 @@ exports.MyLittleTweets = function () {
 				{voteuser: voteuserid, user: user},
 				function (err, result) {
 					if (err) throw err;
-					console.log(result);
 					cb(result);
 				}
 			);
