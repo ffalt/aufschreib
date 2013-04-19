@@ -213,7 +213,7 @@ var
 	path = require('path');
 
 function expandPath() {
-	return path.resolve(__dirname, file_settings.path);
+	return path.resolve(__dirname, file_settings.path) + '/';
 }
 
 module.exports = {

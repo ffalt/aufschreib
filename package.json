@@ -10,7 +10,7 @@
 		"fetch": ">= 0.1.5",
 		"moment": ">= 2.0.0",
 		"passport": ">= 0.1.16",
-		"passport-socketio": ">= 1.0.1",
+		"passport.socketio": ">= 1.0.1",
 		"passport-local": ">= 0.1.6",
 		"resolver": ">= 0.1.8",
 		"socket.io": ">= 0.9.13"
