@@ -59,6 +59,19 @@ exports.MyLittleTweets = function () {
 		});
 	};
 
+	me.clearAll = function (cb) {
+		me.init(function () {
+			votescollection.remove(function () {
+				userscollection.remove(function () {
+					tweetcollection.remove(function () {
+						cb();
+					});
+				});
+			});
+		})
+	};
+
+
 	me.initUser = function (user, callback) {
 		callback();
 	};
@@ -198,10 +211,10 @@ exports.MyLittleTweets = function () {
 							processUsers(index + 1);
 						} else {
 							var entry = entries[index];
-							doneusers.push(entry.tweetuser);
 							var votes = entries.filter(function (testentry) {
 								return testentry.tweetuser === entry.tweetuser;
 							});
+							doneusers.push(entry.tweetuser);
 							loadUserTweets(votes, function (usertweets) {
 								votescollection.count({voteuserid: voteuserid, tweetuser: entry.tweetuser}, function (err, count) {
 									callback(usertweets, count, function () {
@@ -252,6 +265,42 @@ exports.MyLittleTweets = function () {
 			q.push(newtweets);
 		}
 	}
+
+	me.prepareUser = function (username, password, cb) {
+		createUser(username, password, function (user) {
+
+			tweetcollection.find({}, function (err, cursor) {
+
+				function saveTweetObj(tweet) {
+					if (!tweet) {
+						cb(user);
+					} else {
+						votescollection.save(
+							{voteuserid: user.id,
+								tweetid: tweet.id,
+								tweetuser: tweet.user,
+								human: consts.unknown,
+								machine: consts.unknown
+							}, function (err) {
+								if (err) {
+									throw err;
+								}
+								cursor.nextObject(function (err, item) {
+									saveTweetObj(item);
+								});
+							});
+					}
+				}
+
+				cursor.nextObject(function (err, item) {
+					saveTweetObj(item);
+				});
+
+			});
+
+
+		});
+	};
 
 	function updateUserVotes(voteuserid, newtweets, cb) {
 		votescollection.find({voteuserid: voteuserid}).toArray(function (err, votes) {
@@ -318,31 +367,46 @@ exports.MyLittleTweets = function () {
 
 	function getUserByName(name, cb) {
 		userscollection.findOne({name: name}, function (err, user) {
-			cb(user);
+			cb(err, user);
 		});
 	}
 
-	function createUser(name, cb) {
+	function getUserById(id, cb) {
+		userscollection.findOne({id: id}, function (err, user) {
+			cb(err, user);
+		});
+	}
+
+	function createUser(name, password, cb) {
 		getUnusedUserId(function (newid) {
-			userscollection.save({name: name, id: newid}, function (err) {
+			var user = {name: name, password: password, id: newid};
+			userscollection.save(user, function (err) {
 				if (err)
 					throw err;
-				cb(newid);
+				cb(user);
 			});
 		});
 	}
 
-	function getOrCreateUser(name, cb) {
-		getUserByName(name, function (user) {
+	function getOrCreateUser(name, password, cb) {
+		getUserByName(name, function (err, user) {
 			if (user) {
-				cb(user.id);
+				cb(user);
 			} else {
-				createUser(name, cb);
+				createUser(name, password, cb);
 			}
 		});
 	}
 
-	me.prepare = function (newtweets, cb) {
+	me.findUserById = function (id, cb) {
+		getUserById(id, cb);
+	};
+
+	me.findUserByName = function (username, cb) {
+		getUserByName(username, cb);
+	};
+
+	me.prepare = function (newtweets, defaultuser, defaultpass, cb) {
 		async.series([
 			function (callback) {
 				tweetcollection.remove(callback);
@@ -351,13 +415,13 @@ exports.MyLittleTweets = function () {
 				storeTweets(newtweets, callback);
 			},
 			function (callback) {
-				console.log('[MongoDB] Ensure existence of admin user');
-				getOrCreateUser('admin', function () {
-					callback(null);
+				console.log('[MongoDB] Ensure existence of default user');
+				getOrCreateUser(defaultuser, defaultpass, function (user) {
+					callback(null, user);
 				});
 			},
 			function (callback) {
-				console.log('[MongoDB] Update Votes');
+				console.log('[MongoDB] Update votes');
 				updateUsersVotes(newtweets, callback);
 			}
 		], cb);
@@ -365,7 +429,6 @@ exports.MyLittleTweets = function () {
 
 	me.enumerateTweetsAndCats = function (voteuserid, callback) {
 		votescollection.find({voteuserid: voteuserid}, function (err, cursor) {
-
 
 			function loadTweetObj(vote, cursor) {
 				if (!vote) {

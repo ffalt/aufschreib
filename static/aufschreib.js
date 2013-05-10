@@ -119,7 +119,14 @@ var aufschreib = {
 	setActiveCat: function (div, cat) {
 		div.find('a[class*=active]').removeClass('active');
 		div.find('a[value*=' + cat + ']').addClass('active');
-		div.find('.tweet-human').text(cat);     //todo: get cat name
+		if (cats) { //from global namespace
+			cats.forEach(function (c) {
+				if (c.id == cat) {
+					cat = c.name;
+				}
+			})
+		}
+		div.find('.tweet-human').text(cat);
 	},
 	voteTweet: function (sender, cat) {
 		var div = $(sender).closest(".tweet");
@@ -140,6 +147,24 @@ var aufschreib = {
 			});
 		return false;
 	},
+	voteIds: function (parentdiv, ids, divs, cat) {
+		var params = {
+			cmd: 'setall',
+			ids: ids.join(','),
+			cat: cat
+		};
+		aufschreib.get(parentdiv, '', params,
+			function (data) {
+				if (data) {
+					divs.forEach(function (adiv) {
+						aufschreib.setActiveCat(adiv, cat);
+					});
+					if (aufschreib.closethings) {
+						aufschreib.checkVoted(parentdiv);
+					}
+				}
+			});
+	},
 	voteAll: function (sender, cat) {
 		var ids = [];
 		var divs = [];
@@ -150,22 +175,14 @@ var aufschreib = {
 				ids.push($(this).attr('id'));
 			}
 		);
-		var params = {
-			cmd: 'setall',
-			ids: ids.join(','),
-			cat: cat
-		};
-		aufschreib.get(div, '', params,
-			function (data) {
-				if (data) {
-					divs.forEach(function (div) {
-						aufschreib.setActiveCat(div, cat);
-					});
-					if (aufschreib.closethings) {
-						aufschreib.checkVoted(div);
-					}
-				}
-			});
+		var maxdivs = divs.splice(0, 100);
+		var maxids = ids.splice(0, 100);
+		while (maxids.length > 0) {
+			//console.log(maxids);
+			aufschreib.voteIds(div, maxids, maxdivs, cat);
+			maxdivs = divs.splice(0, 100);
+			maxids = ids.splice(0, 100);
+		}
 		return false;
 	},
 	resizedw: function (sender) {

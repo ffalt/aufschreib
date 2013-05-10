@@ -1,6 +1,4 @@
 const debug = true;
-const storages = ('files', 'mysql', 'mongo');
-const storage = 'mongo';
 const mongo_settings = {
 	"hostname": "localhost",
 	"port": 27017,
@@ -12,15 +10,6 @@ const mongo_settings = {
 const file_settings = {
 	path: './data/'
 }
-const mysql_settings = {
-	host: 'localhost',
-	user: 'aufschreib',
-	password: 'secret',
-	database: 'aufschreib',
-	supportBigNumbers: true,
-	debug: false,
-	connectionLimit: 100
-};
 const server_settings = {
 	listento: '0.0.0.0',  // \o_ listen to ALL the adapters
 	port: 8081
@@ -35,9 +24,7 @@ function expandPath() {
 
 module.exports = {
 	debug: debug,
-	storage: storage,
 	mongo_settings: mongo_settings,
-	mysql_settings: mysql_settings,
 	server_settings: server_settings,
 	datapath: expandPath
 };

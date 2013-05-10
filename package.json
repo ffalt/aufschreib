@@ -13,7 +13,8 @@
 		"passport.socketio": ">= 1.0.1",
 		"passport-local": ">= 0.1.6",
 		"resolver": ">= 0.1.8",
-		"socket.io": ">= 0.9.13"
+		"socket.io": ">= 0.9.13",
+		"mongodb": ">= 1.2.14"
 	},
 	"engines": { "node": ">= 0.8.15" }
 }

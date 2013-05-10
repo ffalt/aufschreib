@@ -106,7 +106,10 @@ function loadUrls(cb) {
 }
 
 var
-	storage = require('./tweets_' + config.storage).MyLittleTweets();
+	storage = require('./tweets_mongo').MyLittleTweets();
+var
+	defaultuser = 'admin',
+	defaultpass = 'totalsupergehaim';
 
 async.waterfall([
 	function (callback) {
@@ -122,7 +125,7 @@ async.waterfall([
 	},
 	function (rawTweets, callback) {
 		var tweets = transform(rawTweets);
-		storage.prepare(tweets, function () {
+		storage.prepare(tweets, defaultuser, defaultpass, function () {
 				callback(null);
 			}
 		);

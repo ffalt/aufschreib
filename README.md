@@ -32,58 +32,13 @@ The result data is NOT RELIABLE! yet.
 ##Requirements
 
 [http://nodejs.org/](http://nodejs.org/)
-
-
-optional: a mysql or mongo database
-
-modules for node js
-
-	npm install
-
-optional
-
-	npm install mysql
-
-optional
-
-	npm install mongodb
+[http://www.mongodb.org/](http://www.mongodb.org/)
 
 ##Usage
 
 ### 0. Prepare Config File
 
 Copy **"config.dist.js"** and rename it to **"config.js"**
-
-### 1. Choose your storage
-**1.1 File-based storage**
-
-Edit **"config.js"** and set
-
-const storage = 'files';
-
-**1.2 *OR* mysql-based storage**
-
-Edit **"config.js"** and set
-
-	const usedb = 'mysql';
-
-now change the connection details
-
-	const mysql_settings = {
-		host: 'localhost',
-		user: 'aufschreib',
-		password: 'ohsosecret',
-		database: 'aufschreib',
-		supportBigNumbers: true,
-		debug: false,
-		connectionLimit: 100
-	};`
-
-**1.3 *OR* mongodb-based storage**
-
-Edit **"config.js"** and set
-
-	const usedb = 'mongo';
 
 now change the connection details
 
@@ -164,12 +119,7 @@ run
 
 `node "1 prepare.js"`
 
-if you use mysql, tables are created and data is filled
-
-if you use mongo, collections are created and data is filled
-
-if you use files, well, only file **"tweetstore.json"** will be created ;)
-
+collections are created and data is filled
 aaaaaaandddddd wait until the process finishes
 
 ### 5. Server

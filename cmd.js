@@ -13,7 +13,7 @@ exports.MyLittleCmds = function () {
 	var tokenizer = require('./tweet_tokenizer.js').MyLittleTweetTokenizer();
 	var classifier = require('./classify').MyLittleClassifier();
 	var stats = require('./stats').MyLittleStats();
-	var store = require('./tweets_' + config.storage).MyLittleTweets();
+	var store = require('./tweets_mongo').MyLittleTweets();
 
 	me.init = function (cb) {
 		store.init(cb);
@@ -290,10 +290,31 @@ exports.MyLittleCmds = function () {
 		}
 	};
 
+	me.validateUser = function (username, password, cb) {
+		//function(err,user)
+		// Find the user by username.  If there is no user with the given
+		// username, or the password is not correct, set the user to `false` to
+		// indicate failure and set a flash message.  Otherwise, return the
+		// authenticated `user`.
+		store.findUserByName(username, function (err, user) {
+			if ((err) || (!user)) {
+				cb(err);
+			} else if (user.password != password) {
+				cb(err, null)
+			} else {
+				cb(err, user);
+			}
+		})
+	};
+
+	me.findUserById = function (id, cb) {
+		store.findUserById(id, cb);
+	};
+
 	me.createuser = function (req, res) {
-		console.log(req.body);
-		res.send(200);
-		//processCmd(req, res);
+		store.prepareUser(req.body.username, req.body.password, function () {
+			res.send(200);
+		});
 	};
 
 	me.process = function (req, res) {
