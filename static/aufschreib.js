@@ -345,6 +345,7 @@ var aufschreib = {
 	createUser: function () {
 		var oOutput = $("#output-newuser");
 		var formData = $("#form-newuser").serialize();
+		oOutput.text("Please wait...");
 		$.ajax({
 			url: "/user/create",
 			type: "POST",

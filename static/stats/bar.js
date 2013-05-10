@@ -116,7 +116,7 @@ function Bars() {
 					entries[name].counts[key] = (entries[name].counts[key] || 0) + data[i].counts[key];
 				}
 			} else {
-				entries[name] = {id: data[i].id, count: data[i].count, stop: data[i].stop, counts: {}};
+				entries[name] = {id: data[i].id.toLowerCase(), count: data[i].count, stop: data[i].stop, counts: {}};
 				for (var key in data[i].counts) {
 					entries[name].counts[key] = data[i].counts[key];
 				}
