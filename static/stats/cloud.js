@@ -9,6 +9,7 @@ function Clouds() {
 			kind: 'word',
 			cat: 'all',
 
+			hidestops: false,
 			spiral: 'archimedean',
 			scale: 'log',
 			casesensitiv: false,
@@ -69,16 +70,18 @@ function Clouds() {
 		var data = stats.getBaseData();
 		var tags = {};
 		data.forEach(function (entry) {
-				var count = entry.count;
-				if (options.cat !== 'all') {
-					count = entry.counts[options.cat];
-				}
-				if (count) {
-					var word = entry.id;
-					if (!options.casesensitiv) {
-						word = word.toLowerCase();
+				if ((!options.hidestops) || (!entry.stop)) {
+					var count = entry.count;
+					if (options.cat !== 'all') {
+						count = entry.counts[options.cat];
 					}
-					tags[word] = (tags[word] || 0) + count;
+					if (count) {
+						var word = entry.id;
+						if (!options.casesensitiv) {
+							word = word.toLowerCase();
+						}
+						tags[word] = (tags[word] || 0) + count;
+					}
 				}
 			}
 		);
@@ -160,6 +163,14 @@ function Clouds() {
 		stats.d3_eventCancel();
 	}
 
+	function toggleStop() {
+		options.hidestops = (!options.hidestops);
+		this.value = options.hidestops;
+		d3.selectAll('#' + options.id + 'stop li').attr('class', (options.hidestops ? 'active' : null));
+		generate();
+		stats.d3_eventCancel();
+	}
+
 	function toggleCase() {
 		options.casesensitiv = (!options.casesensitiv);
 		this.value = options.casesensitiv;
@@ -172,6 +183,7 @@ function Clouds() {
 		progress.statusText = d3.select('#' + options.id + 'status');
 		d3.selectAll('.navbar-form input').on('change', change);
 		d3.select('#' + options.id + 'case a').on('click', toggleCase);
+		d3.select('#' + options.id + 'stop a').on('click', toggleStop);
 		stats.linkUIDefault(options.id);
 		//d3.select('#' + options.id + 'download-png').on('click', downloadPNG);
 		stats.linkUIReloads(options, ['mode', 'kind'], generate);

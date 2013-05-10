@@ -21,10 +21,34 @@
 
  */
 var tokenizer = require('./tweet_tokenizer').MyLittleTweetTokenizer();
+var fs = require('fs');
+var config = require('./config');
 
 exports.MyLittleWordStat = function () {
 	var me = this;
 	var THRESHOLD = 5;
+	var stopwords = [];
+
+	function init() {
+		var filename = config.datapath() + 'stop.txt';
+		fs.exists(filename, function (exists) {
+			if (exists) {
+				var data = fs.readFileSync(filename, 'utf8').split("\n");
+				data.forEach(function (s) {
+					if (stopwords.indexOf(s) < 0)
+						stopwords.push(s.trim());
+				});
+				//fs.writeFileSync(filename, stopwords.join("\n"), 'utf8');
+			}
+		});
+	}
+
+	function isStopWord(text) {
+		var s = text.toLowerCase();
+		return stopwords.indexOf(s) >= 0;
+	}
+
+	init();
 
 	function sortdDataByCat(data, cat) {
 		data.sort(
@@ -71,7 +95,7 @@ exports.MyLittleWordStat = function () {
 							}
 						}
 						break;
-					default: //case 'words':
+					default: //case 'word':
 						arr = tokenizer.tokenize(tweet.text);
 						break;
 				}
@@ -93,8 +117,13 @@ exports.MyLittleWordStat = function () {
 					for (var cat in stat) {
 						total += stat[cat];
 					}
-					if (total >= THRESHOLD)
-						data.push({id: key, count: total, counts: stat});
+					if (total >= THRESHOLD) {
+						var obj = {id: key, count: total, counts: stat};
+						if ((params.kind === 'word') && isStopWord(key)) {
+							obj.stop = true;
+						}
+						data.push(obj);
+					}
 				}
 				data.sort(
 					function (a, b) {

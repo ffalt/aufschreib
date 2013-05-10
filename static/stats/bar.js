@@ -6,6 +6,7 @@ function Bars() {
 			kind: 'word',
 			cat: 'all',
 
+			hidestops: false,
 			bars: 'stacked',
 			casesensitiv: false,
 			limit: 30,
@@ -54,9 +55,18 @@ function Bars() {
 		d3.selectAll('.navbar-form input').on('change', change);
 		d3.selectAll('#' + options.id + 'bars a').on('click', toggleBars);
 		d3.select('#' + options.id + 'case a').on('click', toggleCase);
+		d3.select('#' + options.id + 'stop a').on('click', toggleStop);
 		stats.linkUIDefault(options.id);
 		stats.linkUIReloads(options, ['mode', 'kind'], generate);
 		stats.linkUIRegens(options, ['cat'], generate);
+	}
+
+	function toggleStop() {
+		options.hidestops = (!options.hidestops);
+		this.value = options.hidestops;
+		d3.selectAll('#' + options.id + 'stop li').attr('class', (options.hidestops ? 'active' : null));
+		generate();
+		stats.d3_eventCancel();
 	}
 
 	function toggleCase() {
@@ -96,7 +106,7 @@ function Bars() {
 					entries[name].counts[key] = (entries[name].counts[key] || 0) + data[i].counts[key];
 				}
 			} else {
-				entries[name] = {id: data[i].id, count: data[i].count, counts: {}};
+				entries[name] = {id: data[i].id, count: data[i].count, stop: data[i].stop, counts: {}};
 				for (var key in data[i].counts) {
 					entries[name].counts[key] = data[i].counts[key];
 				}
@@ -185,6 +195,11 @@ function Bars() {
 			filterdata = mergeCases(stats.getBaseData());
 		else
 			filterdata = stats.getBaseData();
+		if (options.hidestops) {
+			filterdata = filterdata.filter(function (obj) {
+				return !obj.stop;
+			});
+		}
 		var data = [];
 		for (var i = 0; i < filterdata.length; i++) {
 			if (options.cat === 'all')
@@ -262,15 +277,15 @@ function Bars() {
 			.call(customYAxis);
 
 		var layer = bargraph.graphcontainer.selectAll('.layer')
-				.data(layers)
-				.enter().append('g')
-				.attr('class', 'layer');
+			.data(layers)
+			.enter().append('g')
+			.attr('class', 'layer');
 		layer = bargraph.graphcontainer.selectAll('.layer');
 		layer.data(layers).exit().remove();
 		layer = bargraph.graphcontainer.selectAll('.layer');
 		layer.style('fill', function (d, i) {
-				return bargraph.catsInView[i].color;
-			});
+			return bargraph.catsInView[i].color;
+		});
 		bargraph.rect = layer.selectAll('.segment')
 			.data(function (d) {
 				return d;
@@ -303,7 +318,6 @@ function Bars() {
 			.attr('height', function (d) {
 				return bargraph.y(d.y0) - bargraph.y(d.y0 + d.y);
 			});
-
 
 		stats.legendary(bargraph.graphcontainer, bargraph.catsInView, sizes.barwidth - sizes.legendwidth, 10, sizes.legendwidth);
 	}

@@ -26,24 +26,28 @@ function Stats(cats, hashBangNotifyDisabeld) {
 			.append('g')
 			.attr('class', 'legend-entry');
 		legendentries.append('svg:rect')
-			.attr('fill', function (d) {
-				return d.color;
-			})
 			.attr('x', left)
 			.attr('y', function (d, i) {
 				return top + (25 * i);
 			})
 			.attr('width', 10)
-			.attr('height', 10);
+			.attr('height', 10)
+			.attr('class', 'legend-color');
 		legendentries.append('svg:text')
 			.attr('x', left + 15)
 			.attr('y', function (d, i) {
 				return top + (25 * i) + 10
-			})
+			});
+		legend.selectAll('text')
+			.data(catsInView)
 			.text(function (d) {
 				return d.name;
 			});
-
+		legend.selectAll('.legend-color')
+			.data(catsInView)
+			.attr('fill', function (d) {
+				return d.color;
+			});
 		legend
 			.selectAll('.legend-entry')
 			.data(catsInView)
