@@ -87,12 +87,16 @@ function Bars() {
 		stats.d3_eventCancel();
 	}
 
-	function toggleBars() {
-		options.bars = d3.select(this).attr('value');
+	function applyBarType() {
 		if (options.bars === 'grouped')
 			transitionGrouped();
 		else if (options.bars === 'stacked')
 			transitionStacked();
+	}
+
+	function toggleBars() {
+		options.bars = d3.select(this).attr('value');
+		applyBarType();
 		stats.selectActive(options, 'bars');
 		stats.d3_eventCancel();
 	}
@@ -316,26 +320,13 @@ function Bars() {
 
 		bargraph.rect = layer.selectAll('.segment');
 		bargraph.rect
-			.attr('x', function (d) {
-				return bargraph.x(d.x);
-			})
-			.attr('width', bargraph.x.rangeBand())
-			.attr('title',function (d, i) {
+				.attr('title',function (d, i) {
 				return 'Klasse:' + "\t\t" + bargraph.catsInView[d.layer].name + "\n" +
 					'Eintrag:' + "\t\t" + data[i].id + "\n" +
 					'Anzahl:' + "\t\t" + d.y + "\n" +
 					(d.y === d.total ? '' : 'Insgesamt: ' + "\t" + d.total);
-			}).transition()
-			.delay(function (d, i) {
-				return i * 10;
-			})
-			.attr('y', function (d) {
-				return bargraph.y(d.y0 + d.y);
-			})
-			.attr('height', function (d) {
-				return bargraph.y(d.y0) - bargraph.y(d.y0 + d.y);
 			});
-
+		applyBarType();
 		stats.legendary(bargraph.graphcontainer, bargraph.catsInView, sizes.barwidth - sizes.legendwidth, 10, sizes.legendwidth);
 	}
 
