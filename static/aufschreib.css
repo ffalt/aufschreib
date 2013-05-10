@@ -204,6 +204,9 @@ a:hover {
 	display: inline;
 }
 
+.logout {
+	padding-top: 4px;
+}
 /* Stat */
 
 .piechart {
