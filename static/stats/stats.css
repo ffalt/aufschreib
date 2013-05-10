@@ -60,3 +60,11 @@ pre, code {
 .javascript .special {
 	color: #e6550d;
 }
+
+.navsmall .brand {
+	font-size: 13px !important;
+}
+
+.navsmall .nav > li > a {
+	padding: 10px 8px !important;
+}
