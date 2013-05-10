@@ -9,6 +9,7 @@ function Clouds() {
 			kind: 'word',
 			cat: 'all',
 
+			hidetag: false,
 			hidestops: false,
 			spiral: 'archimedean',
 			scale: 'log',
@@ -70,7 +71,12 @@ function Clouds() {
 		var data = stats.getBaseData();
 		var tags = {};
 		data.forEach(function (entry) {
-				if ((!options.hidestops) || (!entry.stop)) {
+				if
+					(
+					((!options.hidestops) || (!entry.stop))
+						&&
+						((!options.hidetag) || ((entry.id !== '#aufschrei') && (entry.id !== '#Aufschrei')))
+					) {
 					var count = entry.count;
 					if (options.cat !== 'all') {
 						count = entry.counts[options.cat];
@@ -163,6 +169,14 @@ function Clouds() {
 		stats.d3_eventCancel();
 	}
 
+	function toggleTag() {
+		options.hidetag = (!options.hidetag);
+		this.value = options.hidetag;
+		d3.selectAll('#' + options.id + 'tag li').attr('class', (options.hidetag ? 'active' : null));
+		generate();
+		stats.d3_eventCancel();
+	}
+
 	function toggleStop() {
 		options.hidestops = (!options.hidestops);
 		this.value = options.hidestops;
@@ -184,6 +198,7 @@ function Clouds() {
 		d3.selectAll('.navbar-form input').on('change', change);
 		d3.select('#' + options.id + 'case a').on('click', toggleCase);
 		d3.select('#' + options.id + 'stop a').on('click', toggleStop);
+		d3.select('#' + options.id + 'tag a').on('click', toggleTag);
 		stats.linkUIDefault(options.id);
 		//d3.select('#' + options.id + 'download-png').on('click', downloadPNG);
 		stats.linkUIReloads(options, ['mode', 'kind'], generate);

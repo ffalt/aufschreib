@@ -7,6 +7,7 @@ function Bars() {
 			cat: 'all',
 
 			hidestops: false,
+			hidetag: false,
 			bars: 'stacked',
 			casesensitiv: false,
 			limit: 30,
@@ -56,9 +57,18 @@ function Bars() {
 		d3.selectAll('#' + options.id + 'bars a').on('click', toggleBars);
 		d3.select('#' + options.id + 'case a').on('click', toggleCase);
 		d3.select('#' + options.id + 'stop a').on('click', toggleStop);
+		d3.select('#' + options.id + 'tag a').on('click', toggleTag);
 		stats.linkUIDefault(options.id);
 		stats.linkUIReloads(options, ['mode', 'kind'], generate);
 		stats.linkUIRegens(options, ['cat'], generate);
+	}
+
+	function toggleTag() {
+		options.hidetag = (!options.hidetag);
+		this.value = options.hidetag;
+		d3.selectAll('#' + options.id + 'tag li').attr('class', (options.hidetag ? 'active' : null));
+		generate();
+		stats.d3_eventCancel();
 	}
 
 	function toggleStop() {
@@ -200,6 +210,11 @@ function Bars() {
 				return !obj.stop;
 			});
 		}
+		if (options.hidetag) {
+			filterdata = filterdata.filter(function (obj) {
+				return (obj.id !== '#aufschrei') && (obj.id !== '#Aufschrei');
+			});
+		}
 		var data = [];
 		for (var i = 0; i < filterdata.length; i++) {
 			if (options.cat === 'all')
@@ -234,20 +249,22 @@ function Bars() {
 			}
 		});
 
-		var stack = d3.layout.stack(),
-			layers = stack(
-				d3.range(bargraph.catsInView.length).map(
-					function (d, layernr) {
-						var cat = bargraph.catsInView[d].id;
-						var a = [];
-						for (var i = 0; i < data.length; i++)
-							a[i] = data[i].counts[cat] || 0;
-						return a.map(function (y, x) {
-							return {x: x, y: y, layer: layernr, total: data[x].count};
-						});
-					}
-				)
-			);
+		var stack = d3.layout.stack();
+		var range = d3.range(bargraph.catsInView.length).map(
+			function (d, layernr) {
+				var cat = bargraph.catsInView[d].id;
+				var a = [];
+				for (var i = 0; i < data.length; i++)
+					a[i] = data[i].counts[cat] || 0;
+				return a.map(function (y, x) {
+					return {x: x, y: y, layer: layernr, total: data[x].count};
+				});
+			}
+		);
+		var layers = [];
+		if (range.length > 0)
+			layers = stack(range);
+
 		bargraph.yGroupMax = d3.max(layers, function (layer) {
 			return d3.max(layer, function (d) {
 				return d.y;
