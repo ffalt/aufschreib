@@ -329,10 +329,6 @@ var aufschreib = {
 			cb('Connection error. Please reload site.');
 			socket.disconnect();
 		});
-		socket.on('connect_failed', function () {
-			cb('Connection error. Please reload site.');
-			socket.disconnect();
-		});
 		socket.on('fail', function (data) {
 			var s = data['msg'] + '<br />';
 			aufschreib.connectedloghistory += s;
