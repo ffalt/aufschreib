@@ -325,7 +325,7 @@ var aufschreib = {
 			cb(data['msg']);
 			socket.disconnect();
 		});
-		socket.on('error', function () {
+		socket.on('connect_failed', function () {
 			cb('Connection error. Please reload site.');
 			socket.disconnect();
 		});
