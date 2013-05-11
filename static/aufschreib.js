@@ -530,7 +530,6 @@ var aufschreib = {
 		});
 	},
 	ready: function () {
-		$('#jswarning').remove();
 		$('#menu').show();
 		var search = $('#search');
 		search.keypress(function (e) {
@@ -582,4 +581,5 @@ var aufschreib = {
 		});
 	}
 };
+$('#jswarning').remove();
 aufschreib.load();
