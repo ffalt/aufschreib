@@ -34,6 +34,7 @@ passport.use(new LocalStrategy(
 					return done(err);
 				}
 				if (!user) {
+					console.error('[Server] Auth failed ' + username);
 					return done(null, false, { message: 'Invalid Credentials'});
 				}
 				return done(null, user);
@@ -101,6 +102,7 @@ app.get('/login', function (req, res) {
 app.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),
 	function (req, res) {
 		cmd.initUser(req, res, function () {
+			console.log('[Server] User login: ' + req.user.name);
 			res.redirect('/');
 		});
 	});
@@ -136,7 +138,7 @@ io.set("authorization", passportSocketIo.authorize({
 }));
 
 io.sockets.on('connection', function (socket) {
-	console.log("user connected: ", socket.handshake.user.id);
+	//console.log("user connected: ", socket.handshake.user.id);
 	cmd.socket(socket);
 });
 

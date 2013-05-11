@@ -393,7 +393,7 @@ exports.MyLittleTweets = function () {
 				return;
 			}
 		}
-		console.log('Check User by Name: ' + name);
+		//console.log('Check User by Name: ' + name);
 		userscollection.findOne({name: name}, function (err, user) {
 			if (user)
 				userCache[user.id] = user;
@@ -405,7 +405,7 @@ exports.MyLittleTweets = function () {
 		if (userCache[id]) {
 			cb(null, userCache[id]);
 		} else {
-			console.log('Check User: ' + id);
+			//console.log('Check User: ' + id);
 			userscollection.findOne({id: id}, function (err, user) {
 				if (user)
 					userCache[id] = user;

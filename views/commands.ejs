@@ -1,10 +1,5 @@
 <link type="text/css" href="/static/stats/stats.css" rel="stylesheet">
 <link type="text/css" href="/static/stats/pie.css" rel="stylesheet">
-<script src="/static/d3/d3.v3.min.js"></script>
-<script src="/static/stats/stats.js"></script>
-<script src="/static/stats/pie.js"></script>
-<script src="/static/socket.io/socket.io.js"></script>
-<script src="/static/jquery/jquery.form.js"></script>
 
 <ul id="cmd-tabs" class="nav nav-tabs">
 	<li class="active"><a href="#" data-target="cmd-machine" data-toggle="tab">Machine</a></li>
@@ -43,11 +38,7 @@
 			</button>
 			<br/>
 		</div>
-		<div class="row">
-			<div class="span12">
-				<div id="statcache-result"></div>
-			</div>
-		</div>
+		<div id="statcache-result"></div>
 	</div>
 	<div class="off-left-hidden" id="div-cmd-import">
 		<div class="well">

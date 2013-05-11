@@ -23,9 +23,14 @@ exports.MyLittleCmds = function () {
 		res.send(400, msg);
 	}
 
+	function log(text) {
+		if (config.debug)
+			console.log(text);
+	}
+
 	function responseUnknown(res) {
 		responseError(res, 'Unknown command, go home, you\'re drunk');
-		console.log('[Server] Error');
+		log('[Server] Error');
 	}
 
 	function responseSite(req, res) {
@@ -63,7 +68,7 @@ exports.MyLittleCmds = function () {
 						if (str)
 							res.write(str);
 						else
-							console.log('[Server] warning, something is wrong with: ' + JSON.stringify(str));
+							log('[Server] warning, something is wrong with: ' + JSON.stringify(str));
 						written += tweets.length;
 						callback();
 					});
@@ -73,7 +78,7 @@ exports.MyLittleCmds = function () {
 							res.write(str);
 						res.end();
 						var end = +new Date();
-						console.log('[Server] Tweets: ' + written + ' spilled in ' + (end - start) + 'ms');
+						log('[Server] Tweets: ' + written + ' spilled in ' + (end - start) + 'ms');
 					}
 
 					if (data) {
@@ -101,7 +106,7 @@ exports.MyLittleCmds = function () {
 					user_img: tweets[0].userimg
 				});
 				var end = +new Date();
-				console.log('[Server] Tweets by User: ' + tweets.length + ' spilled in ' + (end - start) + 'ms');
+				log('[Server] Tweets by User: ' + tweets.length + ' spilled in ' + (end - start) + 'ms');
 			}
 		);
 	}
@@ -111,7 +116,7 @@ exports.MyLittleCmds = function () {
 			store.setHumanCat(req.user.id, id, cat, function (err) {
 				if (!err) {
 					res.send('ok');
-					console.log('[Server] Tweet categorized');
+					log('[Server] Tweet categorized');
 				} else {
 					responseUnknown(res);
 				}
@@ -129,7 +134,7 @@ exports.MyLittleCmds = function () {
 			store.setHumanCats(req.user.id, ids, cat, function (err) {
 				if (!err) {
 					res.send('ok');
-					console.log('[Server] Tweets categorized');
+					log('[Server] Tweets categorized');
 				} else {
 					responseUnknown(res);
 				}
@@ -201,7 +206,7 @@ exports.MyLittleCmds = function () {
 			container_id: params.getChartContainerId()
 		});
 		var end = +new Date();
-		console.log('[Server] Stat ' + params.type + ' served in ' + (end - start) + 'ms');
+		log('[Server] Stat ' + params.type + ' served in ' + (end - start) + 'ms');
 	}
 
 	function responseCmdJson(req, res, type, mode, cat, kind, force) {
@@ -214,7 +219,7 @@ exports.MyLittleCmds = function () {
 		stats.getChartData(params, function (data) {
 			res.json(data);
 			var end = +new Date();
-			console.log('[Server] JSON ' + params.type + ' served in ' + (end - start) + 'ms');
+			log('[Server] JSON ' + params.type + ' served in ' + (end - start) + 'ms');
 		});
 	}
 

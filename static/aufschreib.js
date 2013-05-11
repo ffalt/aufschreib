@@ -314,7 +314,7 @@ var aufschreib = {
 	},
 	connectIo: function (cmd, logdiv, cb) {
 		var url = window.location.protocol + "//" + window.location.host;
-		var socket = io.connect(url);//'http://localhost');
+		var socket = io.connect(url);
 		socket.emit('start', { cmd: cmd });
 		socket.on('news', function (data) {
 			var s = data['msg'] + '<br />';
@@ -323,6 +323,14 @@ var aufschreib = {
 		});
 		socket.on('success', function (data) {
 			cb(data['msg']);
+			socket.disconnect();
+		});
+		socket.on('error', function () {
+			cb('Connection error. Please reload site.');
+			socket.disconnect();
+		});
+		socket.on('connect_failed', function () {
+			cb('Connection error. Please reload site.');
 			socket.disconnect();
 		});
 		socket.on('fail', function (data) {

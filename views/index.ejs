@@ -7,8 +7,9 @@
 	<!-- Le styles -->
 	<link type="text/css" href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 	<link type="text/css" href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-	<link type="text/css" href="/static/fontawesome/css/font-awesome.css" rel="stylesheet">
+	<link type="text/css" href="/static/fontawesome/css/font-awesome.min.css" rel="stylesheet">
 	<link type="text/css" href="/static/aufschreib.css" rel="stylesheet">
+	<link type="text/css" href="/static/stats/stats.css" rel="stylesheet">
 	<script type="text/javascript">
 		var cats = <%- JSON.stringify(consts.cats) %>;
 	</script>
@@ -124,6 +125,12 @@
 <!--[if lt IE 9]>
 <script type="text/javascript" src="/static/bootstrap/js/html5shiv.js"></script>
 <![endif]-->
+
+<script  type="text/javascript" src="/static/d3/d3.v3.min.js"></script>
+<script src="/static/socket.io/socket.io.min.js"></script>
+<script src="/static/jquery/jquery.form.min.js"></script>
+<script src="/static/stats/stats.js"></script>
+<script src="/static/stats/pie.js"></script>
 
 </html>
 
