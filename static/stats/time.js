@@ -12,6 +12,7 @@ function Times() {
 		margin = {top: 20, right: 30, bottom: 30, left: 80},
 		focus_height = 80,
 		charts_padding = 50,
+		legendwidth = 100,
 		width = 960 - margin.left - margin.right,
 		height = 500,
 		chart_height = height - charts_padding - margin.top - margin.bottom - focus_height
@@ -246,6 +247,9 @@ function Times() {
 			.style('display', ( (options.view === "zero") ? null : 'none'));
 
 		svg.select(".brush").call(brush.extent([xGroupMin, xDefaultGroupMax]));
+
+		stats.legendary(chartgroup, catsInView, width -legendwidth, 10, legendwidth);
+
 		//onBrush();
 	}
 

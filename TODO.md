@@ -1,4 +1,4 @@
-- finish multi-user-management (create/update/delete users)
+- finish multi-user-management (update/delete users)
 - store hashes not plain passwords
 - check on small devices
-- implement better way to save human votes to file other than saving the whole file all the time (append and use latest if duplicates occures)
+- implement statistics based on votes by all accounts

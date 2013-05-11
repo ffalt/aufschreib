@@ -40,7 +40,7 @@ The result data is NOT RELIABLE! yet.
 
 Copy **"config.dist.js"** and rename it to **"config.js"**
 
-now change the connection details
+now change the connection details to your settings
 
 	const mongo_settings = {
 		"hostname": "localhost",

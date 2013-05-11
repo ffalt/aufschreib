@@ -20,7 +20,7 @@
 	<div id="div-cmd-machine">
 		<div class="well">
 			<h4>Apply Bayesian</h4>
-			<button class="btn btn-primary" onclick="return aufschreib.classify();" type="button">
+			<button id="btn-act-classify" class="btn btn-primary" onclick="return aufschreib.classify();" type="button">
 				Classify
 			</button>
 			<br/>
@@ -28,17 +28,16 @@
 		<div class="row">
 			<% var container_id = chart_machine_params.getChartContainerId() + '_before' %>
 			<% var chartparams = chart_machine_params; %>
-			<div class="span5"><h4>Machine Classification Before</h4><% include stats/pie_commands %></div>
-			<div class="span5"><h4>Machine Classification After</h4>
-
-				<div id="classify-result">Please press the Button to update</div>
+			<div class="span6"><h4>Machine Classification Before</h4><% include stats/pie_commands %></div>
+			<div class="span6"><h4>Machine Classification After</h4>
+				<div id="classify-result"></div>
 			</div>
 		</div>
 	</div>
 	<div class="off-left-hidden" id="div-cmd-stats">
 		<div class="well">
 			<h4>Create/Update Cache for faster Statistics</h4>
-			<button class="btn btn-primary" onclick="return aufschreib.updateCache();"
+			<button  id="btn-act-cache" class="btn btn-primary" onclick="return aufschreib.updateCache();"
 					type="button">
 				Update Stats Cache
 			</button>
@@ -58,7 +57,7 @@
 				  encoding="multipart/form-data"
 				  id="form-file">
 				<input id="bulkfile" type="file" name="file" size="40" placeholder="Choose JSON file"/>
-				<button class="btn btn-primary" onclick="return aufschreib.sendFile()">Upload File</button>
+				<button id="btn-act-bulk" class="btn btn-primary" onclick="return aufschreib.sendFile()">Upload File</button>
 			</form>
 		</div>
 		<div class="row">
@@ -66,7 +65,6 @@
 			<% var chartparams = chart_human_params; %>
 			<div class="span6"><h4>Human Classification Before</h4><% include stats/pie_commands %></div>
 			<div class="span5"><h4>Human Classification After</h4>
-
 				<div id="output-upload"></div>
 			</div>
 		</div>

@@ -8,6 +8,9 @@ var aufschreib = {
 		cat: null,
 		kind: null
 	},
+	connected: false,
+	connectedlog: '',
+	connectedloghistory: '',
 	closethings: false,
 	route: {
 		default: 'edit',
@@ -243,7 +246,7 @@ var aufschreib = {
 		return result;
 	},
 	nextList: function (sender) {
-		var id = $(sender).attr('id');
+		var id = $(sender).attr('value');
 		var params = aufschreib.makeListParams();
 		params['id'] = id;
 		aufschreib.get(null, '', params, function (data) {
@@ -280,6 +283,7 @@ var aufschreib = {
 		var params = {cmd: 'commands'};
 		aufschreib.get(null, '', params, function (data) {
 			$('#content').html(data);
+			aufschreib.setProcessing(aufschreib.connected, aufschreib.connectedlog);
 		});
 		return false;
 	},
@@ -303,23 +307,26 @@ var aufschreib = {
 		var socket = io.connect(url);//'http://localhost');
 		socket.emit('start', { cmd: cmd });
 		socket.on('news', function (data) {
-			logdiv.append(data['msg'] + '<br />');
-			//socket.emit('my other event', { my: 'data' });
+			var s = data['msg'] + '<br />';
+			aufschreib.connectedloghistory += s;
+			$(logdiv).append(s);
 		});
 		socket.on('success', function (data) {
 			cb(data['msg']);
 			socket.disconnect();
 		});
 		socket.on('fail', function (data) {
-			logdiv.append(data['msg'] + '<br />');
+			var s = data['msg'] + '<br />';
+			aufschreib.connectedloghistory += s;
+			$(logdiv).append(s);
 			socket.disconnect();
 		});
 	},
 	requestClassify: function () {
-		var content = $('#classify-result');
-		content.empty();
-		aufschreib.connectIo('classify', content, function (data) {
-			content.html(data);
+		aufschreib.setProcessing(true, '#classify-result');
+		aufschreib.connectIo('classify', '#classify-result', function (data) {
+			aufschreib.setProcessing(false);
+			$('#classify-result').html(data);
 		});
 //		var params = {cmd: 'classify'};
 //		aufschreib.get(null, '', params, function (data) {
@@ -328,33 +335,46 @@ var aufschreib = {
 		return false;
 	},
 	classify: function () {
-		$('#command-modal').modal('show');
+		if (!aufschreib.connected)
+			$('#command-modal').modal('show');
 		return false;
 	},
+	setProcessing: function (active, log) {
+		aufschreib.connected = active;
+		aufschreib.connectedlog = log;
+		if (active) {
+			$("[id^='btn-act-']").addClass('disabled');
+			$(aufschreib.connectedlog).html('<i class="icon-spinner icon-spin icon-large"></i> Processing...<br />' +
+				aufschreib.connectedloghistory);
+		} else {
+			$("[id^='btn-act-']").removeClass('disabled');
+			aufschreib.connectedloghistory = '';
+		}
+	},
 	updateCache: function () {
-		var content = $('#statcache-result');
-		content.empty();
-		aufschreib.connectIo('updatecache', content, function (data) {
+		if (aufschreib.connected) return false;
+		aufschreib.setProcessing(true, '#statcache-result');
+		aufschreib.connectIo('updatecache', '#statcache-result', function (data) {
+			aufschreib.setProcessing(false);
+			$('#statcache-result').html(data);
 		});
-//		var params = {cmd: 'updatecache'};
-//		aufschreib.get(null, '', params, function (data) {
-//			$('#classify-result').html(data);
-//		});
 		return false;
 	},
 	createUser: function () {
-		var oOutput = $("#output-newuser");
+		if (aufschreib.connected) return false;
 		var formData = $("#form-newuser").serialize();
-		oOutput.text("Please wait...");
+		aufschreib.setProcessing(true, '#output-newuser');
 		$.ajax({
 			url: "/user/create",
 			type: "POST",
 			data: formData,
 			success: function (data, status) {
-				oOutput.text("User created!");
+				aufschreib.setProcessing(false);
+				$("#output-newuser").text("User created!");
 			},
 			error: function (jqXHR, textStatus, errorMessage) {
-				oOutput.text("Error " + textStatus);
+				aufschreib.setProcessing(false);
+				$("#output-newuser").text("Error " + textStatus);
 			}
 		});
 		return false;

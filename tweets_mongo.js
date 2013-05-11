@@ -200,15 +200,16 @@ exports.MyLittleTweets = function () {
 					function processUsers(index) {
 						if (index >= entries.length) {
 							callback(null, null);
+						} else if (doneusers.indexOf(entries[index].tweetuser) >= 0) {
+							processUsers(index + 1);
 						} else if ((start) && (entries[index].tweetuser === start)) {
 							start = null;
 							processUsers(index);
 						} else if (start) {
+							doneusers.push(entries[index].tweetuser);
 							processUsers(index + 1);
 						} else if (sendtweets >= maxtweets) {
 							callback(null, entries[index].tweetuser);
-						} else if (doneusers.indexOf(entries[index].tweetuser) >= 0) {
-							processUsers(index + 1);
 						} else {
 							var entry = entries[index];
 							var votes = entries.filter(function (testentry) {
