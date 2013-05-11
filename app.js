@@ -106,8 +106,10 @@ app.post('/login', passport.authenticate('local', { failureRedirect: '/login', f
 	});
 
 app.get('/logout', function (req, res) {
-	req.logout();
-	res.redirect('/');
+	cmd.logoutUser(req, res, function () {
+		req.logout();
+		res.redirect('/');
+	});
 });
 
 io.enable('browser client minification');  // send minified client

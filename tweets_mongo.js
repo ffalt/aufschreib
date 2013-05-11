@@ -14,7 +14,7 @@ exports.MyLittleTweets = function () {
 	var votescollection;
 	var userscollection;
 	var mongodb;
-
+	var userCache = {};
 	var generate_mongo_url = function (obj) {
 		obj.hostname = (obj.hostname || 'localhost');
 		obj.port = (obj.port || 27017);
@@ -71,8 +71,12 @@ exports.MyLittleTweets = function () {
 		})
 	};
 
-
 	me.initUser = function (user, callback) {
+		callback();
+	};
+
+	me.deinitUser = function (user, callback) {
+		delete userCache[user.id];
 		callback();
 	};
 
@@ -171,7 +175,44 @@ exports.MyLittleTweets = function () {
 		}
 	}
 
-	me.getUserPackages = function (voteuserid, start, filter, search, maxtweets, callback) {
+	function processUserPackages(voteuserid, entries, start, maxtweets, callback) {
+		//console.log('Entries: ' + entries.length);
+		var sendtweets = 0;
+
+		function processUsers(index) {
+			if (index >= entries.length) {
+				callback(null, null);
+			} else if ((start) && (entries[index].name === start)) {
+				start = null;
+				processUsers(index);
+			} else if (start) {
+				processUsers(index + 1);
+			} else if (sendtweets >= maxtweets) {
+				callback(null, {next: entries[index].name, left: entries.length - index});
+			} else {
+				var entry = entries[index];
+				loadUserTweets(entry.votes, function (usertweets) {
+					votescollection.count({voteuserid: voteuserid, tweetuser: entry.name}, function (err, count) {
+						callback(usertweets, count, function () {
+							sendtweets += usertweets.length;
+							processUsers(index + 1);
+						})
+					});
+				});
+			}
+		}
+
+		processUsers(0);
+
+	}
+
+	me.getUserPackages = function (voteuser, start, filter, search, maxtweets, callback) {
+		if ((voteuser.lastentries) && (start)) {
+			//console.log('use Cache');
+			processUserPackages(voteuser.id, voteuser.lastentries, start, maxtweets, callback);
+			return;
+		}
+		//console.log('no Cache');
 		var humanfilter = [];
 		var machinefilter = [];
 		filter = filter.split(',');
@@ -182,9 +223,8 @@ exports.MyLittleTweets = function () {
 				machinefilter.push(cat.substring(8));
 			}
 		});
-		var sendtweets = 0;
 		prepareSearch(search, function (allowedids) {
-			var query = {voteuserid: voteuserid,
+			var query = {voteuserid: voteuser.id,
 				human: {$in: humanfilter},
 				machine: {$in: machinefilter}
 			};
@@ -195,40 +235,20 @@ exports.MyLittleTweets = function () {
 				if (err) {
 					throw err;
 				} else {
-					var doneusers = [];
-
-					function processUsers(index) {
-						if (index >= entries.length) {
-							callback(null, null);
-						} else if (doneusers.indexOf(entries[index].tweetuser) >= 0) {
-							processUsers(index + 1);
-						} else if ((start) && (entries[index].tweetuser === start)) {
-							start = null;
-							processUsers(index);
-						} else if (start) {
-							doneusers.push(entries[index].tweetuser);
-							processUsers(index + 1);
-						} else if (sendtweets >= maxtweets) {
-							callback(null, entries[index].tweetuser);
-						} else {
-							var entry = entries[index];
-							var votes = entries.filter(function (testentry) {
-								return testentry.tweetuser === entry.tweetuser;
-							});
-							doneusers.push(entry.tweetuser);
-							loadUserTweets(votes, function (usertweets) {
-								votescollection.count({voteuserid: voteuserid, tweetuser: entry.tweetuser}, function (err, count) {
-									callback(usertweets, count, function () {
-										sendtweets += usertweets.length;
-										processUsers(index + 1);
-									})
-								});
-							});
-						}
+					var packages = {};
+					for (var i = 0; i < entries.length; i++) {
+						var entry = entries[i];
+						packages[entry.tweetuser] = packages[entry.tweetuser] || [];
+						packages[entry.tweetuser].push(entry);
 					}
-
-					processUsers(0);
-
+					var pack = [];
+					for (var key in packages) {
+						var obj = {votes: packages[key]};
+						obj.name = obj.votes[0].tweetuser;
+						pack.push(obj);
+					}
+					voteuser.lastentries = pack;
+					processUserPackages(voteuser.id, pack, start, maxtweets, callback);
 				}
 			});
 		});
@@ -367,15 +387,31 @@ exports.MyLittleTweets = function () {
 	}
 
 	function getUserByName(name, cb) {
+		for (var key in userCache) {
+			if (userCache.hasOwnProperty(key) && (userCache[key].name === name)) {
+				cb(null, userCache[key]);
+				return;
+			}
+		}
+		console.log('Check User by Name: ' + name);
 		userscollection.findOne({name: name}, function (err, user) {
+			if (user)
+				userCache[user.id] = user;
 			cb(err, user);
 		});
 	}
 
 	function getUserById(id, cb) {
-		userscollection.findOne({id: id}, function (err, user) {
-			cb(err, user);
-		});
+		if (userCache[id]) {
+			cb(null, userCache[id]);
+		} else {
+			console.log('Check User: ' + id);
+			userscollection.findOne({id: id}, function (err, user) {
+				if (user)
+					userCache[id] = user;
+				cb(err, user);
+			});
+		}
 	}
 
 	function createUser(name, password, cb) {

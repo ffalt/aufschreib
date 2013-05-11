@@ -47,7 +47,7 @@ exports.MyLittleCmds = function () {
 			'Content-Type': 'text/html; charset=utf-8'
 		});
 		var start = +new Date();
-		store.getUserPackages(req.user.id, startnr, filter, search, 100,
+		store.getUserPackages(req.user, startnr, filter, search, 100,
 			function (tweets, data, callback) {
 				if ((tweets) && (tweets.length > 0)) {
 					res.render('user', {
@@ -77,9 +77,9 @@ exports.MyLittleCmds = function () {
 					}
 
 					if (data) {
-						res.render('nextlink', {id: data}, endIt);
+						res.render('nextlink', {id: data.next, count: data.left}, endIt);
 					} else if (written === 0) {
-						endIt(null, 'Nix :]');
+						endIt(null, 'Nothing found :]');
 					} else {
 						endIt();
 					}
@@ -262,6 +262,10 @@ exports.MyLittleCmds = function () {
 			}
 		}
 	}
+
+	me.logoutUser = function (req, res, callback) {
+		store.deinitUser(req.user, callback);
+	};
 
 	me.initUser = function (req, res, callback) {
 		store.initUser(req.user, callback);
