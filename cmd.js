@@ -367,6 +367,9 @@ exports.MyLittleCmds = function () {
 				socket.emit('fail', { msg: 'unknown command' });
 			}
 		});
+		socket.on('end', function (data) {
+			socket.disconnect();
+		});
 	};
 
 	return me;

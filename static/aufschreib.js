@@ -314,27 +314,31 @@ var aufschreib = {
 	},
 	connectIo: function (cmd, logdiv, cb) {
 		var url = window.location.protocol + "//" + window.location.host;
-		var socket = io.connect(url);
-		socket.emit('start', { cmd: cmd });
-		socket.on('news', function (data) {
-			var s = data['msg'] + '<br />';
-			aufschreib.connectedloghistory += s;
-			$(logdiv).append(s);
-		});
-		socket.on('success', function (data) {
-			cb(data['msg']);
-			socket.disconnect();
-		});
-		socket.on('connect_failed', function () {
-			cb('Connection error. Please reload site.');
-			socket.disconnect();
-		});
-		socket.on('fail', function (data) {
-			var s = data['msg'] + '<br />';
-			aufschreib.connectedloghistory += s;
-			$(logdiv).append(s);
-			socket.disconnect();
-		});
+		var socket = io.connect(url)
+			.emit('start', { cmd: cmd })
+			.on('news', function (data) {
+				var s = data['msg'] + '<br />';
+				aufschreib.connectedloghistory += s;
+				$(logdiv).append(s);
+			})
+			.on('success', function (data) {
+				socket.emit('end', {});
+				socket.disconnect();
+				io.j = [];  // ugly workaround for connect -> disconnect -> connect bug in socket.io
+				io.sockets = [];  //this, too
+				cb(data['msg']);
+			})
+			.on('connect_failed', function () {
+				cb('Connection error. Please reload site.');
+				io.j = [];  // ugly workaround for connect -> disconnect -> connect bug in socket.io
+				io.sockets = [];  //this, too
+			})
+			.on('fail', function (data) {
+				socket.disconnect();
+				var s = data['msg'] + '<br />';
+				aufschreib.connectedloghistory += s;
+				$(logdiv).append(s);
+			});
 	},
 	requestClassify: function () {
 		aufschreib.setProcessing(true, '#classify-result');
