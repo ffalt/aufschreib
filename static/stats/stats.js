@@ -98,7 +98,6 @@ function Stats(cats, hashBangNotifyDisabeld) {
 			.attr('viewBox', '0 0 ' + width + ' ' + height)
 			.attr('perserveAspectRatio', 'xMinYMid')
 			.style("background-color", "white");
-		;
 		var
 			aspect = width / height,
 			container = $('#' + id + 'vis').parent();
@@ -110,12 +109,18 @@ function Stats(cats, hashBangNotifyDisabeld) {
 		return svg;
 	}
 
-	function downloadSVG() {
+	function openSVG(svg) {
 		d3.select(this).attr('href', 'data:image/svg+xml;charset=utf-8;base64,' + btoa(unescape(encodeURIComponent(
 			svg.attr('version', '1.1')
 				.attr('xmlns', 'http://www.w3.org/2000/svg')
 				.attr('xmlns:xmlns:xlink', 'http://www.w3.org/1999/xlink')   //double declaration is not a type
 				.node().parentNode.innerHTML))));
+	}
+
+	function downloadSVG() {
+		if (svg) {
+			openSVG(svg);
+		}
 	}
 
 	function downloadJSON() {
@@ -216,7 +221,8 @@ function Stats(cats, hashBangNotifyDisabeld) {
 		selectActives: selectActives,
 		linkUIDefault: linkUIDefault,
 		linkUIReload: linkUIReload,
-		linkUIRegen: linkUIRegen
+		linkUIRegen: linkUIRegen,
+		openSVG: openSVG
 	};
 }
 

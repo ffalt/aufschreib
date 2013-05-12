@@ -77,6 +77,13 @@ const wordkinds = [
 		icon: 'icon-link'
 	}
 ];
+const graphkinds = [
+	{
+		id: 'mention',
+		name: 'Mentions',
+		icon: 'icon-reply'
+	}
+];
 const stats = [
 	{
 		id: 'pie',
@@ -99,7 +106,7 @@ const stats = [
 	},
 	{
 		id: 'time',
-		name: 'Timeline',
+		name: 'Time',
 		maxentries: 0,
 		defaultkind: null,
 		kinds: [],
@@ -115,6 +122,15 @@ const stats = [
 		kinds: wordkinds,
 		icon: 'icon-cloud',
 		usesCats: true
+	},
+	{
+		id: 'graph',
+		name: 'Graph',
+		maxentries: 0,
+		defaultkind: 'mention',
+		kinds: graphkinds,
+		icon: 'icon-sitemap',
+		usesCats: false
 	}
 ];
 const thresholds = {

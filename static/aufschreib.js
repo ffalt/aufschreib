@@ -445,9 +445,13 @@ var aufschreib = {
 		if (subs.length > 2) {
 			aufschreib.stats.kind = subs[2];
 		} else {
+			//TODO use defaults from consts.js
 			if ((aufschreib.stats.type === 'cloud') || (aufschreib.stats.type === 'bar')) {
 				if (!aufschreib.stats.kind)
 					aufschreib.stats.kind = 'word';
+			} else if (aufschreib.stats.type === 'graph') {
+				if (!aufschreib.stats.kind)
+					aufschreib.stats.kind = 'mention';
 			} else
 				aufschreib.stats.kind = null;
 		}

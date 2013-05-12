@@ -22,6 +22,7 @@ var config = require('./config');
 var wordstat = require('./stats_words').MyLittleWordStat();
 var timestat = require('./stats_time').MyLittleTimeStat();
 var piestat = require('./stats_pie').MyLittlePieStat();
+var graphstat = require('./stats_graph').MyLittleGraphStat();
 
 exports.MyLittleStats = function () {
 	var me = this;
@@ -110,6 +111,9 @@ exports.MyLittleStats = function () {
 
 	function getStat(params) {
 		switch (params.type) {
+			case 'graph':
+				return graphstat;
+				break;
 			case 'time':
 				return timestat;
 				break;
@@ -225,7 +229,6 @@ exports.MyLittleStats = function () {
 	}
 
 	me.cacheStats = function (voteuserid, store, logcb, callback) {
-		logcb('Creating Stats Cache');
 		var params = me.getParams(voteuserid, store);
 		params.mode = 'human';
 		writeCacheMode(params, logcb, function () {

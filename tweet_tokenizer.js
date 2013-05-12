@@ -43,6 +43,13 @@ exports.MyLittleTweetTokenizer = function () {
 		return result;
 	};
 
+	me.extractUsers = function (text) {
+		var result = text.match(exp_user);
+		if (!result)
+			result = [];
+		return result;
+	};
+
 	me.extractClient = function (text) {
 		var n = text.match(exp_client);
 		if ((n) && (n.length > 1)) {
