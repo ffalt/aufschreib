@@ -1,92 +1,124 @@
 <% include stats_head %>
+<div id="<%- container_id %>temp" class="hidden">
+	<ul class="nav navbar-nav" id="<%- container_id %>spiral">
+		<li><span class="navbar-brand">Spiral:</span></li>
+		<li><a class="btn btn-default" title="Archimedean" value="archimedean" href="#">Archimedean</a></li>
+		<li><a class="btn btn-default" title="Rectangular" value="rectangular" href="#">Rectangular</a></li>
+	</ul>
+	<ul class="nav navbar-nav" id="<%- container_id %>scale">
+		<li><span class="navbar-brand">Scale:</span></li>
+		<li><a class="btn btn-default" title="log n" href="#" value="log">log n</a></li>
+		<li><a class="btn btn-default" title="√n" href="#" value="sqrt">√n</a></li>
+		<li><a class="btn btn-default" title="n" href="#" value="linear">n</a></li>
+	</ul>
+	<ul class="nav navbar-nav">
+		<li><span class="navbar-brand">Orientations:</span></li>
+		<li>
+			<form class="navbar-form form-horizontal navbar-form-orientations">
+				<div class="input-group inline">
+					<span class="input-group-addon">Max</span>
+					<input class="form-control small-input" type="number" id="cloud_angle-count" value="5" min="1">
+					<span class="input-group-addon">#</span>
+				</div>
 
-<div class="navbar navsmall">
-	<div class="navbar-inner">
-		<ul class="nav" id="<%- container_id %>spiral">
-			<li><span class="brand">Spiral:</span></li>
-			<li><a title="Archimedean" value="archimedean" href="#">Archimedean</a></li>
-			<li><a title="Rectangular" value="rectangular" href="#">Rectangular</a></li>
-		</ul>
-		<ul class="nav" id="<%- container_id %>scale">
-			<li><span class="brand">Scale:</span></li>
-			<li><a title="log n" href="#" value="log">log n</a></li>
-			<li><a title="√n" href="#" value="sqrt">√n</a></li>
-			<li><a title="n" href="#" value="linear">n</a></li>
-		</ul>
+				<div class="input-group inline">
+					<span class="input-group-addon">from</span>
+					<input class="form-control small-input" type="number" id="cloud_angle-from" width="30" value="-60" min="-90" max="90">
+					<span class="input-group-addon">°</span>
+				</div>
 
-		<ul class="nav">
-			<li><span class="brand">Font:</span></li>
-			<li>
-				<form class="navbar-form form-horizontal">
-					<input type="text" class="span2" id="cloud_font" value="Impact">
-				</form>
-			</li>
-		</ul>
+				<span class="cloud_angles inline" id="cloud_angles_view"></span>
 
-		<ul class="nav">
-			<li><span class="brand">Max:</span></li>
-			<li>
-				<form class="navbar-form form-horizontal">
-					<input type="number" class="span1" id="cloud_count" value="30" min="0">
-				</form>
-			</li>
-		</ul>
-
-		<ul class="nav" id="<%- container_id %>case">
-			<li><span class="brand">Case:</span></li>
-			<li><a title="Case Sensitive" href="#" value="false">Sensitive</a></li>
-		</ul>
-
-		<ul class="nav" id="<%- container_id %>stop">
-			<li><span class="brand">Stopwords:</span></li>
-			<li><a title="Hide/Show Stopwords" href="#" value="true">Hidden</a></li>
-		</ul>
-		<ul class="nav" id="<%- container_id %>tag">
-			<li><span class="brand">#aufschrei:</span></li>
-			<li><a title="Hide/Show #aufschrei Entry" href="#" value="false">Hidden</a></li>
-		</ul>
-
-		<ul class="nav">
-			<li><span class="brand">Orientations:</span></li>
-			<li>
-				<form class="navbar-form form-horizontal">
-					<span class="input-prepend input-append">
-						<span class="add-on">How Much</span>
-						<input class="span1" type="number" id="cloud_angle-count" value="5" min="1">
-						<span class="add-on">#</span>
-					</span>
-
-					<div class="input-prepend input-append">
-						<span class="add-on">from</span>
-						<input class="span1" type="number" id="cloud_angle-from" width="30" value="-60" min="-90"
-							   max="90">
-						<span class="add-on">°</span>
-					</div>
-
-					<span class="cloud_angles inline" id="cloud_angles_view"></span>
-
-					<div class="input-prepend input-append">
-						<span class="add-on">to</span>
-						<input class="span1" type="number" id="cloud_angle-to" width="30" value="60" min="-90"
-							   max="90">°
-						<span class="add-on">°</span>
-					</div>
-				</form>
-			</li>
-		</ul>
-
-	</div>
+				<div class="input-group inline">
+					<span class="input-group-addon">to</span>
+					<input class="form-control small-input" type="number" id="cloud_angle-to" width="30" value="60" min="-90" max="90">
+					<span class="input-group-addon">°</span>
+				</div>
+			</form>
+		</li>
+	</ul>
+	<ul class="nav navbar-nav" id="<%- container_id %>settings">
+		<li><span class="navbar-brand">Settings:</span></li>
+		<li id="<%- container_id %>case"><a class="btn btn-default" title="Case Sensitive" href="#" value="false">Case Sensitive</a></li>
+		<li id="<%- container_id %>stop"><a class="btn btn-default" title="Hide/Show Stopwords" href="#" value="false">Hide Stopwords</a></li>
+		<li id="<%- container_id %>tag"><a class="btn btn-default" title="Hide/Show #aufschrei Entry" href="#" value="false">Hide #aufschrei</a></li>
+	</ul>
+	<ul class="nav navbar-nav">
+		<li><span class="navbar-brand">Font:</span></li>
+		<li>
+			<form class="navbar-form form-horizontal">
+				<div class="input-group">
+					<input type="text" class="form-control col-md-2" id="cloud_font" value="Impact">
+				</div>
+			</form>
+		</li>
+	</ul>
+	<ul class="nav navbar-nav">
+		<li><span class="navbar-brand">Max Entries:</span></li>
+		<li>
+			<form class="navbar-form form-horizontal">
+				<div class="input-group">
+					<input type="number" class="form-control small-input" id="cloud_count" value="30" min="0">
+				</div>
+			</form>
+		</li>
+	</ul>
 </div>
-
 <% include stats_content %>
 
 <% include stats_foot %>
-
+<link type="text/css" href="/static/utils/typeahead.js-bootstrap.css" rel="stylesheet">
+<script src="/static/utils/fontdetect.js"></script>
+<script src="/static/utils/typeahead.min.js"></script>
 <script src="/static/d3/d3.layout.cloud.min.js"></script>
 <script type="text/javascript">
 	$(function () {
 		$(document).ready(
 				function () {
+					var detective = new Detector();
+					var testfonts = [];
+					testfonts.push("Arial");
+					testfonts.push("Arial Black");
+					testfonts.push("Arial Narrow");
+					testfonts.push("Arial Rounded MT Bold");
+					testfonts.push("Bookman Old Style");
+					testfonts.push("Bradley Hand ITC");
+					testfonts.push("Century");
+					testfonts.push("Century Gothic");
+					testfonts.push("Comic Sans MS");
+					testfonts.push("Courier");
+					testfonts.push("Courier New");
+					testfonts.push("Georgia");
+					testfonts.push("Gentium");
+					testfonts.push("Impact");
+					testfonts.push("King");
+					testfonts.push("Lucida Console");
+					testfonts.push("Lalit");
+					testfonts.push("Modena");
+					testfonts.push("Monotype Corsiva");
+					testfonts.push("Papyrus");
+					testfonts.push("Tahoma");
+					testfonts.push("TeX");
+					testfonts.push("Times");
+					testfonts.push("Times New Roman");
+					testfonts.push("Trebuchet MS");
+					testfonts.push("Verdana");
+					testfonts.push("Verona");
+					var fonts = [];
+					for (var i = 0; i < testfonts.length; i++) {
+						if (detective.detect(testfonts[i])) {
+							fonts.push(testfonts[i]);
+						}
+					}
+					;
+					$('#cloud_font').typeahead({
+						name: 'fonts',
+						header: 'Cloud Font',
+						limit: 30,
+						local: testfonts
+					});
+
+					$('#<%- container_id %>temp').children().appendTo($('#navbar-content'));
 					var cloudy = new Clouds();
 					cloudy.initCloud('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>', new Stats(cats));
 				}

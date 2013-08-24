@@ -1,20 +1,18 @@
 <div id="<%- tweet.id %>" class="tweet">
-	<div class="tweet-counts text-right">
-		<%- tweet.source
-		%> - <a href="https://twitter.com/<%- tweet.user %>/statuses/<%- tweet.id %>" target="_blank"><%=
-		textutils.formatDateTime(tweet.created_at)
-		%></a>&nbsp;&nbsp;<a class="close tweet-close" href="#">×</a>
+	<div class="text-right">
+		<a class="close tweet-close" href="#">×</a>
+	</div>
+	<div class="tweet-counts">
+		<a href="https://twitter.com/<%- tweet.user %>/statuses/<%- tweet.id %>" target="_blank"><%= textutils.formatDateTime(tweet.created_at) %></a> - <%- tweet.source %>
 	</div>
 	<div class="tweet-msg"><%- textutils.prettyPrintTweetText(tweet.text, tweet.longurls) %></div>
 	<div>
 		<div class="tweet-btns">
-			<div class="btn-group">
 				<% consts.cats.forEach(function(cat) {
 				if (cat.id !== consts.unknown) {
-				%><a class="btn btn-tweet<%- (cat.id===tweet.human?' active' : '' ) %>"
-					 value="<%- cat.id %>" href="#"><i class="<%- cat.icon %>"></i> <%= cat.name %></a>
+				%><a class="btn btn-default btn-tweet-vote btn-tweet<%- (cat.id===tweet.human?' active' : '' ) %>"
+					 value="<%- cat.id %>" href="#"><i class="glyphicon <%- cat.icon %>"></i> <%= cat.name %></a>
 				<% } }); %>
-			</div>
 		</div>
 		<div class="tweet-classy">
 			Human:&nbsp;<span class="tweet-human"><%= consts.tools.catName(tweet.human) %></span>

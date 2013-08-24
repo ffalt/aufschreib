@@ -1,37 +1,34 @@
 <% include stats_head %>
 
-<div class="navbar navsmall">
-	<div class="navbar-inner">
-
-		<ul class="nav">
-			<li><span class="brand">Max:</span></li>
-			<li>
-				<form class="navbar-form form-horizontal">
-					<input type="number" class="span1" id="bar_count" value="30" min="0">
-				</form>
-			</li>
-		</ul>
-		<ul class="nav" id="<%- container_id %>bars">
-			<li><span class="brand">Bars:</span></li>
-			<li><a title="Stacked" href="#" value="stacked">Stacked</a></li>
-			<li><a title="Grouped" href="#" value="grouped">Grouped</a></li>
-		</ul>
-		<ul class="nav" id="<%- container_id %>case">
-			<li><span class="brand">Case:</span></li>
-			<li><a title="Case Sensitive" href="#" value="false">Sensitive</a></li>
-		</ul>
-		<ul class="nav" id="<%- container_id %>stop">
-			<li><span class="brand">Stopwords:</span></li>
-			<li><a title="Hide/Show Stopwords" href="#" value="false">Hidden</a></li>
-		</ul>
-		<ul class="nav" id="<%- container_id %>tag">
-			<li><span class="brand">#aufschrei:</span></li>
-			<li><a title="Hide/Show #aufschrei Entry" href="#" value="false">Hidden</a></li>
-		</ul>
-
-	</div>
+<div id="<%- container_id %>temp" class="hidden">
+	<ul class="nav navbar-nav" id="<%- container_id %>max">
+		<li><span class="navbar-brand">Max Entries:</span></li>
+		<li>
+			<form class="navbar-form navbar-left form-inline" role="search">
+				<div class="input-group">
+					<input type="number" class="form-control small-input" id="bar_count" value="30" min="0">
+				</div>
+			</form>
+		</li>
+	</ul>
+	<ul class="nav navbar-nav" id="<%- container_id %>bars">
+		<li><span class="navbar-brand">Bars:</span></li>
+		<li><a class="btn btn-default" title="Stacked" href="#" value="stacked">Stacked</a></li>
+		<li><a class="btn btn-default" title="Grouped" href="#" value="grouped">Grouped</a></li>
+	</ul>
+	<ul class="nav navbar-nav" id="<%- container_id %>case">
+		<li><span class="navbar-brand">Case:</span></li>
+		<li><a class="btn btn-default" title="Case Sensitive" href="#" value="false">Sensitive</a></li>
+	</ul>
+	<ul class="nav navbar-nav" id="<%- container_id %>stop">
+		<li><span class="navbar-brand">Stopwords:</span></li>
+		<li><a class="btn btn-default" title="Hide/Show Stopwords" href="#" value="false">Hidden</a></li>
+	</ul>
+	<ul class="nav navbar-nav" id="<%- container_id %>tag">
+		<li><span class="navbar-brand">#aufschrei:</span></li>
+		<li><a class="btn btn-default" title="Hide/Show #aufschrei Entry" href="#" value="false">Hidden</a></li>
+	</ul>
 </div>
-
 <% include stats_content %>
 
 <% include stats_foot %>
@@ -40,6 +37,7 @@
 	$(function () {
 		$(document).ready(
 				function () {
+					$('#<%- container_id %>temp').children().appendTo($('#navbar-content'));
 					var bars = new Bars();
 					bars.initBars('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>', new Stats(cats));
 				}

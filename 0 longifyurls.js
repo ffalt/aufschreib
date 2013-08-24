@@ -109,17 +109,59 @@ function longifyUrls(tweets) {
 		}
 	}
 
+	function resolveWithCall(url, callback) {
+		resolver.resolve(url, function (error, resolved) {
+			try {
+				if ((error) || (resolved === url)) {
+					if (!error)
+						error = 'Nothing found for ' + url;
+					callback(error);
+				} else {
+					callback(null, resolved);
+				}
+			} catch (e) {
+				callback(e);
+			}
+		});
+	}
+
+	function resolveLongUrlPlz(url, callback) {
+		fetchUrl("http://www.longurlplease.com/api/v1.1?q=" + url, function (error, meta, body) {
+			try {
+				if (error) {
+					callback(error);
+				} else {
+					var result = body.toString();
+					console.log(result);
+					if
+						((result.indexOf('required more quota') >= 0) || (result.indexOf('Over Quota') >= 0)) {
+						callback("Api Limit reached");
+					} else {
+						var resolved = JSON.parse(result);
+						if ((resolved) && (resolved[url])) {
+							callback(null, resolved[url]);
+						}
+						else
+							callback("Nothing found for " + url);
+					}
+				}
+			} catch (e) {
+				callback(e);
+			}
+		});
+	}
+
 	function resolveEvenDeeper(resolvedeeperlinks, totalcount) {
 		if (resolvedeeperlinks.length === 0) {
 			saveUrls(links);
 		} else {
 			var resolve = resolvedeeperlinks.pop();
-			resolver.resolve(resolve.short, function (error, resolved) {
-				if ((error) || (resolved === resolve.short)) {
+			resolveWithCall(resolve.short, function (error, result) {
+				if (error) {
 					console.log((totalcount - resolvedeeperlinks.length) + '/' + totalcount + ' could not even deeper resolve ' + resolve.short + ' - ' + error);
 				} else {
-					links[resolve.org] = resolved;
-					console.log((totalcount - resolvedeeperlinks.length) + '/' + totalcount + ' resolved even deeper ' + resolve.org + ' -> ' + resolve.short + ' -> ' + resolved);
+					links[resolve.org] = result;
+					console.log((totalcount - resolvedeeperlinks.length) + '/' + totalcount + ' resolved even deeper ' + resolve.org + ' -> ' + resolve.short + ' -> ' + result);
 				}
 				resolveEvenDeeper(resolvedeeperlinks, totalcount);
 			});
@@ -135,33 +177,34 @@ function longifyUrls(tweets) {
 				}
 			}
 			resolveEvenDeeper(resolvedeeperlinks, resolvedeeperlinks.length);
-
 		} else {
 			var resolve = resolvedeeperlinks.pop();
 			if (sucessfullyresolved[resolve.short]) {
 				links[resolve.org] = sucessfullyresolved[resolve.short];
 				resolveDeeper(resolvedeeperlinks, sucessfullyresolved, totalcount);
 			} else {
-				fetchUrl("http://www.longurlplease.com/api/v1.1?q=" + resolve.short, function (error, meta, body) {
+				var wait = 1000;
+				resolveLongUrlPlz(resolve.short, function (error, result) {
 					if (error) {
-						console.log((totalcount - resolvedeeperlinks.length) + '/' + totalcount + ' could not deeper resolve ' + resolve.short + ' - ' + error);
-					} else {
-						var resolved = JSON.parse(body.toString());
-						if ((resolved) && (resolved[resolve.short])) {
-							var result = resolved[resolve.short];
-							links[resolve.org] = result;
-							sucessfullyresolved[resolve.short] = result;
-							console.log((totalcount - resolvedeeperlinks.length) + '/' + totalcount + ' resolved deeper ' + resolve.org + ' -> ' + resolve.short + ' -> ' + result);
-							if (isShortUrlSupported(result)) {
-								resolve.short = result;
-								resolvedeeperlinks.push(resolve); //longifyception!!1!
-							}
+						if (error == 'Api Limit reached') {
+							resolvedeeperlinks.push(result);
+							wait = 20 * 1000;
+							console.log(error);
+						} else {
+							console.log((totalcount - resolvedeeperlinks.length) + '/' + totalcount + ' could not deeper resolve ' + resolve.short + ' - ' + error);
 						}
-						else {
-							console.log((totalcount - resolvedeeperlinks.length) + '/' + totalcount + ' empty answer for deeper resolve ' + resolve.short);
+					} else {
+						links[resolve.org] = result;
+						sucessfullyresolved[resolve.short] = result;
+						console.log((totalcount - resolvedeeperlinks.length) + '/' + totalcount + ' resolved deeper ' + resolve.org + ' -> ' + resolve.short + ' -> ' + result);
+						if (isShortUrlSupported(result)) {
+							resolve.short = result;
+							resolvedeeperlinks.push(resolve); //longifyception!!1!
 						}
 					}
-					resolveDeeper(resolvedeeperlinks, sucessfullyresolved, totalcount);
+					setTimeout((function () {
+						resolveDeeper(resolvedeeperlinks, sucessfullyresolved, totalcount);
+					}), wait);
 				});
 			}
 		}
@@ -178,19 +221,24 @@ function longifyUrls(tweets) {
 			resolveDeeper(resolvedeeperlinks, {}, resolvedeeperlinks.length);
 		} else {
 			var link = unresolvedlinks[index];
-			fetchUrl("http://www.longurlplease.com/api/v1.1?q=" + link, function (error, meta, body) {
+
+			var wait = 1000;
+			resolveLongUrlPlz(link, function (error, result) {
 				if (error) {
-					console.log(index + 1 + '/' + unresolvedlinks.length + ' could not resolve ' + link + ' - ' + error);
-				} else {
-					var resolved = JSON.parse(body.toString());
-					if ((resolved) && (resolved[link])) {
-						links[link] = resolved[link];
-						console.log(index + 1 + '/' + unresolvedlinks.length + ' resolved ' + link + ' ' + resolved[link]);
+					if (error == 'Api Limit reached') {
+						wait = 20 * 1000;
+						index--;
+						console.log(error);
+					} else {
+						console.log(index + 1 + '/' + unresolvedlinks.length + ' could not resolve ' + link + ' - ' + error);
 					}
-					else
-						console.log(index + 1 + '/' + unresolvedlinks.length + ' empty answer for ' + link);
+				} else {
+					links[link] = result;
+					console.log(index + 1 + '/' + unresolvedlinks.length + ' resolved ' + link + ' ' + result);
 				}
-				resolve(index + 1);
+				setTimeout((function () {
+					resolve(index + 1);
+				}), wait);
 			});
 		}
 	}

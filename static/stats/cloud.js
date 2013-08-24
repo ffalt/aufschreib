@@ -172,7 +172,7 @@ function Clouds() {
 	function toggleTag() {
 		options.hidetag = (!options.hidetag);
 		this.value = options.hidetag;
-		d3.selectAll('#' + options.id + 'tag li').attr('class', (options.hidetag ? 'active' : null));
+		d3.selectAll('#' + options.id + 'tag').attr('class', (options.hidetag ? 'active' : null));
 		generate();
 		stats.d3_eventCancel();
 	}
@@ -180,7 +180,7 @@ function Clouds() {
 	function toggleStop() {
 		options.hidestops = (!options.hidestops);
 		this.value = options.hidestops;
-		d3.selectAll('#' + options.id + 'stop li').attr('class', (options.hidestops ? 'active' : null));
+		d3.selectAll('#' + options.id + 'stop').attr('class', (options.hidestops ? 'active' : null));
 		generate();
 		stats.d3_eventCancel();
 	}
@@ -188,7 +188,7 @@ function Clouds() {
 	function toggleCase() {
 		options.casesensitiv = (!options.casesensitiv);
 		this.value = options.casesensitiv;
-		d3.selectAll('#' + options.id + 'case li').attr('class', (options.casesensitiv ? 'active' : null));
+		d3.selectAll('#' + options.id + 'case').attr('class', (options.casesensitiv ? 'active' : null));
 		generate();
 		stats.d3_eventCancel();
 	}

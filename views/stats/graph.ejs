@@ -1,24 +1,22 @@
 <% include stats_head %>
 
-<div class="navbar navsmall">
-	<div class="navbar-inner">
-		<ul class="nav" id="<%- container_id %>view">
-			<li><span class="brand">View:</span></li>
-			<li><a title="SVG" value="svg" href="#">SVG</a></li>
-			<li><a title="WebGL" value="webgl" href="#">WebGL</a></li>
-		</ul>
-		<ul class="nav">
-			<li><span class="brand">Min:</span></li>
-			<li>
-				<form class="navbar-form form-horizontal">
-					<input type="number" class="span1" id="graph_min" value="5" min="1">
-				</form>
-			</li>
-		</ul>
-	</div>
-
+<div id="<%- container_id %>temp" class="hidden">
+	<ul class="nav navbar-nav" id="<%- container_id %>view">
+		<li><span class="navbar-brand">View:</span></li>
+		<li><a class="btn btn-default" title="SVG" value="svg" href="#">SVG</a></li>
+		<li><a class="btn btn-default" title="WebGL" value="webgl" href="#">WebGL</a></li>
+	</ul>
+	<ul class="nav navbar-nav" id="<%- container_id %>min">
+		<li><span class="navbar-brand">Min Mentions:</span></li>
+		<li>
+			<form class="navbar-form navbar-left form-inline" role="search">
+				<div class="input-group">
+					<input type="number" class="form-control small-input" id="graph_min" value="5" min="1">
+				</div>
+			</form>
+		</li>
+	</ul>
 </div>
-
 <% include stats_content %>
 
 <% include stats_foot %>
@@ -29,6 +27,7 @@
 	$(function () {
 		$(document).ready(
 				function () {
+					$('#<%- container_id %>temp').children().appendTo($('#navbar-content'));
 					var graph = new Graph();
 					graph.initGraph('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>', new Stats(cats));
 				}

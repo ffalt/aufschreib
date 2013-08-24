@@ -25,7 +25,6 @@ passport.deserializeUser(function (id, done) {
 	});
 });
 
-
 passport.use(new LocalStrategy(
 	function (username, password, done) {
 		process.nextTick(function () {
@@ -58,8 +57,6 @@ app.configure('all', function () {
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
 	app.use(express.session({ secret: 'keyboard cat is happy', store: sessionstore }));
-	// Initialize Passport!  Also use passport.session() middleware, to support
-	// persistent login sessions (recommended).
 	app.use(passport.initialize());
 	app.use(passport.session());
 	app.use(function (err, req, res, next) {

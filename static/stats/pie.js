@@ -101,6 +101,8 @@ function Pies() {
 		data.forEach(function (d) {
 			total += d.value;
 		})
+		var listenToEventsBlockCount = 0;
+		var listenToEvents = false;
 		// Each sector will refer to its gradient fill
 		paths
 			.attr("fill", function (d, i) {
@@ -111,27 +113,28 @@ function Pies() {
 					'Prozent:' + "\t" + (d.value * 100 / total).toFixed(2) + '%' + "\n" +
 					'Anzahl:' + "\t" + d.value;
 			})
-			.transition().duration(1000).attrTween("d", tweenIn).each("end", function () {
-				this._listenToEvents = true;
+			.transition().duration(600).attrTween("d", tweenIn).each("end", function () {
+				listenToEventsBlockCount++;
+				listenToEvents = listenToEventsBlockCount == data.length;
 			});
 
 		// Mouse interaction handling
 		paths
 			.on("click", function (d) {
-				/*	if (this._listenToEvents) {
+				/*	if (listenToEvents) {
 
 				 // Reset inmediatelly
 				 d3.select(this).attr("transform", "translate(0,0)")
 				 // Change level on click if no transition has started
 				 paths.each(function () {
-				 this._listenToEvents = false;
+				 listenToEvents = false;
 				 });
 				 }
 				 */
 			})
 			.on("mouseover", function (d) {
 				// Mouseover effect if no transition has started
-				if (this._listenToEvents) {
+				if (listenToEvents) {
 					// Calculate angle bisector
 					var ang = d.startAngle + (d.endAngle - d.startAngle) / 2;
 					// Transformate to SVG space
@@ -147,7 +150,7 @@ function Pies() {
 			})
 			.on("mouseout", function (d) {
 				// Mouseout effect if no transition has started
-				if (this._listenToEvents) {
+				if (listenToEvents) {
 					d3.select(this).transition()
 						.duration(150).attr("transform", "translate(0,0)");
 				}

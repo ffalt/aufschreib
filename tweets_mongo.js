@@ -474,10 +474,10 @@ exports.MyLittleTweets = function () {
 					tweetcollection.findOne({id: vote.tweetid}, function (err, tweet) {
 						tweet.human = vote.human;
 						tweet.machine = vote.machine;
-						callback(tweet);
-						cursor.nextObject(function (err, item) {
-							loadTweetObj(item, cursor);
-						});
+						if (!callback(tweet))
+							cursor.nextObject(function (err, item) {
+								loadTweetObj(item, cursor);
+							});
 					});
 				}
 			}

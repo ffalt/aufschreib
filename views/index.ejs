@@ -5,111 +5,141 @@
 	<title>#aufschreib</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- Le styles -->
+	<!--<link type="text/css" href="/static/fontawesome/css/font-awesome.min.css" rel="stylesheet">-->
 	<link type="text/css" href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-	<link type="text/css" href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-	<link type="text/css" href="/static/fontawesome/css/font-awesome.min.css" rel="stylesheet">
 	<link type="text/css" href="/static/aufschreib.css" rel="stylesheet">
-	<link type="text/css" href="/static/stats/stats.css" rel="stylesheet">
 	<script type="text/javascript">
 		var cats = <%- JSON.stringify(consts.cats) %>;
 	</script>
 </head>
 <body>
-<div id="jswarning" class="alert alert-block alert-error fade in">
+<div id="jswarning" class="alert alert-danger">
 	<p></p>
 	<h4 class="alert-heading">Oh snap! You don't have any JavaScript left!</h4>
 	<p>This is so so sad. (But seriously: this site needs JavaScript enabled)</p>
 </div>
 <div id="overlay" style="display: none">
-	<div class='overlay-img'></div>
+	<div class="overlay-img"></div>
 </div>
-<div class="navbar navbar-inverse navbar-fixed-top">
-	<div class="navbar-inner">
-		<div class="container">
-			<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-				<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+
+<div class="navbar navbar-default navbar-inverse navbar-fixed-top">
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-top-content">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
 			</button>
-			<a class="logo" href="#">#aufschrei<span>b</span></a>
-			<div class="menu pull-right logout">
-				&nbsp
-				<a href="/logout" title="Log out"><i class="icon-signout icon-2x"></i></a>
-			</div>
-			<div id="menu" class="nav-collapse collapse" style="display: none">
-				<nav id="nav-site">
-					<ul class="nav">
-						<li id='edit' class="active"><a href="#!/edit">Classify</a></li>
-						<li id='commands'><a href="#!/commands">Machinify</a></li>
-						<li id='stats'><a href="#!/stats">Statify</a></li>
-					</ul>
-				</nav>
-				<div class="pull-right">
-					<nav id="nav-stats" class="stats">
-						<ul class="nav nav-pills">
-							<% consts.stats.forEach(function(stat) { %>
-							<li><a href="#!/stats/<%- stat.id %>"><i class="<%- stat.icon %>"></i> <%= stat.name %></a>
-							</li>
-							<% }); %>
-						</ul>
-					</nav>
-					<ul class="nav edit">
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-								<i class="icon-cogs"></i><b class="caret"></b></a>
-							<ul class="dropdown-menu dropdown-menu-form">
-								<li>&nbsp;&nbsp;&nbsp;
-									<input type="checkbox" id="option_hideaftervote"/>
-									<label for="option_hideaftervote">Hide after vote</label>
-								</li>
-							</ul>
-						</li>
-						<li class="dropdown">
-							<a href="#" title="Filter by Classification" class="dropdown-toggle" data-toggle="dropdown">
-								<i class="icon-filter"></i> Filter <b class="caret"></b></a>
-							<ul class="dropdown-menu dropdown-menu-form" id="nav-edit-filter">
-								<li class="nav-header"><i class="<%- consts.modes[0].icon %>"></i> Human</li>
-								<%
-								consts.cats.forEach(function (cat) { %>
-								<li>&nbsp;&nbsp;&nbsp;
-									<input type="checkbox" value="human_<%- cat.id %>" id="human_<%- cat.id %>"<%-
-									( cat.id === consts.unknown ? 'checked="checked"' : '')
-									%>/> <label for="human_<%- cat.id %>"><%- cat.name %></label>
-								</li>
-								<%
-								}); %>
-								<li class="nav-header"><i class="<%- consts.modes[1].icon %>"></i> Machine</li>
-								<% consts.cats.forEach(function (cat) { %>
-								<li>&nbsp;&nbsp;&nbsp;
-									<input type="checkbox" value="machine_<%- cat.id %>"
-										   id="machine_<%- cat.id %>" checked="checked"/>
-									<label for="machine_<%- cat.id %>"><%- cat.name %></label>
-								</li>
-								<% }); %>
-								<li class="nav-header">Select...</li>
-								<li><a href="#" class="check_all">...all</a></li>
-								<li><a href="#" class="check_none">...none</a></li>
-								<li class="divider"></li>
-								<li><a href="#" class="check_apply">Anwenden</a></li>
-							</ul>
+			<a class="navbar-brand logo">#aufschrei<span>b</span></a>
+		</div>
+		<div id="navbar-top-content" class="navbar-collapse collapse">
+			<ul id="nav-site" class="nav navbar-nav">
+				<li id='edit' class="active"><a href="#!/edit">Classify</a></li>
+				<li id='commands'><a href="#!/commands">Machinify</a></li>
+				<li id='stats'><a href="#!/stats">Statify</a></li>
+			</ul>
+			<ul id="nav-stats" class="nav navbar-nav navbar-right">
+				<% consts.stats.forEach(function(stat) { %>
+				<li><a href="#!/stats/<%- stat.id %>"><i class="glyphicon <%- stat.icon %>"></i> <%= stat.name %></a></li>
+				<% }); %>
+			</ul>
+			<ul id="nav-edit" class="nav navbar-nav navbar-right">
+				<li>
+					<a data-toggle="modal" href="#modal-filter"><i class="glyphicon glyphicon-filter"></i></a>
+				</li>
+				<li class="dropdown">
+					<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-wrench"></i> <b class="caret"></b></a>
+					<ul class="dropdown-menu dropdown-menu-form">
+						<li>&nbsp;&nbsp;&nbsp;
+							<input type="checkbox" id="option_hideaftervote"/>
+							<label for="option_hideaftervote">Hide after vote</label>
 						</li>
 					</ul>
-					<form class="navbar-search edit" action="#">
-						<div class="input-prepend">
-							<span class="add-on"><i class="icon-search"></i></span>
-							<input id="search" type="text" class="span2" placeholder="Filter by Text">
+				</li>
+				<li>
+					<form class="navbar-form navbar-left" role="search">
+						<div class="form-group">
+							<!--<span class="add-on"><i class="icon-search"></i></span>-->
+							<input id="search" type="text" class="form-control" placeholder="Search">
 						</div>
 					</form>
-				</div>
-			</div>
-
-			<!--/.nav-collapse -->
-		</div>
+				</li>
+			</ul>
+		</div><!--/.nav-collapse -->
 	</div>
 </div>
+
+<div id="modal-filter" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Filter by Classification</h4>
+			</div>
+			<div class="modal-body">
+				<p>
+					<form id="form-filter" role="form">
+					<div class="form-group">
+						<label><i class="glyphicon <%- consts.modes[0].icon %>"></i> Human</label>
+						<% consts.cats.forEach(function (cat) { %>
+						<div class="checkbox">
+							<label>
+								<input type="checkbox"
+									   value="human_<%- cat.id %>"
+									   id="human_<%- cat.id %>"
+									   <%- ( cat.id === consts.unknown ? 'checked="checked"' : '') %>
+								/>&nbsp;
+								<%- cat.name %>
+							</label>
+						</div>
+						<% }); %>
+					</div>
+					<div class="form-group">
+						<label><i class="glyphicon <%- consts.modes[1].icon %>"></i> Machine</label>
+						<% consts.cats.forEach(function (cat) { %>
+						<div class="checkbox">
+							<label>
+								<input type="checkbox"
+									   value="machine_<%- cat.id %>"
+									   id="machine_<%- cat.id %>"
+									   checked="checked" />
+								&nbsp;
+								<%- cat.name %>
+							</label>
+						</div>
+						<% }); %>
+					</div>
+				</form>
+				</p>
+				<p>
+				<a href="javascript:;" class="btn btn-default btn-xs check_all">Check all</a>
+				<a href="javascript:;" class="btn btn-default btn-xs check_none">Check none</a>
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<a href="javascript:;" class="btn btn-primary check_apply" data-dismiss="modal">Apply</a>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div class="navbar-inner">
+	<div class="menu pull-right logout">
+		&nbsp
+		<a href="/logout" title="Log out"><i class="icon-signout icon-2x"></i></a>
+	</div>
+
+	<!--/.nav-collapse -->
+</div>
+
+
 <!-- /.navbar -->
 <div id="contentcontainer" class="container">
 	<div class="row">
-		<div class="span12">
-			<div class="content" id="content"><h2>Hi, <%= user.name %></h2></div>
+		<div class="col-md-12">
+			<div class="content" id="content"><h2 class="jumbotron centered">Hi, <%= user.name %></h2></div>
 		</div>
 	</div>
 </div>
@@ -120,11 +150,6 @@
 <script type="text/javascript" src="/static/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/static/aufschreib.js"></script>
-
-<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-<!--[if lt IE 9]>
-<script type="text/javascript" src="/static/bootstrap/js/html5shiv.js"></script>
-<![endif]-->
 
 <script type="text/javascript" src="/static/d3/d3.v3.min.js"></script>
 <script type="text/javascript" src="/static/socket.io/socket.io.min.js"></script>

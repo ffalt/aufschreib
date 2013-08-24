@@ -23,7 +23,10 @@ exports.MyLittleClassifier = function () {
 			} else {
 				count++;
 				if (count % 10000 === 0) {
-					logcb('...' + count + ' Tweets');
+					if (!logcb('...' + count + ' Tweets')) {
+						callback(true);
+						return true;
+					}
 				}
 				var newclass;
 				if (tweet.human === consts.unknown) {
@@ -42,7 +45,6 @@ exports.MyLittleClassifier = function () {
 	}
 
 	me.classify = function (voteuserid, store, logcb, callback) {
-		logcb('Training');
 		var count = 0,
 			classi = new classifier.Bayesian({
 				thresholds: consts.thresholds
@@ -52,8 +54,12 @@ exports.MyLittleClassifier = function () {
 				if (count === 0) {
 					callback(false);
 				} else {
-					logcb('Fighting based on ' + count + ' Tweets');
-					fight(voteuserid, classi, store, logcb, callback);
+					if (logcb('Fighting based on ' + count + ' Tweets')) {
+						fight(voteuserid, classi, store, logcb, callback);
+					} else {
+						logcb('wut?')
+						callback(false);
+					}
 				}
 			} else if (tweet.human != consts.unknown) {
 				var cleantext = tokenizer.cleanKeepLinks(tweet.text);

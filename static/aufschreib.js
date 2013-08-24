@@ -8,6 +8,7 @@ var aufschreib = {
 		cat: null,
 		kind: null
 	},
+	current: '',
 	connected: false,
 	connectedlog: '',
 	connectedloghistory: '',
@@ -20,7 +21,7 @@ var aufschreib = {
 	error: function (msg) {
 		$('#alert').remove();
 		$('body').prepend($(
-			'<div id="alert" class="alert alert-block alert-error fade in">' +
+			'<div id="alert" class="alert alert-danger">' +
 				'<button data-dismiss="alert" class="close" type="button">×</button>' +
 				'<h4 class="alert-heading">Oh snap! You got an error!</h4>' +
 				'<p>' + msg + '</p>' +
@@ -77,21 +78,24 @@ var aufschreib = {
 		});
 	},
 	get: function (sender, url, params, success) {
-		var timeout = setTimeout(function () {
-			aufschreib.blendProgressIn(sender);
-		}, 2000);
+		if (sender)
+			var timeout = setTimeout(function () {
+				aufschreib.blendProgressIn(sender);
+			}, 2000);
 		$.ajax({
 			url: url,
 			dataType: 'html',
 			data: params,
 			success: function (data) {
 				clearTimeout(timeout);
-				aufschreib.blendProgressOut(sender);
+				if (sender)
+					aufschreib.blendProgressOut(sender);
 				success(data);
 			},
 			error: function (xhr, ts, err) {
 				clearTimeout(timeout);
-				aufschreib.blendProgressOut(sender);
+				if (sender)
+					aufschreib.blendProgressOut(sender);
 				aufschreib.error(xhr.status + ': ' + err);
 				//alert(xhr.status + ': ' + err);
 			}
@@ -195,14 +199,7 @@ var aufschreib = {
 		}
 		return false;
 	},
-	resizedw: function (sender) {
-		var w = $(window).width();
-		$(sender).find(".btn").each(function () {
-			$(this).toggleClass("btn-mini", (w < 600));
-		});
-	},
 	connectCatChange: function (sender) {
-		aufschreib.resizedw(sender);
 		$(sender).find(".btn-tweet").each(function () {
 			$(this).unbind("click");
 			$(this).click(function () {
@@ -255,7 +252,7 @@ var aufschreib = {
 	},
 	nextList: function (sender) {
 		$(sender).addClass('disabled');
-		$(sender).html('<i class="icon-spinner icon-spin icon-large"></i> Processing...');
+		$(sender).html('<div class="process-img"></div> <span>Getting next...</span>');
 		var id = $(sender).attr('value');
 		var params = aufschreib.makeListParams();
 		params['id'] = id;
@@ -267,7 +264,7 @@ var aufschreib = {
 		return false;
 	},
 	applyfilter: function () {
-		$('#nav-edit-filter').find(':checkbox').each(
+		$('#modal-filter input[type="checkbox"]').each(
 			function () {
 				var pos = $.inArray($(this).attr('value'), aufschreib.data);
 				if ($(this).attr('checked')) {
@@ -280,9 +277,16 @@ var aufschreib = {
 			}
 		);
 	},
+	clearContent: function() {
+		$('#content').html('<div style="width:100%; height:200px;"><div class="overlay-img"></div></div>');
+	},
 	request: function () {
+		aufschreib.clearContent();
+		aufschreib.current = 'vote';
 		var params = aufschreib.makeListParams();
 		aufschreib.get(null, '', params, function (data) {
+			if (aufschreib.current != 'vote')
+				return;
 			var content = $('.content');
 			content.html(data);
 			aufschreib.connectCatChange(content);
@@ -290,14 +294,20 @@ var aufschreib = {
 		return false;
 	},
 	requestCommands: function () {
+		aufschreib.clearContent();
+		aufschreib.current = 'commands';
 		var params = {cmd: 'commands'};
 		aufschreib.get(null, '', params, function (data) {
+			if (aufschreib.current != 'commands')
+				return;
 			$('#content').html(data);
 			aufschreib.setProcessing(aufschreib.connected, aufschreib.connectedlog);
 		});
 		return false;
 	},
 	requestChart: function () {
+		aufschreib.clearContent();
+		aufschreib.current = 'charts';
 		$('li', '#nav-stats').removeClass('active');
 		$('a[href*=' + aufschreib.stats.type + ']', '#nav-stats').parent().addClass('active');
 		var params = {cmd: 'chart', type: aufschreib.stats.type, mode: aufschreib.stats.mode};
@@ -308,6 +318,8 @@ var aufschreib = {
 			params['kind'] = aufschreib.stats.kind;
 		}
 		aufschreib.get(null, '', params, function (data) {
+			if (aufschreib.current != 'charts')
+				return;
 			$('#content').html(data);
 		});
 		return false;
@@ -346,10 +358,10 @@ var aufschreib = {
 			aufschreib.setProcessing(false);
 			$('#classify-result').html(data);
 		});
-//		var params = {cmd: 'classify'};
-//		aufschreib.get(null, '', params, function (data) {
-//			$('#classify-result').html(data);
-//		});
+		var params = {cmd: 'classify'};
+		aufschreib.get(null, '', params, function (data) {
+			$('#classify-result').html(data);
+		});
 		return false;
 	},
 	classify: function () {
@@ -362,7 +374,7 @@ var aufschreib = {
 		aufschreib.connectedlog = log;
 		if (active) {
 			$("[id^='btn-act-']").addClass('disabled');
-			$(aufschreib.connectedlog).html('<i class="icon-spinner icon-spin icon-large"></i> Processing...<br />' +
+			$(aufschreib.connectedlog).html('<div class="process-img"></div> Processing...<br />' +
 				aufschreib.connectedloghistory);
 		} else {
 			$("[id^='btn-act-']").removeClass('disabled');
@@ -416,8 +428,8 @@ var aufschreib = {
 	setMode: function (mode) {
 		$('li', '#nav-site').removeClass('active');
 		$('a[href*=' + mode + ']', '#nav-site').parent().addClass('active');
-		$('.edit').toggle((mode === 'edit'));
-		$('.stats').toggle((mode === 'stats'));
+		$('#nav-edit').toggle((mode === 'edit'));
+		$('#nav-stats').toggle((mode === 'stats'));
 	},
 	setStatsSilent: function (type, mode, kind, cat) {
 		aufschreib.stats.type = type;
@@ -551,20 +563,19 @@ var aufschreib = {
 			return true;
 		});
 		aufschreib.closethings = ($('#option_hideaftervote').attr('checked') === 'checked');
-		$('.dropdown a.check_all').click(function (event) {
-			$(this).parents('ul:eq(0)').find(':checkbox').attr('checked', 'checked');
+		$('#modal-filter a.check_all').click(function (event) {
+			$('#modal-filter input[type="checkbox"]').attr('checked', 'checked');
 			event.stopPropagation();
 			return false;
 		});
-		$('.dropdown a.check_none').click(function (event) {
-			$(this).parents('ul:eq(0)').find(':checkbox').attr('checked', null);
+		$('#modal-filter a.check_none').click(function (event) {
+			$('#modal-filter input[type="checkbox"]').attr('checked', null);
 			event.stopPropagation();
 			return false;
 		});
-		$('.dropdown a.check_apply').click(function () {
+		$('#modal-filter a.check_apply').click(function () {
 			aufschreib.applyfilter();
 			aufschreib.request();
-			//event.stopPropagation();
 		});
 		aufschreib.applyfilter();
 		/* watch out for hash changes */
@@ -576,13 +587,6 @@ var aufschreib = {
 				aufschreib.router();
 			}, 100);
 		}
-		var doit;
-		$(window).resize(function () {
-			clearTimeout(doit);
-			doit = setTimeout(function () {
-				aufschreib.resizedw('.content');
-			}, 100);
-		});
 	}
 };
 $('#jswarning').remove();

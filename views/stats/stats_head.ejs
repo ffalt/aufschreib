@@ -1,33 +1,40 @@
 <% var statinfo = consts.tools.statinfo(chartparams.type); if ((statinfo) && (!hide_head)) { %>
-<div class="navbar nav-pills navsmall">
-	<div class="navbar-inner">
+<nav class="navbar navbar-default navbar-stats" role="navigation">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-content">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+	</div>
+	<div id="navbar-content" class="collapse navbar-collapse navbar-ex1-collapse">
 
-		<% if (statinfo.kinds.length>0) { %>
-		<ul class="nav" id="<%- container_id %>kind">
-			<li><span class="brand">Data:</span></li>
+			<% if (statinfo.kinds.length>0) { %>
+		<ul class="nav navbar-nav" id="<%- container_id %>kind">
+			<li><span class="navbar-brand">Data:</span></li>
 			<% statinfo.kinds.forEach(function(kind) { %>
-			<li><a href="#" value="<%- kind.id %>"><i class="<%= kind.icon %>"></i> <%= kind.name %></a></li>
+			<li><a class="btn btn-default" href="#" value="<%- kind.id %>"><i class="glyphicon <%= kind.icon %>"></i> <%= kind.name %></a></li>
 			<% });%>
 		</ul>
 		<% }%>
 
-		<ul class="nav" id="<%- container_id %>mode">
-			<li><span class="brand">Modes:</span></li>
+		<ul class="nav navbar-nav" id="<%- container_id %>mode">
+			<li><span class="navbar-brand">Modes:</span></li>
 			<% consts.modes.forEach(function(mode) { %>
-			<li><a href="#" value="<%= mode.id %>" title="<%= mode.name %>"><i class="<%- mode.icon %>"></i></a></li>
+			<li><a class="btn btn-default" href="#" value="<%= mode.id %>" title="<%= mode.name %>"><i class="glyphicon <%- mode.icon %>"></i></a></li>
 			<% }); %>
 		</ul>
 
 		<% if (statinfo.usesCats) { %>
-		<ul class="nav" id="<%- container_id %>cat">
-			<li><span class="brand">Classes:</span></li>
-			<li><a title="All" href="#" value="all">All</a></li>
+		<ul class="nav navbar-nav" id="<%- container_id %>cat">
+			<li><div class="navbar-brand">Classes:</div></li>
+			<li><a class="btn btn-default" title="All" href="#" value="all">All</a></li>
 			<% consts.cats.forEach(function(cat) { %>
-			<li><a href="#" title="<%= cat.name %>" value="<%- cat.id %>"><i class="<%- cat.icon %>"></i></a></li>
+			<li><a class="btn btn-default" href="#" title="<%= cat.name %>" value="<%- cat.id %>"><i class="glyphicon <%- cat.icon %>"></i></a></li>
 			<% }); %>
 		</ul>
 		<% } %>
 
 	</div>
-</div>
+</nav>
 <% }%>

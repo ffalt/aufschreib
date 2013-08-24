@@ -160,16 +160,6 @@ exports.MyLittleCmds = function () {
 		});
 	}
 
-	function socket_updatecache(socket) {
-		socket.emit('news', { msg: 'Update Cache started' });
-		stats.cacheStats(socket.handshake.user.id, store, function (log) {
-			console.log('[Stats] ' + log);
-			socket.emit('news', { msg: log });
-		}, function () {
-			socket.emit('success', { msg: 'Done.' });
-		});
-	}
-
 	function responseCmdClassifiction(req, res, mode) {
 		store.getCats(req.user.id, mode, function (data) {
 			res.json(data);
@@ -279,21 +269,25 @@ exports.MyLittleCmds = function () {
 	me.bulkinsert = function (req, res) {
 		var file = req.files.file;
 		if (file) {
-			fs.readFile(file.path, function (err, data) {
-				data = JSON.parse(data);
-				store.importHumanCats(req.user.id, data, function (err) {
-					if (err)
-						res.send(400, err);
-					else {
-						var params = stats.getParams(req.user.id, store, 'pie', 'human', null, null, true);
-						res.render('stats/' + 'pie_commands', {
-							chartparams: params,
-							consts: consts,
-							hide_head: true,
-							container_id: params.getChartContainerId() + '_after'});
-					}
-				})
-			});
+			try {
+				fs.readFile(file.path, function (err, data) {
+					data = JSON.parse(data);
+					store.importHumanCats(req.user.id, data, function (err) {
+						if (err)
+							res.send(400, err);
+						else {
+							var params = stats.getParams(req.user.id, store, 'pie', 'human', null, null, true);
+							res.render('stats/' + 'pie_commands', {
+								chartparams: params,
+								consts: consts,
+								hide_head: true,
+								container_id: params.getChartContainerId() + '_after'});
+						}
+					})
+				});
+			} catch (e) {
+				res.send(400, 'Error invalid file');
+			}
 		} else {
 			res.send(400);
 		}
@@ -329,31 +323,63 @@ exports.MyLittleCmds = function () {
 	me.process = function (req, res) {
 		processCmd(req, res);
 	};
-	function socket_classify(socket) {
-		socket.emit('news', { msg: 'Classify started' });
-		classifier.classify(socket.handshake.user.id, store, function (log) {
-				console.log('[Classify] ' + log);
-				socket.emit('news', { msg: log });
-			}, function (isdone) {
-				console.log('next');
-				if (isdone) {
-					var params = stats.getParams(socket.handshake.user.id, store, 'pie', 'machine', null, null, true);
-					var filePath = __dirname + '/views/stats/' + 'pie_commands.ejs';
-					fs.readFile(filePath, 'utf-8', function (err, content) {
-						if (err)
-							throw err;
-						var data = ejs.render(content, {
-							chartparams: params,
-							consts: consts,
-							hide_head: true,
-							container_id: params.getChartContainerId() + '_after'});
-						socket.emit('success', { msg: data });
-					});
-				} else {
-					socket.emit('fail', { msg: 'No data for classifying :.(' });
-				}
+
+	function socket_updatecache(socket) {
+		var emit = function (cmd, obj) {
+			try {
+				socket.emit(cmd, obj);
+				return true;
+			} catch (e) {
+				return false;
 			}
-		);
+		};
+		emit('news', { msg: 'Update Cache started' });
+		stats.cacheStats(socket.handshake.user.id, store, function (log) {
+			console.log('[Stats] ' + log);
+			return emit('news', { msg: log });
+		}, function () {
+			return emit('success', { msg: 'Done.' });
+		});
+	}
+
+	function socket_classify(socket) {
+		console.log('socket_classify');
+		var emit = function (cmd, obj) {
+			try {
+				socket.emit(cmd, obj);
+				return true;
+			} catch (e) {
+				return false;
+			}
+		};
+		if (emit('news', { msg: 'Classify started' }))
+			classifier.classify(socket.handshake.user.id, store,
+				function (log) {
+					console.log('[Classify] ' + log);
+					emit('news', { msg: log });
+					return true;
+				},
+				function (isdone) {
+					console.log('next');
+					if (isdone) {
+						var params = stats.getParams(socket.handshake.user.id, store, 'pie', 'machine', null, null, true);
+						var filePath = __dirname + '/views/stats/' + 'pie_commands.ejs';
+						fs.readFile(filePath, 'utf-8', function (err, content) {
+							if (err)
+								throw err;
+							var data = ejs.render(content, {
+								chartparams: params,
+								consts: consts,
+								hide_head: true,
+								container_id: params.getChartContainerId() + '_after'});
+							emit('success', { msg: data });
+						});
+					} else {
+						emit('fail', { msg: 'No data for classifying :.(' });
+					}
+					return true;
+				}
+			);
 	}
 
 	me.socket = function (socket) {
@@ -364,7 +390,10 @@ exports.MyLittleCmds = function () {
 			} else if (data['cmd'] === 'updatecache') {
 				socket_updatecache(socket);
 			} else {
-				socket.emit('fail', { msg: 'unknown command' });
+				try {
+					socket.emit('fail', { msg: 'unknown command' });
+				} catch (e) {
+				}
 			}
 		});
 		socket.on('end', function (data) {

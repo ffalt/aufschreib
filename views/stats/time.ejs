@@ -1,16 +1,13 @@
 <% include stats_head %>
 
-<div class="navbar navsmall">
-	<div class="navbar-inner">
-		<ul class="nav" id="<%- container_id %>view">
-			<li><span class="brand">View:</span></li>
-			<li><a title="Zero" value="zero" href="#">Zero</a></li>
-			<li><a title="Wiggle" value="wiggle" href="#">Wiggle</a></li>
-			<li><a title="Expand" value="expand" href="#">Expand</a></li>
+<div id="<%- container_id %>temp" class="hidden">
+		<ul class="nav navbar-nav" id="<%- container_id %>view">
+			<li><span class="navbar-brand">View:</span></li>
+			<li><a class="btn btn-default" title="Zero" value="zero" href="#">Zero</a></li>
+			<li><a class="btn btn-default" title="Wiggle" value="wiggle" href="#">Wiggle</a></li>
+			<li><a class="btn btn-default" title="Expand" value="expand" href="#">Expand</a></li>
 		</ul>
-	</div>
 </div>
-
 <% include stats_content %>
 
 <% include stats_foot %>
@@ -19,6 +16,7 @@
     $(function () {
         $(document).ready(
                 function () {
+					$('#<%- container_id %>temp').children().appendTo($('#navbar-content'));
 					var times = new Times();
 					times.initTimes('<%- container_id %>','<%- chartparams.mode %>','<%- chartparams.kind %>', new Stats(cats));
 				}

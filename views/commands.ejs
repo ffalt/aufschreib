@@ -10,29 +10,27 @@
 	<li><a href="#" data-target="cmd-admin" data-toggle="tab">Admin area</a></li>
 	<% } %>
 </ul>
-
 <div class="tab-content">
 	<div id="div-cmd-machine">
-		<div class="well">
+		<div class="cmd-well">
 			<h4>Apply Bayesian</h4>
 			<button id="btn-act-classify" class="btn btn-primary" onclick="return aufschreib.classify();" type="button">
 				Classify
 			</button>
 			<br/>
 		</div>
-		<div class="row">
-			<% var container_id = chart_machine_params.getChartContainerId() + '_before' %>
-			<% var chartparams = chart_machine_params; %>
-			<div class="span6"><h4>Machine Classification Before</h4><% include stats/pie_commands %></div>
-			<div class="span6"><h4>Machine Classification After</h4>
-				<div id="classify-result"></div>
-			</div>
+		<% var container_id = chart_machine_params.getChartContainerId() + '_before' %>
+		<% var chartparams = chart_machine_params; %>
+		<div class="col-md-6"><h4>Machine Classification Before</h4><% include stats/pie_commands %></div>
+		<div class="col-md-6"><h4>Machine Classification After</h4>
+
+			<div id="classify-result"></div>
 		</div>
 	</div>
 	<div class="off-left-hidden" id="div-cmd-stats">
-		<div class="well">
+		<div class="cmd-well">
 			<h4>Create/Update Cache for faster Statistics</h4>
-			<button  id="btn-act-cache" class="btn btn-primary" onclick="return aufschreib.updateCache();"
+			<button id="btn-act-cache" class="btn btn-primary" onclick="return aufschreib.updateCache();"
 					type="button">
 				Update Stats Cache
 			</button>
@@ -41,62 +39,69 @@
 		<div id="statcache-result"></div>
 	</div>
 	<div class="off-left-hidden" id="div-cmd-import">
-		<div class="well">
+		<div class="cmd-well">
 			<h4>Bulk insert User Classification Json File</h4>
+
 			<form action="/bulk" method="post"
 				  class="form-inline" enctype="multipart/form-data"
 				  encoding="multipart/form-data"
 				  id="form-file">
 				<input id="bulkfile" type="file" name="file" size="40" placeholder="Choose JSON file"/>
+				<br/>
 				<button id="btn-act-bulk" class="btn btn-primary" onclick="return aufschreib.sendFile()">Upload File</button>
 			</form>
 		</div>
 		<div class="row">
 			<% var container_id = chart_human_params.getChartContainerId() + '_before'; %>
 			<% var chartparams = chart_human_params; %>
-			<div class="span6"><h4>Human Classification Before</h4><% include stats/pie_commands %></div>
-			<div class="span6"><h4>Human Classification After</h4>
+			<div class="col-md-6"><h4>Human Classification Before</h4><% include stats/pie_commands %></div>
+			<div class="col-md-6"><h4>Human Classification After</h4>
+
 				<div id="output-upload"></div>
 			</div>
 		</div>
 	</div>
 	<div class="off-left-hidden" id="div-cmd-export">
-		<div class="well">
+		<div class="cmd-well">
 			<h4>Download Classification JSON</h4>
-						<% for (var i=0; i < consts.modes.length; i++) { var mode=consts.modes[i]; %>
-						<a target="_blank" title="Download <%= mode.name %> Classification JSON data"
-							class="btn" alt="Raw <%= mode.name %> JSON"
-							   href="?cmd=classifiction&mode=<%= mode.id %>"><i class="<%= mode.icon %>"></i> <%= mode.name %></a>
-						<% } %>
+			<% for (var i=0; i < consts.modes.length; i++) { var mode=consts.modes[i]; %>
+			<a target="_blank" title="Download <%= mode.name %> Classification JSON data"
+			   class="btn btn-primary" alt="Raw <%= mode.name %> JSON"
+			   href="?cmd=classifiction&mode=<%= mode.id %>"><i class="glyphicon <%= mode.icon %>"></i> <%= mode.name %></a>
+			<% } %>
 		</div>
 		<div class="row">
 		</div>
 	</div>
 	<% if (user.id === 1) { %>
 	<div class="off-left-hidden" id="div-cmd-admin">
-		<div class="row">
-			<div class="span12">
+			<div class="cmd-well col-md-12">
 				<h4>Create User</h4>
 
-				<form method="post" id="form-newuser">
-					<fieldset>
-						<div class="input-prepend">
-							<span class="add-on"><i class="icon-user"></i></span>
-							<input type="text" name="username" placeholder="Username">
+				<form method="post" id="form-newuser" class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="input-username" class="col-lg-2 control-label"><i class="glyphicon glyphicon-user"></i> Username</label>
+
+						<div class="col-lg-10">
+							<input id="input-username" type="text" name="username" class="form-control" placeholder="Username">
 						</div>
-						<div class="input-prepend">
-							<span class="add-on"><i class="icon-key"></i></span>
-							<input type="password" name="password" placeholder="Password">
+					</div>
+					<div class="form-group">
+						<label for="input-password" class="col-lg-2 control-label"><i class="glyphicon glyphicon-lock"></i> Password</label>
+
+						<div class="col-lg-10">
+							<input id="input-password" type="password" name="password" class="form-control" placeholder="Password">
 						</div>
-						<div class="input-prepend">
+					</div>
+					<div class="form-group">
+						<div class="col-lg-offset-2 col-lg-10">
 							<button class="btn btn-primary" onclick="return aufschreib.createUser()">Create User
 							</button>
 						</div>
-					</fieldset>
+					</div>
 				</form>
 				<div id="output-newuser"></div>
 			</div>
-		</div>
 	</div>
 	<% } %>
 </div>
@@ -104,7 +109,7 @@
 	$(function () {
 		//workaround for d3 bug, where getBBox() causes the graph not to render in previously hidden div
 		//using off-left-hidden technique to simulate tab behaviour
-		$('#cmd-tabs a[data-toggle="tab"]').on('show', function (e) {
+		$('#cmd-tabs a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 			var divid = "#div-" + $(e.target).attr("data-target");
 			$(divid).removeClass("off-left-hidden");
 			divid = "#div-" + $(e.relatedTarget).attr("data-target");
@@ -113,17 +118,20 @@
 	});
 </script>
 
-<div id="command-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-	 aria-hidden="true">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h3 id="myModalLabel">Hey you, FYI</h3>
-	</div>
-	<div class="modal-body">
-		<p>This can take very looooooooooooooooooooong…</p>
-	</div>
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Ok then, nope</button>
-		<button class="btn btn-primary" data-dismiss="modal" onclick="aufschreib.requestClassify();">Do it</button>
+<div id="command-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 id="myModalLabel">Hey you! FYI:</h3>
+			</div>
+			<div class="modal-body">
+				<p>This can take very looooooooooooooooooooong…</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">Ok then, nope</button>
+				<button class="btn btn-primary" data-dismiss="modal" onclick="aufschreib.requestClassify();">Do it</button>
+			</div>
+		</div>
 	</div>
 </div>

@@ -2,37 +2,37 @@ const basecats = [
 	{
 		id: 'outcry',
 		name: 'Aufschrei',
-		icon: 'icon-bullhorn',
+		icon: 'glyphicon-bullhorn',
 		color: '#5e8c6A'
 	},
 	{
 		id: 'report',
 		name: 'Links',
-		icon: 'icon-share-alt',
+		icon: 'glyphicon-share-alt',
 		color: '#98abc5'
 	},
 	{
 		id: 'comment',
 		name: 'Kommentar',
-		icon: 'icon-comment-alt',
+		icon: 'glyphicon-comment',
 		color: '#bfb35a'
 	},
 	{
 		id: 'troll',
 		name: 'Troll',
-		icon: 'icon-thumbs-down',
+		icon: 'glyphicon-thumbs-down',
 		color: '#8c2318'
 	},
 	{
 		id: 'spam',
 		name: 'Spam',
-		icon: 'icon-trash',
+		icon: 'glyphicon-trash',
 		color: '#ff8c00'
 	},
 	{
 		id: 'unknown',
 		name: 'Unbekannt',
-		icon: 'icon-question-sign',
+		icon: 'glyphicon-question-sign',
 		color: '#f2c45a'
 	}
 ];
@@ -42,46 +42,46 @@ const modes = [
 	{
 		id: 'human',
 		name: 'Human',
-		icon: 'icon-user-md'
+		icon: 'glyphicon-user'
 	},
 	{
 		id: 'machine',
 		name: 'Machine',
-		icon: 'icon-magic'
+		icon: 'glyphicon-th'
 	}
 ];
 const wordkinds = [
 	{
 		id: 'word',
 		name: 'Words',
-		icon: 'icon-quote-left'
+		icon: 'glyphicon-quote-left'
 	},
 	{
 		id: 'user',
 		name: 'Users',
-		icon: 'icon-user'
+		icon: 'glyphicon-user'
 	},
 	{
 		id: 'hash',
 		name: 'Hashtags',
-		icon: 'icon-hash'
+		icon: 'glyphicon-hash'
 	},
 	{
 		id: 'client',
 		name: 'Clients',
-		icon: 'icon-desktop'
+		icon: 'glyphicon-desktop'
 	},
 	{
 		id: 'link',
 		name: 'Links',
-		icon: 'icon-link'
+		icon: 'glyphicon-link'
 	}
 ];
 const graphkinds = [
 	{
 		id: 'mention',
 		name: 'Mentions',
-		icon: 'icon-reply'
+		icon: 'glyphicon-reply'
 	}
 ];
 const stats = [
@@ -91,7 +91,7 @@ const stats = [
 		kinds: [],
 		maxentries: 0,
 		defaultkind: null,
-		icon: 'icon-circle-blank',
+		icon: 'glyphicon-circle-blank',
 		usesCats: false
 	},
 	{
@@ -101,7 +101,7 @@ const stats = [
 		maxentries: 30,
 		defaultkind: 'word',
 		kinds: wordkinds,
-		icon: 'icon-bar-chart',
+		icon: 'glyphicon-bar-chart',
 		usesCats: true
 	},
 	{
@@ -110,7 +110,7 @@ const stats = [
 		maxentries: 0,
 		defaultkind: null,
 		kinds: [],
-		icon: 'icon-indent-left',
+		icon: 'glyphicon-indent-left',
 		usesCats: false
 	},
 	{
@@ -120,7 +120,7 @@ const stats = [
 		thresholds: 10,
 		defaultkind: 'word',
 		kinds: wordkinds,
-		icon: 'icon-cloud',
+		icon: 'glyphicon-cloud',
 		usesCats: true
 	},
 	{
@@ -129,7 +129,7 @@ const stats = [
 		maxentries: 0,
 		defaultkind: 'mention',
 		kinds: graphkinds,
-		icon: 'icon-sitemap',
+		icon: 'glyphicon-sitemap',
 		usesCats: false
 	}
 ];

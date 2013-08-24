@@ -1,5 +1,5 @@
 <div class="user" id="<%- user_id %>">
-	<div class="row-fluid">
+	<div class="tweets-header">
 		<a class="close user-close" href="#">×</a>
         <span class="user-counts pull-right">
         <%= tweets.length %> / <%= user_tweet_total_count %>
@@ -12,14 +12,12 @@
 			<a class="user-name" target="_blank" href="https://twitter.com/<%= user_id %>"><%= user_name %></a>
 			<% if (tweets.length>1) { %>
 			<div class="user-btns">
-				<div class="btn-group">
 					<% consts.cats.forEach(function(cat) {
 					if (cat.id !== consts.unknown) {
 					%>
-					<a class="btn btn-user" value="<%= cat.id %>" href="#">
-						<i class="<%- cat.icon %>"></i> <%= cat.name %></a>
+					<a class="btn btn-default btn-user btn-tweet-vote" value="<%= cat.id %>" href="#">
+						<i class="glyphicon <%- cat.icon %>"></i> <%= cat.name %></a>
 					<% } }); %>
-				</div>
 			</div>
 			<% } %>
 		</div>
