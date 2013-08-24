@@ -14,6 +14,19 @@ body {
 	margin-right: 6px;
 }
 
+.glyphicon-custom-quote-left:before {
+	content: "\275D";
+}
+
+.glyphicon-custom-hashtag:before {
+	content: "\0023";
+}
+
+.glyphicon-custom-app:before {
+	content: "\2328";
+}
+
+
 /* Popup Overlay */
 
 #form-filter .form-group {
@@ -225,6 +238,11 @@ a:hover {
 .piechart {
 	margin: 0;
 	padding: 0;
+}
+
+#stats_time_humanvis .fillrect {
+	fill: #fff;
+	stroke: #fff;
 }
 
 .off-left-hidden {

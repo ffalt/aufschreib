@@ -114,14 +114,31 @@ function Times() {
 			.attr("class", "x axis")
 			.attr("transform", "translate(0," + chart_height + ")")
 			.call(xAxis);
+
 		focus_chartgroup.append("g")
 			.attr("class", "x axis focus")
 			.attr("transform", "translate(0," + focus_height + ")")
 			.call(xAxis2);
 
-		chartgroup.append("g")
-			.attr("class", "y axis")
-			.call(yAxis);
+		var g= chartgroup.append("g")
+		g.append('rect')
+			.attr("class", "fillrect")
+			.attr("x", width)
+			.attr("y", 0)
+			.attr("width", 200)
+			.attr("height", chart_height)
+
+		g= chartgroup.append("g")
+			.attr("class", "y axis");
+			g.append('rect')
+			.attr("class", "fillrect")
+			.attr("x", -200)
+			.attr("y", 0)
+			.attr("width", 200)
+			.attr("height", chart_height)
+		g.call(yAxis)
+
+
 
 		focus_chartgroup.append("g")
 			.attr("class", "x brush")
@@ -248,7 +265,7 @@ function Times() {
 
 		svg.select(".brush").call(brush.extent([xGroupMin, xDefaultGroupMax]));
 
-		stats.legendary(chartgroup, catsInView, width -legendwidth, 10, legendwidth);
+		stats.legendary(chartgroup, catsInView, width - legendwidth, 10, legendwidth);
 
 		//onBrush();
 	}

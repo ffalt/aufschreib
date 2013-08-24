@@ -54,7 +54,7 @@ const wordkinds = [
 	{
 		id: 'word',
 		name: 'Words',
-		icon: 'glyphicon-quote-left'
+		icon: 'glyphicon-custom-quote-left'
 	},
 	{
 		id: 'user',
@@ -64,12 +64,12 @@ const wordkinds = [
 	{
 		id: 'hash',
 		name: 'Hashtags',
-		icon: 'glyphicon-hash'
+		icon: 'glyphicon-custom-hashtag'
 	},
 	{
 		id: 'client',
 		name: 'Clients',
-		icon: 'glyphicon-desktop'
+		icon: 'glyphicon-custom-app'
 	},
 	{
 		id: 'link',
