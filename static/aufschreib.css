@@ -10,6 +10,8 @@ body {
 	width: 32px;
 	background: transparent url(/static/images/spinner_squares_circle.gif) no-repeat center;
 	float: left;
+	margin-top: 4px;
+	margin-right: 6px;
 }
 
 /* Popup Overlay */

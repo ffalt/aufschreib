@@ -333,7 +333,7 @@ exports.MyLittleCmds = function () {
 				return false;
 			}
 		};
-		emit('news', { msg: 'Update Cache started' });
+		emit('news', { msg: 'Updating Cache' });
 		stats.cacheStats(socket.handshake.user.id, store, function (log) {
 			console.log('[Stats] ' + log);
 			return emit('news', { msg: log });
@@ -343,25 +343,24 @@ exports.MyLittleCmds = function () {
 	}
 
 	function socket_classify(socket) {
-		console.log('socket_classify');
 		var emit = function (cmd, obj) {
 			try {
 				socket.emit(cmd, obj);
-				return true;
 			} catch (e) {
 				return false;
 			}
+			return true;
 		};
-		if (emit('news', { msg: 'Classify started' }))
+		if (emit('news', { msg: 'Classifying' }))
 			classifier.classify(socket.handshake.user.id, store,
 				function (log) {
 					console.log('[Classify] ' + log);
-					emit('news', { msg: log });
-					return true;
+					return emit('news', { msg: log });
 				},
 				function (isdone) {
-					console.log('next');
 					if (isdone) {
+						if (!socket.handshake)
+						   return;
 						var params = stats.getParams(socket.handshake.user.id, store, 'pie', 'machine', null, null, true);
 						var filePath = __dirname + '/views/stats/' + 'pie_commands.ejs';
 						fs.readFile(filePath, 'utf-8', function (err, content) {
@@ -386,6 +385,7 @@ exports.MyLittleCmds = function () {
 		//socket.emit('news', { msg: 'Connection established ' + socket.handshake.user.id });
 		socket.on('start', function (data) {
 			if (data['cmd'] === 'classify') {
+				console.log('start classify');
 				socket_classify(socket);
 			} else if (data['cmd'] === 'updatecache') {
 				socket_updatecache(socket);

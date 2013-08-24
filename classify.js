@@ -35,7 +35,6 @@ exports.MyLittleClassifier = function () {
 				} else {
 					newclass = tweet.human;
 				}
-			//	console.log(newclass);
 				if (tweet.machine !== newclass) {
 					tweet.machine = newclass;
 					result.push(tweet);
@@ -54,11 +53,10 @@ exports.MyLittleClassifier = function () {
 				if (count === 0) {
 					callback(false);
 				} else {
-					if (logcb('Fighting based on ' + count + ' Tweets')) {
+					if (logcb('Fighting based on ' + count + ' Tweets1')) {
 						fight(voteuserid, classi, store, logcb, callback);
 					} else {
-						logcb('wut?')
-						callback(false);
+						return true;
 					}
 				}
 			} else if (tweet.human != consts.unknown) {

@@ -192,7 +192,6 @@ var aufschreib = {
 		var maxdivs = divs.splice(0, 100);
 		var maxids = ids.splice(0, 100);
 		while (maxids.length > 0) {
-			//console.log(maxids);
 			aufschreib.voteIds(div, maxids, maxdivs, cat);
 			maxdivs = divs.splice(0, 100);
 			maxids = ids.splice(0, 100);
@@ -356,10 +355,6 @@ var aufschreib = {
 		aufschreib.setProcessing(true, '#classify-result');
 		aufschreib.connectIo('classify', '#classify-result', function (data) {
 			aufschreib.setProcessing(false);
-			$('#classify-result').html(data);
-		});
-		var params = {cmd: 'classify'};
-		aufschreib.get(null, '', params, function (data) {
 			$('#classify-result').html(data);
 		});
 		return false;
