@@ -13,7 +13,7 @@ function Times() {
 		focus_height = 80,
 		charts_padding = 50,
 		legendwidth = 100,
-		width = 960 - margin.left - margin.right,
+		width = 1300 - margin.left - margin.right,
 		height = 500,
 		chart_height = height - charts_padding - margin.top - margin.bottom - focus_height
 		;

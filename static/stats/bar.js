@@ -21,7 +21,7 @@ function Bars() {
 			margins: {top: 40, right: 10, bottom: 20, left: 80},
 			xaxisheight: 150,
 			barheight: 300,
-			barwidth: 850,
+			barwidth: 1000,
 			width: function () {
 				return this.barwidth + this.margins.left + this.margins.right
 			},

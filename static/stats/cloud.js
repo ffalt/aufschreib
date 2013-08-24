@@ -23,7 +23,7 @@ function Clouds() {
 		};
 	var
 		sizes = {
-			width: 960,
+			width: 1200,
 			height: 600
 		};
 	var
