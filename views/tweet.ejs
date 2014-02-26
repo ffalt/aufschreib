@@ -1,6 +1,6 @@
 <div id="<%- tweet.id %>" class="tweet">
 	<div class="text-right">
-		<a class="close tweet-close" href="#">×</a>
+		<a title="Tweet ausblenden" class="close tweet-close" href="#">×</a>
 	</div>
 	<div class="tweet-counts">
 		<a href="https://twitter.com/<%- tweet.user %>/statuses/<%- tweet.id %>" target="_blank"><%= textutils.formatDateTime(tweet.created_at) %></a> - <%- tweet.source %>
@@ -10,13 +10,17 @@
 		<div class="tweet-btns">
 				<% consts.cats.forEach(function(cat) {
 				if (cat.id !== consts.unknown) {
-				%><a class="btn btn-default btn-tweet-vote btn-tweet<%- (cat.id===tweet.human?' active' : '' ) %>"
-					 value="<%- cat.id %>" href="#"><i class="glyphicon <%- cat.icon %>"></i> <%= cat.name %></a>
+				%><a class="btn btn-default btn-tweet-vote btn-tweet<%- (cat.id===tweet.human?' active btn-primary' : '' ) %>"
+                     title="<%- cat.hint %>" value="<%- cat.id %>" href="#"><i class="glyphicon <%- cat.icon %>"></i> <%= cat.name %></a>
 				<% } }); %>
 		</div>
-		<div class="tweet-classy">
-			Human:&nbsp;<span class="tweet-human"><%= consts.tools.catName(tweet.human) %></span>
-			Machine:&nbsp;<span class="tweet-machine"><%= consts.tools.catName(tweet.machine) %></span>
-		</div>
+        <div class="tweet-classy">
+			<!--Deine Bewertung:&nbsp;<span class="tweet-human"><%= consts.tools.catName(tweet.human) %></span>-->
+			<% if (tweet.machine==consts.unknown) { %>
+            Kein Vorschlag
+            <% }else {  %>
+            Vorschlag:&nbsp;<span class="tweet-machine"><%= consts.tools.catName(tweet.machine) %></span>
+            <% }  %>
+        </div>
 	</div>
 </div>

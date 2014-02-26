@@ -1,13 +1,8 @@
 <% include stats_head %>
 
 <div id="<%- container_id %>temp" class="hidden">
-	<ul class="nav navbar-nav" id="<%- container_id %>view">
-		<li><span class="navbar-brand">View:</span></li>
-		<li><a class="btn btn-default" title="SVG" value="svg" href="#">SVG</a></li>
-		<li><a class="btn btn-default" title="WebGL" value="webgl" href="#">WebGL</a></li>
-	</ul>
 	<ul class="nav navbar-nav" id="<%- container_id %>min">
-		<li><span class="navbar-brand">Min Mentions:</span></li>
+		<li><span class="navbar-brand">Minimale Anzahl Mentions:</span></li>
 		<li>
 			<form class="navbar-form navbar-left form-inline" role="search">
 				<div class="input-group">
@@ -16,6 +11,11 @@
 			</form>
 		</li>
 	</ul>
+    <ul class="nav navbar-nav" id="<%- container_id %>view">
+        <li><span class="navbar-brand">Anzeige-Technik:</span></li>
+        <li><a class="btn btn-default" title="SVG - Wird von den meinsten Browsern unterstützt" value="svg" href="#">SVG</a></li>
+        <li><a class="btn btn-default" title="WebGL - Wird von manchen Browser nicht unterstützt" value="webgl" href="#">WebGL</a></li>
+    </ul>
 </div>
 <% include stats_content %>
 

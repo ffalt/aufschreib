@@ -1,5 +1,12 @@
 <% include stats_head %>
 
+<div id="<%- container_id %>temp" class="hidden">
+    <ul class="nav navbar-nav">
+        <li><span class="navbar-brand">Sonstiges:</span></li>
+        <li id="<%- container_id %>rated"><a class="btn btn-default" title="Nicht bewertete (Unbekannt) ein-/ausblenden" href="#" value="false">Nicht bewertete</a></li>
+    </ul>
+</div>
+
 <% include stats_content %>
 
 <% include stats_foot %>
@@ -8,7 +15,8 @@
 	$(function () {
 		$(document).ready(
 				function () {
-					var pies = new Pies();
+                    $('#<%- container_id %>temp').children().appendTo($('#navbar-content'));
+                    var pies = new Pies();
 					pies.initPie('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>',
 							'<%- chartparams.forcegenerate %>', new Stats(cats));
 				}

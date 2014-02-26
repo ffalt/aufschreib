@@ -2,36 +2,42 @@ const basecats = [
 	{
 		id: 'outcry',
 		name: 'Aufschrei',
+        hint: 'Tweet, der von einer Aufschrei-Situation berichtet',
 		icon: 'glyphicon-bullhorn',
 		color: '#5e8c6A'
 	},
 	{
-		id: 'report',
-		name: 'Links',
-		icon: 'glyphicon-share-alt',
-		color: '#98abc5'
-	},
-	{
 		id: 'comment',
 		name: 'Kommentar',
+        hint: 'Tweet, in dem #aufschrei besprochen wird, aber keine Aufschrei-Situation geschildert wird',
 		icon: 'glyphicon-comment',
 		color: '#bfb35a'
 	},
 	{
 		id: 'troll',
 		name: 'Troll',
+        hint: 'Tweet, der keinen konstruktiven Betrag liefert, z.b. feindlich ist',
 		icon: 'glyphicon-thumbs-down',
 		color: '#8c2318'
 	},
+    {
+        id: 'report',
+        name: 'Links',
+        hint: 'Tweet, der nur Überschrift und Link zu einem Medienbeitrag enthält (z.B. Blogs, Artikeln, Videos)',
+        icon: 'glyphicon-share-alt',
+        color: '#98abc5'
+    },
 	{
 		id: 'spam',
 		name: 'Spam',
+        hint: 'Tweet, der überhaupt keinen Bezug enthält und ggf. auf Werbeseite verlinkt',
 		icon: 'glyphicon-trash',
 		color: '#ff8c00'
 	},
 	{
 		id: 'unknown',
 		name: 'Unbekannt',
+        hint: 'Bisher nicht bewerteter Tweet',
 		icon: 'glyphicon-question-sign',
 		color: '#f2c45a'
 	}
@@ -41,40 +47,45 @@ const defaultmode = 'human';
 const modes = [
 	{
 		id: 'human',
-		name: 'Human',
+		name: 'Deine Bewertungen',
 		icon: 'glyphicon-user'
 	},
 	{
 		id: 'machine',
-		name: 'Machine',
+		name: 'Maschinelle Vorschläge',
 		icon: 'glyphicon-th'
 	}
 ];
 const wordkinds = [
 	{
 		id: 'word',
-		name: 'Words',
+		name: 'Wörter',
+        hint: 'Die häufigsten Wörter',
 		icon: 'glyphicon-custom-quote-left'
 	},
 	{
 		id: 'user',
-		name: 'Users',
+		name: 'Konten',
+		hint: 'Konten mit den meisten Tweets',
 		icon: 'glyphicon-user'
 	},
 	{
 		id: 'hash',
 		name: 'Hashtags',
+		hint: 'Die häufigsten Hashtags',
 		icon: 'glyphicon-custom-hashtag'
 	},
 	{
 		id: 'client',
-		name: 'Clients',
+		name: 'Apps',
+        hint: 'Die häufigsten verwendeten Programme/Webseiten',
 		icon: 'glyphicon-custom-app'
 	},
 	{
 		id: 'link',
 		name: 'Links',
-		icon: 'glyphicon-link'
+        hint: 'Die häufigsten Links',
+        icon: 'glyphicon-link'
 	}
 ];
 const graphkinds = [
@@ -87,49 +98,49 @@ const graphkinds = [
 const stats = [
 	{
 		id: 'pie',
-		name: 'Pie',
+		name: 'Kuchen',
 		kinds: [],
 		maxentries: 0,
 		defaultkind: null,
-		icon: 'glyphicon-circle-blank',
+		icon: 'disabled-glyphicon-circle-blank',
 		usesCats: false
 	},
 	{
 		id: 'bar',
-		name: 'Bar',
+		name: 'Balken',
 		thresholds: 1,
 		maxentries: 30,
 		defaultkind: 'word',
 		kinds: wordkinds,
-		icon: 'glyphicon-bar-chart',
+		icon: 'disabled-glyphicon-bar-chart',
 		usesCats: true
 	},
 	{
 		id: 'time',
-		name: 'Time',
+		name: 'Zeit',
 		maxentries: 0,
 		defaultkind: null,
 		kinds: [],
-		icon: 'glyphicon-indent-left',
+		icon: 'disabled-glyphicon-indent-left',
 		usesCats: false
 	},
 	{
 		id: 'cloud',
-		name: 'Cloud',
+		name: 'Wolke',
 		maxentries: 250,
 		thresholds: 10,
 		defaultkind: 'word',
 		kinds: wordkinds,
-		icon: 'glyphicon-cloud',
+		icon: 'disabled-glyphicon-cloud',
 		usesCats: true
 	},
 	{
 		id: 'graph',
-		name: 'Graph',
+		name: 'Netz',
 		maxentries: 0,
 		defaultkind: 'mention',
 		kinds: graphkinds,
-		icon: 'glyphicon-sitemap',
+		icon: 'disabled-glyphicon-sitemap',
 		usesCats: false
 	}
 ];
@@ -175,6 +186,14 @@ var tools = (function () {
 		return false;
 	}
 
+    function infokind(type, kindid) {
+		var info = statinfo(type);
+		if (info) {
+			return findbyid(info.kinds, kindid);
+		}
+		return null;
+	}
+
 	function validstat(statid) {
 		return (findbyid(stats, statid) !== null);
 	}
@@ -193,6 +212,7 @@ var tools = (function () {
 		validmode: validmode,
 		validcat: validcat,
 		validkind: validkind,
+        infokind: infokind,
 		catName: catName,
 		modeName: modeName
 	};

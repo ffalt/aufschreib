@@ -34,6 +34,16 @@ body {
 	margin: 10px;
 }
 
+.dropdown-menu-form {
+    padding-top: 10px;
+    padding-left: 10px;
+    width: 240px !important;
+}
+
+.dropdown-menu-form label {
+    font-weight: normal !important;
+}
+
 /* Logo */
 
 .logo {
@@ -188,7 +198,7 @@ a:hover {
 	padding: 8px;
 	margin-bottom: 10px;
 	border: 1px solid #DDDDDD;
-	background-color: #f8f8f8;
+	background-color: #f4f4f4;
 	min-width: 260px;
 }
 
@@ -228,10 +238,6 @@ a:hover {
 	padding: 8px;
 	text-align: center;
 }
-
-/*.logout {*/
-	/*padding-top: 4px;*/
-/*}*/
 
 /* Stat */
 
@@ -320,7 +326,7 @@ a:hover {
 }
 
 .input-group .small-input {
-	width: 60px;
+	width: 50px;
 }
 
 .input-group .small-input[type="number"] {

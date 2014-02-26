@@ -22,7 +22,7 @@
 </div>
 
 <div class="navbar navbar-default navbar-inverse navbar-fixed-top">
-	<div class="container">
+	<!--<div class="container">-->
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-top-content">
 				<span class="icon-bar"></span>
@@ -33,9 +33,10 @@
 		</div>
 		<div id="navbar-top-content" class="navbar-collapse collapse">
 			<ul id="nav-site" class="nav navbar-nav">
-				<li id='edit' class="active"><a href="#!/edit">Classify</a></li>
-				<li id='commands'><a href="#!/commands">Machinify</a></li>
-				<li id='stats'><a href="#!/stats">Statify</a></li>
+				<li id='start' class="active"><a href="#!/start">Start</a></li>
+				<li id='edit'><a href="#!/edit">Bewerten</a></li>
+				<li id='commands'><a href="#!/commands">Tools</a></li>
+				<li id='stats'><a href="#!/stats">Ergebnisse</a></li>
 			</ul>
 			<ul id="nav-stats" class="nav navbar-nav navbar-right">
 				<% consts.stats.forEach(function(stat) { %>
@@ -43,29 +44,35 @@
 				<% }); %>
 			</ul>
 			<ul id="nav-edit" class="nav navbar-nav navbar-right">
-				<li>
-					<a data-toggle="modal" href="#modal-filter"><i class="glyphicon glyphicon-filter"></i></a>
-				</li>
 				<li class="dropdown">
-					<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-wrench"></i> <b class="caret"></b></a>
+					<a href="javascript:;" title="Einstellungen" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-wrench"></i> <b class="caret"></b></a>
 					<ul class="dropdown-menu dropdown-menu-form">
-						<li>&nbsp;&nbsp;&nbsp;
-							<input type="checkbox" id="option_hideaftervote"/>
-							<label for="option_hideaftervote">Hide after vote</label>
+						<li>
+                            <label>
+							    <input type="checkbox" id="option_hideaftervote"/>&nbsp;Eintrag ausblenden wenn alle Tweets bewertet sind
+                            </label>
 						</li>
 					</ul>
 				</li>
+                <li>
+                    <a title="Filter nach Bewertungen" data-toggle="modal" href="#modal-filter"><i class="glyphicon glyphicon-filter"></i></a>
+                </li>
 				<li>
 					<form class="navbar-form navbar-left" role="search">
 						<div class="form-group">
 							<!--<span class="add-on"><i class="icon-search"></i></span>-->
-							<input id="search" type="text" class="form-control" placeholder="Search">
+							<input id="search" type="text" class="form-control" placeholder="Text-Filter">
 						</div>
 					</form>
 				</li>
 			</ul>
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/logout" title="Abmelden"><i class="glyphicon glyphicon-log-out"></i></a>
+                </li>
+            </ul>
 		</div><!--/.nav-collapse -->
-	</div>
+	<!--</div>-->
 </div>
 
 <div id="modal-filter" class="modal fade">
@@ -73,13 +80,14 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Filter by Classification</h4>
+				<h4 class="modal-title">Filter nach Bewertung</h4>
 			</div>
 			<div class="modal-body">
 				<p>
+                    Es werden nur Tweets angezeigt, die mindestens einer oder mehreren der unten markierten Bewertungen entsprechen.
 					<form id="form-filter" role="form">
 					<div class="form-group">
-						<label><i class="glyphicon <%- consts.modes[0].icon %>"></i> Human</label>
+						<label><i class="glyphicon <%- consts.modes[0].icon %>"></i> Deine Bewertungen</label>
 						<% consts.cats.forEach(function (cat) { %>
 						<div class="checkbox">
 							<label>
@@ -94,7 +102,7 @@
 						<% }); %>
 					</div>
 					<div class="form-group">
-						<label><i class="glyphicon <%- consts.modes[1].icon %>"></i> Machine</label>
+						<label><i class="glyphicon <%- consts.modes[1].icon %>"></i> Maschinelle Bewertungen</label>
 						<% consts.cats.forEach(function (cat) { %>
 						<div class="checkbox">
 							<label>
@@ -111,38 +119,26 @@
 				</form>
 				</p>
 				<p>
-				<a href="javascript:;" class="btn btn-default btn-xs check_all">Check all</a>
-				<a href="javascript:;" class="btn btn-default btn-xs check_none">Check none</a>
+				<a href="javascript:;" class="btn btn-default btn-xs check_all">Alle markieren</a>
+				<a href="javascript:;" class="btn btn-default btn-xs check_none">Markierungen aufheben</a>
 				</p>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<a href="javascript:;" class="btn btn-primary check_apply" data-dismiss="modal">Apply</a>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Schliessen</button>
+				<a href="javascript:;" class="btn btn-primary check_apply" data-dismiss="modal">Anwenden</a>
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-
-<div class="navbar-inner">
-	<div class="menu pull-right logout">
-		&nbsp
-		<a href="/logout" title="Log out"><i class="icon-signout icon-2x"></i></a>
-	</div>
-
-	<!--/.nav-collapse -->
-</div>
-
-
-<!-- /.navbar -->
 <div id="contentcontainer" class="container">
 	<div class="row">
 		<div class="col-md-12">
-			<div class="content" id="content"><h2 class="jumbotron centered">Hi, <%= user.name %></h2></div>
+			<div class="content" id="content"><h2 class="jumbotron centered">Hallo <%= user.name %></h2></div>
 		</div>
 	</div>
 </div>
-<!-- /container -->
+
 </body>
 
 <!-- Le scripts -->

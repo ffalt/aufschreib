@@ -4,11 +4,11 @@
         <span class="user-counts pull-right">
         <%= tweets.length %> / <%= user_tweet_total_count %>
         <% if (user_tweet_total_count - tweets.length > 0) { %>
-        <a href="#" onClick="return aufschreib.loadMore('<%- user_id %>');"> (Load all)</a>
+        <a href="#" title="Alle Tweets von @<%= user_id %> anzeigen" onClick="return aufschreib.loadMore('<%- user_id %>');"> (Alle anzeigen)</a>
         <% } %>
         </span>
 		<div>
-			<img class="user-img" src="<%- user_img %>" alt="<%= user_name %>"/>
+			<img class="user-img" src="<%- user_img %>" alt=""/>
 			<a class="user-name" target="_blank" href="https://twitter.com/<%= user_id %>"><%= user_name %></a>
 			<% if (tweets.length>1) { %>
 			<div class="user-btns">

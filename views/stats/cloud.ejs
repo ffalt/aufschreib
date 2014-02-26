@@ -1,28 +1,28 @@
 <% include stats_head %>
 <div id="<%- container_id %>temp" class="hidden">
 	<ul class="nav navbar-nav" id="<%- container_id %>spiral">
-		<li><span class="navbar-brand">Spiral:</span></li>
+		<li><span class="navbar-brand">Spirale:</span></li>
 		<li><a class="btn btn-default" title="Archimedean" value="archimedean" href="#">Archimedean</a></li>
 		<li><a class="btn btn-default" title="Rectangular" value="rectangular" href="#">Rectangular</a></li>
 	</ul>
 	<ul class="nav navbar-nav" id="<%- container_id %>scale">
-		<li><span class="navbar-brand">Scale:</span></li>
+		<li><span class="navbar-brand">Skalierung:</span></li>
 		<li><a class="btn btn-default" title="log n" href="#" value="log">log n</a></li>
 		<li><a class="btn btn-default" title="√n" href="#" value="sqrt">√n</a></li>
 		<li><a class="btn btn-default" title="n" href="#" value="linear">n</a></li>
 	</ul>
 	<ul class="nav navbar-nav">
-		<li><span class="navbar-brand">Orientations:</span></li>
+		<li><span class="navbar-brand">Orientierung:</span></li>
 		<li>
 			<form class="navbar-form form-horizontal navbar-form-orientations">
 				<div class="input-group inline">
-					<span class="input-group-addon">Max</span>
+					<span class="input-group-addon">Max.</span>
 					<input class="form-control small-input" type="number" id="cloud_angle-count" value="5" min="1">
 					<span class="input-group-addon">#</span>
 				</div>
 
 				<div class="input-group inline">
-					<span class="input-group-addon">from</span>
+					<span class="input-group-addon">von</span>
 					<input class="form-control small-input" type="number" id="cloud_angle-from" width="30" value="-60" min="-90" max="90">
 					<span class="input-group-addon">°</span>
 				</div>
@@ -30,7 +30,7 @@
 				<span class="cloud_angles inline" id="cloud_angles_view"></span>
 
 				<div class="input-group inline">
-					<span class="input-group-addon">to</span>
+					<span class="input-group-addon">bis</span>
 					<input class="form-control small-input" type="number" id="cloud_angle-to" width="30" value="60" min="-90" max="90">
 					<span class="input-group-addon">°</span>
 				</div>
@@ -38,13 +38,13 @@
 		</li>
 	</ul>
 	<ul class="nav navbar-nav" id="<%- container_id %>settings">
-		<li><span class="navbar-brand">Settings:</span></li>
-		<li id="<%- container_id %>case"><a class="btn btn-default" title="Case Sensitive" href="#" value="false">Case Sensitive</a></li>
-		<li id="<%- container_id %>stop"><a class="btn btn-default" title="Hide/Show Stopwords" href="#" value="false">Hide Stopwords</a></li>
-		<li id="<%- container_id %>tag"><a class="btn btn-default" title="Hide/Show #aufschrei Entry" href="#" value="false">Hide #aufschrei</a></li>
+		<li><span class="navbar-brand">Sonstiges:</span></li>
+		<li id="<%- container_id %>case"><a class="btn btn-default" title="Klein-/Großschreibung ignorieren/beachten" href="#" value="false">Klein-/Großschreibung</a></li>
+		<li id="<%- container_id %>stop"><a class="btn btn-default" title="Eher uninteressante Wörter (sogenannte 'Stoppwörter') ein-/ausblenden" href="#" value="false">Stoppwörter</a></li>
+		<li id="<%- container_id %>tag"><a class="btn btn-default" title="Eintrag '#aufschrei' ein-/ausblenden" href="#" value="false">#aufschrei</a></li>
 	</ul>
 	<ul class="nav navbar-nav">
-		<li><span class="navbar-brand">Font:</span></li>
+		<li><span class="navbar-brand">Schrift:</span></li>
 		<li>
 			<form class="navbar-form form-horizontal">
 				<div class="input-group">
@@ -54,7 +54,7 @@
 		</li>
 	</ul>
 	<ul class="nav navbar-nav">
-		<li><span class="navbar-brand">Max Entries:</span></li>
+		<li><span class="navbar-brand">Max. Einträge:</span></li>
 		<li>
 			<form class="navbar-form form-horizontal">
 				<div class="input-group">

@@ -1,0 +1,55 @@
+<h3>Hallo  <%= user.name %>!</h3>
+
+<p>#aufschreib ist eine App um die #aufschrei-Tweets zu bewerten, also in Kategorien einzuordnen.</p>
+
+<p>Die Kategorien sind:</p>
+
+<table class="table table-condensed table-bordered">
+
+    <% consts.cats.forEach(function(cat) { %>
+
+    <tr>
+        <td><i class="glyphicon <%- cat.icon %>"></i></td>
+        <td><%= cat.name %></td>
+        <td><%= cat.hint %></td>
+    </tr>
+
+    <% }); %>
+
+</table>
+
+<h3>Unter <a href="#!/edit">Bewerten</a></h3>
+
+<p>werden Tweets nach Twitter-Konto gruppiert angezeigt,
+    durch Filtern der Bewertungen oder eine einfach Text-Suche können Tweets gleichem oder ähnlichem Inhalts im Block
+    bewertet werden.</p>
+
+<p>Beispiel: eine Textsuche nach typischem Trollwörtern</p>
+
+<h3>Unter <a href="#!/commands">Tools</a></h3>
+
+<p>können <b>Bewertungsvorschläge</b> erstellt/aktualisiert werden, anhand denen Tweets schneller beurteilt und auch
+    gefiltert werden können.</p>
+
+<p>Es soll so laufen:</p>
+
+<ol>
+    <li>Benutzer*innen bewerten ein paar Tweets</li>
+    <li>Der Algorithmus wird damit trainiert</li>
+    <li>Benutzer*innen bewerten mit Hilfe der bisherigen Vorschläge Tweets</li>
+    <li>wieder zu 2. oder die Ergebnisse sind gut genug</li>
+</ol>
+
+<p>Mit dem <b>Zwischenspeicher</b> kann die Anzeige der Ergebnisse beschleunigt werden, die z.B. für eine Präsentation zu langsam ist.</p>
+
+<h3>Unter <a href="#!/stats">Ergebnisse</a></h3>
+
+<p>Verschiedene statistische Ansichten über die Anzahlen von Bewertungen/häufigen Wörtern/Zeitverlauf/u.v.m.</p>
+
+
+
+
+
+
+
+
