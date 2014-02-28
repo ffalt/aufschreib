@@ -2,8 +2,14 @@ var aufschreib = {
     data: ['human_unknown', 'machine_unknown', 'machine_outcry',
         'machine_report', 'machine_comment', 'machine_troll', 'machine_spam'],
     search: '',
-    rangegte: null,
-    rangelte: null,
+    def_range: {
+        min: null,
+        max: null
+    },
+    range: {
+        min: null,
+        max: null
+    },
     stats: {
         mode: 'human',
         type: 'pie',
@@ -253,8 +259,10 @@ var aufschreib = {
         if (aufschreib.search.length > 0) {
             result.search = encodeURIComponent(aufschreib.search);
         }
-        result.rangegte = aufschreib.rangegte;
-        result.rangelte = aufschreib.rangelte;
+        if ((aufschreib.range.min) && (aufschreib.range.max)) {
+            result.rangegte = aufschreib.range.min.valueOf();
+            result.rangelte = aufschreib.range.max.valueOf();
+        }
         return result;
     },
     nextList: function (sender) {
@@ -443,6 +451,14 @@ var aufschreib = {
         $('li', '#nav-site').removeClass('active');
         $('a[href*=' + mode + ']', '#nav-site').parent().addClass('active');
         $('#nav-edit').toggle((mode === 'edit'));
+        $('#time-filter-pane').toggle(
+            ((mode === 'edit') &&
+                (aufschreib.range.min !== null))
+        );
+//        console.log(aufschreib.range);
+//        console.log(     ((mode === 'edit') &&
+//                (aufschreib.range.min!==null))
+//        );
         $('#nav-stats').toggle((mode === 'stats'));
     },
     setStatsSilent: function (type, mode, kind, cat) {
@@ -577,25 +593,66 @@ var aufschreib = {
                 aufschreib.request();
             }
         });
+
+        aufschreib.def_range.min = new Date(parseInt($("#slider").attr("min")));
+        aufschreib.def_range.max = new Date(parseInt($("#slider").attr("max")));
         $("#slider").dateRangeSlider({
-            defaultValues: {
-                min: new Date(parseInt($("#slider").attr("min"))),
-                max: new Date(parseInt($("#slider").attr("max")))
-            },
-            bounds: {
-                min: new Date(parseInt($("#slider").attr("min"))),
-                max: new Date(parseInt($("#slider").attr("max")))
-            },
+            defaultValues: aufschreib.def_range,
+            bounds: aufschreib.def_range,
             formatter: function (val) {
-//                    year = val.getFullYear();
-                return val.getDate() + "." + (val.getMonth() + 1) + " " + val.getHours() + ':' + val.getMinutes();
-            }
+                return moment(val).format("MMM D, HH:mm");
+            },
+            scales: [
+                {
+                    first: function (value) {
+                        return value;
+                    },
+                    end: function (value) {
+                        return value;
+                    },
+                    next: function (value) {
+                        return moment(value).add('days', 1);
+                    },
+                    label: function (value) {
+                        return moment(value).date();
+                    }
+                }
+            ]
         });
         $("#slider").bind("valuesChanged", function (e, data) {
-            aufschreib.rangegte = data.values.min.valueOf();
-            aufschreib.rangelte = data.values.max.valueOf();
-            aufschreib.request();
+            if ($('#time-filter-pane').is(':visible')) {
+                aufschreib.range.min = data.values.min;
+                aufschreib.range.max = data.values.max;
+                aufschreib.request();
+            }
         });
+
+        $('#time-filter-toggle a').click(function (event) {
+
+            $('#time-filter-toggle').toggleClass('active',
+                $('#time-filter-pane').is(':hidden')
+            );
+
+            if ($('#time-filter-pane').is(':hidden')) {
+                aufschreib.range.min = aufschreib.def_range.min;
+                aufschreib.range.max = aufschreib.def_range.max;
+                $('#time-filter-pane').toggle();
+                $("#slider").dateRangeSlider('resize');
+                $("#slider").dateRangeSlider('values',
+                    aufschreib.def_range.min,
+                    aufschreib.def_range.max
+                );
+            } else {
+                aufschreib.def_range.min = aufschreib.range.min;
+                aufschreib.def_range.max = aufschreib.range.max;
+                aufschreib.range.max = null;
+                aufschreib.range.min = null;
+                $('#time-filter-pane').toggle();
+            }
+            aufschreib.request();
+            event.stopPropagation();
+        });
+
         search.val(aufschreib.search);
         $('.dropdown li').click(function (event) {
             event.stopPropagation();

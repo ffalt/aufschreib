@@ -58,6 +58,9 @@
                 <li>
                     <a title="Filter nach Bewertungen" data-toggle="modal" href="#modal-filter"><i class="glyphicon glyphicon-filter"></i></a>
                 </li>
+                <li id="time-filter-toggle">
+                    <a title="Filter nach Zeit" href="javascript:"><i class="glyphicon glyphicon-time"></i></a>
+                </li>
 				<li>
 					<form class="navbar-form navbar-left" role="search">
 						<div class="form-group">
@@ -132,17 +135,17 @@
 	</div><!-- /.modal-dialog -->
 </div>
 
+
 <div id="contentcontainer" class="container">
-	<div class="row filter">
+	<div class="row">
 		<div class="col-md-12">
-            <h4>Filter nach Zeit</h4>
-            <div id="slider" min="<%= range.min %>" max="<%= range.max %>"></div>
-
-
-
+            <div id="time-filter-pane" class="filter-pane">
+                <span>Filter nach Zeit</span>
+                <div id="slider" min="<%= range.min %>" max="<%= range.max %>"></div>
+            </div>
 		</div>
 	</div>
-	<div class="row">
+    <div class="row">
 		<div class="col-md-12">
             <div class="content" id="content"><h2 class="jumbotron centered">Hallo <%= user.name %></h2></div>
 		</div>
@@ -158,12 +161,14 @@
 <script type="text/javascript" src="/static/bower_components/jqueryui/ui/jquery.ui.core.js"></script>
 <script type="text/javascript" src="/static/bower_components/jqueryui/ui/jquery.ui.widget.js"></script>
 
+<!--<script type="text/javascript" src="/static/bower_components/jqrangeslider/dist/jQDateRangeSlider-withRuler-min.js"></script>-->
 <script type="text/javascript" src="/static/bower_components/jqrangeslider/jQRangeSlider.js"></script>
 <script type="text/javascript" src="/static/bower_components/jqrangeslider/jQRangeSliderMouseTouch.js"></script>
 <script type="text/javascript" src="/static/bower_components/jqrangeslider/jQRangeSliderDraggable.js"></script>
 <script type="text/javascript" src="/static/bower_components/jqrangeslider/jQRangeSliderHandle.js"></script>
 <script type="text/javascript" src="/static/bower_components/jqrangeslider/jQRangeSliderBar.js"></script>
 <script type="text/javascript" src="/static/bower_components/jqrangeslider/jQRangeSliderLabel.js"></script>
+<script type="text/javascript" src="/static/bower_components/jqrangeslider/jQRuler.js"></script>
 <script type="text/javascript" src="/static/bower_components/jqrangeslider/jQDateRangeSliderHandle.js"></script>
 <script type="text/javascript" src="/static/bower_components/jqrangeslider/jQDateRangeSlider.js"></script>
 
@@ -171,8 +176,8 @@
 <script type="text/javascript" src="/static/bower_components/d3/d3.min.js"></script>
 <script type="text/javascript" src="/static/bower_components/socket.io-client/dist/socket.io.min.js"></script>
 <script type="text/javascript" src="/static/bower_components/vivagraph/dist/vivagraph.min.js"></script>
-
 <script type="text/javascript" src="/static/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+<script type="text/javascript" src="/static/bower_components/moment/min/moment.min.js"></script>
 
 <!--<link type="text/css" href="/static/bower_components/typeahead.js/typeahead.js-bootstrap.css" rel="stylesheet">-->
 
