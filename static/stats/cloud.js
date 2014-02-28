@@ -56,7 +56,59 @@ function Clouds() {
 		angles;
 
 	function initCloud(id, mode, kind, statshelper) {
-		stats = statshelper;
+
+        var detective = new Detector();
+        var testfonts = [
+        "Arial",
+        "Arial Black",
+        "Arial Narrow",
+        "Arial Rounded MT Bold",
+        "Bookman Old Style",
+        "Bradley Hand ITC",
+        "Century",
+        "Century Gothic",
+        "Comic Sans MS",
+        "Courier",
+        "Courier New",
+        "Georgia",
+        "Gentium",
+        "Impact",
+        "Helvetica",
+        "Helvetica Neue",
+        "King",
+        "Lucida Console",
+        "Lalit",
+        "Modena",
+        "Monotype Corsiva",
+        "Papyrus",
+        "Tahoma",
+        "TeX",
+        "Times",
+        "Times New Roman",
+        "Trebuchet MS",
+        "Verdana",
+        "Verona"];
+
+        var fonts = [];
+        for (var i = 0; i < testfonts.length; i++) {
+            if (detective.detect(testfonts[i])) {
+                fonts.push({font:testfonts[i]});
+            }
+        }
+
+        var houndfonts = new Bloodhound({
+            datumTokenizer: function(d) { return d.font; },
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            local: fonts
+        });
+        houndfonts.initialize();
+
+        $('#cloud_font').typeahead(null, {
+            displayKey: 'font',
+            source: houndfonts.ttAdapter()
+        });
+
+        stats = statshelper;
 		options.id = id;
 		options.mode = mode;
 		options.kind = kind;

@@ -2,6 +2,8 @@ var aufschreib = {
     data: ['human_unknown', 'machine_unknown', 'machine_outcry',
         'machine_report', 'machine_comment', 'machine_troll', 'machine_spam'],
     search: '',
+    rangegte: null,
+    rangelte: null,
     stats: {
         mode: 'human',
         type: 'pie',
@@ -249,8 +251,10 @@ var aufschreib = {
             filter: aufschreib.data.join(',')
         };
         if (aufschreib.search.length > 0) {
-            result['search'] = encodeURIComponent(aufschreib.search);
+            result.search = encodeURIComponent(aufschreib.search);
         }
+        result.rangegte = aufschreib.rangegte;
+        result.rangelte = aufschreib.rangelte;
         return result;
     },
     nextList: function (sender) {
@@ -258,7 +262,7 @@ var aufschreib = {
         $(sender).html('<div class="process-img"></div> <span>Lade die nächsten Tweets...</span>');
         var id = $(sender).attr('value');
         var params = aufschreib.makeListParams();
-        params['id'] = id;
+        params.id = id;
         aufschreib.get(null, '', params, function (data) {
             var pnode = $(sender).parent();
             $(sender).replaceWith(data);
@@ -326,10 +330,10 @@ var aufschreib = {
         $('a[href*=' + aufschreib.stats.type + ']', '#nav-stats').parent().addClass('active');
         var params = {cmd: 'chart', type: aufschreib.stats.type, mode: aufschreib.stats.mode};
         if (aufschreib.stats.cat) {
-            params['cat'] = aufschreib.stats.cat;
+            params.cat = aufschreib.stats.cat;
         }
         if (aufschreib.stats.kind) {
-            params['kind'] = aufschreib.stats.kind;
+            params.kind = aufschreib.stats.kind;
         }
         aufschreib.get(null, '', params, function (data) {
             if (aufschreib.current != 'charts')
@@ -572,6 +576,25 @@ var aufschreib = {
                 aufschreib.search = this.value;
                 aufschreib.request();
             }
+        });
+        $("#slider").dateRangeSlider({
+            defaultValues: {
+                min: new Date(parseInt($("#slider").attr("min"))),
+                max: new Date(parseInt($("#slider").attr("max")))
+            },
+            bounds: {
+                min: new Date(parseInt($("#slider").attr("min"))),
+                max: new Date(parseInt($("#slider").attr("max")))
+            },
+            formatter: function (val) {
+//                    year = val.getFullYear();
+                return val.getDate() + "." + (val.getMonth() + 1) + " " + val.getHours() + ':' + val.getMinutes();
+            }
+        });
+        $("#slider").bind("valuesChanged", function (e, data) {
+            aufschreib.rangegte = data.values.min.valueOf();
+            aufschreib.rangelte = data.values.max.valueOf();
+            aufschreib.request();
         });
         search.val(aufschreib.search);
         $('.dropdown li').click(function (event) {

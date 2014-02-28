@@ -2,7 +2,7 @@
 
 <div id="<%- container_id %>temp" class="hidden">
 	<ul class="nav navbar-nav" id="<%- container_id %>max">
-		<li><span class="navbar-brand">Max. Einträge:</span></li>
+		<li><div class="navbar-desc">Max. Einträge:</div></li>
 		<li>
 			<form class="navbar-form navbar-left form-inline" role="search">
 				<div class="input-group">
@@ -12,12 +12,12 @@
 		</li>
 	</ul>
 	<ul class="nav navbar-nav" id="<%- container_id %>bars">
-		<li><span class="navbar-brand">Balken:</span></li>
+		<li><div class="navbar-desc">Balken:</div></li>
 		<li><a class="btn btn-default" title="Die Balken aufeinander stapeln" href="#" value="stacked">Stapeln</a></li>
 		<li><a class="btn btn-default" title="Die Balken gruppiert nebeneinander anzeigen" href="#" value="grouped">Gruppieren</a></li>
 	</ul>
 	<ul class="nav navbar-nav">
-		<li><span class="navbar-brand">Sonstiges:</span></li>
+		<li><div class="navbar-desc">Sonstiges:</div></li>
 		<li id="<%- container_id %>casesensitiv"><a class="btn btn-default" title="Klein-/Großschreibung ignorieren/beachten" href="#" value="false">Klein-/Großschreibung</a></li>
 		<li id="<%- container_id %>hidestops" class="active"><a class="btn btn-default" title="Eher uninteressante Wörter (sogenannte 'Stoppwörter') ein-/ausblenden" href="#" value="false">Stoppwörter</a></li>
         <!--<li id="<%- container_id %>hidetag" class="active"><a class="btn btn-default" title="Den Hide/Show #aufschrei Entry" href="#" value="false">Eintrag '#aufschrei'</a></li>-->

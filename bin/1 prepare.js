@@ -5,9 +5,9 @@
  */
 
 var fs = require('fs');
-var tokenizer = require('./tweet_tokenizer.js').MyLittleTweetTokenizer();
-var consts = require('./consts');
-var config = require('./config');
+var tokenizer = require('./../lib/tweet_tokenizer.js').MyLittleTweetTokenizer();
+var consts = require('./../lib/consts');
+var config = require('./../config');
 var async = require('async');
 var storeurls = {};
 
@@ -106,7 +106,7 @@ function loadUrls(cb) {
 }
 
 var
-	storage = require('./tweets_couch').MyLittleTweets();
+	storage = require('./../local/tweets_couch').MyLittleTweets();
 var
 	defaultuser = 'admin',
 	defaultpass = 'totalsupergehaim';

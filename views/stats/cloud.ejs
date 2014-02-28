@@ -1,18 +1,18 @@
 <% include stats_head %>
 <div id="<%- container_id %>temp" class="hidden">
 	<ul class="nav navbar-nav" id="<%- container_id %>spiral">
-		<li><span class="navbar-brand">Spirale:</span></li>
+		<li><div class="navbar-desc">Spirale:</div></li>
 		<li><a class="btn btn-default" title="Archimedean" value="archimedean" href="#">Archimedean</a></li>
 		<li><a class="btn btn-default" title="Rectangular" value="rectangular" href="#">Rectangular</a></li>
 	</ul>
 	<ul class="nav navbar-nav" id="<%- container_id %>scale">
-		<li><span class="navbar-brand">Skalierung:</span></li>
+		<li><div class="navbar-desc">Skalierung:</div></li>
 		<li><a class="btn btn-default" title="log n" href="#" value="log">log n</a></li>
 		<li><a class="btn btn-default" title="√n" href="#" value="sqrt">√n</a></li>
 		<li><a class="btn btn-default" title="n" href="#" value="linear">n</a></li>
 	</ul>
 	<ul class="nav navbar-nav">
-		<li><span class="navbar-brand">Orientierung:</span></li>
+		<li><div class="navbar-desc">Orientierung:</div></li>
 		<li>
 			<form class="navbar-form form-horizontal navbar-form-orientations">
 				<div class="input-group inline">
@@ -38,13 +38,13 @@
 		</li>
 	</ul>
 	<ul class="nav navbar-nav" id="<%- container_id %>settings">
-		<li><span class="navbar-brand">Sonstiges:</span></li>
+		<li><div class="navbar-desc">Sonstiges:</div></li>
 		<li id="<%- container_id %>case"><a class="btn btn-default" title="Klein-/Großschreibung ignorieren/beachten" href="#" value="false">Klein-/Großschreibung</a></li>
 		<li id="<%- container_id %>stop"><a class="btn btn-default" title="Eher uninteressante Wörter (sogenannte 'Stoppwörter') ein-/ausblenden" href="#" value="false">Stoppwörter</a></li>
 		<li id="<%- container_id %>tag"><a class="btn btn-default" title="Eintrag '#aufschrei' ein-/ausblenden" href="#" value="false">#aufschrei</a></li>
 	</ul>
 	<ul class="nav navbar-nav">
-		<li><span class="navbar-brand">Schrift:</span></li>
+		<li><div class="navbar-desc">Schrift:</div></li>
 		<li>
 			<form class="navbar-form form-horizontal">
 				<div class="input-group">
@@ -54,7 +54,7 @@
 		</li>
 	</ul>
 	<ul class="nav navbar-nav">
-		<li><span class="navbar-brand">Max. Einträge:</span></li>
+		<li><div class="navbar-desc">Max. Einträge:</div></li>
 		<li>
 			<form class="navbar-form form-horizontal">
 				<div class="input-group">
@@ -67,57 +67,10 @@
 <% include stats_content %>
 
 <% include stats_foot %>
-<link type="text/css" href="/static/utils/typeahead.js-bootstrap.css" rel="stylesheet">
-<script src="/static/utils/fontdetect.js"></script>
-<script src="/static/utils/typeahead.min.js"></script>
-<script src="/static/d3/d3.layout.cloud.min.js"></script>
 <script type="text/javascript">
 	$(function () {
 		$(document).ready(
 				function () {
-					var detective = new Detector();
-					var testfonts = [];
-					testfonts.push("Arial");
-					testfonts.push("Arial Black");
-					testfonts.push("Arial Narrow");
-					testfonts.push("Arial Rounded MT Bold");
-					testfonts.push("Bookman Old Style");
-					testfonts.push("Bradley Hand ITC");
-					testfonts.push("Century");
-					testfonts.push("Century Gothic");
-					testfonts.push("Comic Sans MS");
-					testfonts.push("Courier");
-					testfonts.push("Courier New");
-					testfonts.push("Georgia");
-					testfonts.push("Gentium");
-					testfonts.push("Impact");
-					testfonts.push("King");
-					testfonts.push("Lucida Console");
-					testfonts.push("Lalit");
-					testfonts.push("Modena");
-					testfonts.push("Monotype Corsiva");
-					testfonts.push("Papyrus");
-					testfonts.push("Tahoma");
-					testfonts.push("TeX");
-					testfonts.push("Times");
-					testfonts.push("Times New Roman");
-					testfonts.push("Trebuchet MS");
-					testfonts.push("Verdana");
-					testfonts.push("Verona");
-					var fonts = [];
-					for (var i = 0; i < testfonts.length; i++) {
-						if (detective.detect(testfonts[i])) {
-							fonts.push(testfonts[i]);
-						}
-					}
-					;
-					$('#cloud_font').typeahead({
-						name: 'fonts',
-						header: 'Cloud Font',
-						limit: 30,
-						local: testfonts
-					});
-
 					$('#<%- container_id %>temp').children().appendTo($('#navbar-content'));
 					var cloudy = new Clouds();
 					cloudy.initCloud('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>', new Stats(cats));

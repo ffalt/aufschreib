@@ -1,8 +1,8 @@
 var fs = require('fs');
-var tokenizer = require('./tweet_tokenizer.js').MyLittleTweetTokenizer();
+var tokenizer = require('./../lib/tweet_tokenizer.js').MyLittleTweetTokenizer();
 var fetchUrl = require("fetch").fetchUrl;
 var resolver = require("resolver");
-var config = require('./config.js');
+var config = require('./../config.js');
 var storeurls = {};
 
 function loadRawTweets(cb) {

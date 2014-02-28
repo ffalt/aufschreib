@@ -7,10 +7,10 @@ var express = require('express'),
 	passport = require('passport'),
 	util = require('util'),
 	url = require('url'),
-	consts = require('./consts'),
+	consts = require('./lib/consts'),
 	config = require('./config'),
 	LocalStrategy = require('passport-local').Strategy,
-	cmd = require('./cmd').MyLittleCmds();
+	cmd = require('./lib/cmd').MyLittleCmds();
 var
 	sessionstore = new express.session.MemoryStore;
 

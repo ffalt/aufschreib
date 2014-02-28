@@ -2,7 +2,7 @@
 
 <div id="<%- container_id %>temp" class="hidden">
 	<ul class="nav navbar-nav" id="<%- container_id %>min">
-		<li><span class="navbar-brand">Minimale Anzahl Mentions:</span></li>
+		<li><div class="navbar-desc">Minimale Anzahl Mentions:</div></li>
 		<li>
 			<form class="navbar-form navbar-left form-inline" role="search">
 				<div class="input-group">
@@ -12,7 +12,7 @@
 		</li>
 	</ul>
     <ul class="nav navbar-nav" id="<%- container_id %>view">
-        <li><span class="navbar-brand">Anzeige-Technik:</span></li>
+        <li><div class="navbar-desc">Anzeige-Technik:</div></li>
         <li><a class="btn btn-default" title="SVG - Wird von den meinsten Browsern unterstützt" value="svg" href="#">SVG</a></li>
         <li><a class="btn btn-default" title="WebGL - Wird von manchen Browser nicht unterstützt" value="webgl" href="#">WebGL</a></li>
     </ul>
@@ -21,7 +21,6 @@
 
 <% include stats_foot %>
 
-<script src="/static/vivagraphjs/vivagraph.min.js"></script>
 
 <script type="text/javascript">
 	$(function () {

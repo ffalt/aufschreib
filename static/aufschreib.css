@@ -299,11 +299,6 @@ a:hover {
 	min-width: 50px;
 }
 
-#navbar-content .navbar-nav  {
-	/*margin-top: 2px;*/
-	/*margin-bottom: 2px;*/
-}
-
 #navbar-content .navbar-nav > li {
 	padding: 0;
 	margin: 0;
@@ -326,7 +321,7 @@ a:hover {
 }
 
 .input-group .small-input {
-	width: 50px;
+	width: 50px !important;
 }
 
 .input-group .small-input[type="number"] {
@@ -360,6 +355,12 @@ a:hover {
 	padding-right: 8px;
 }
 
+.navbar-desc {
+    padding-top: 3px;
+    padding-right: 6px;
+    color: #333333;
+}
+
 /* Commands */
 
 #statcache-result {
@@ -378,8 +379,12 @@ a:hover {
 
 /* globals */
 
-
 .centered {
 	text-align: center;
 }
 
+.tt-dropdown-menu {
+    background-color: #ffffff;
+    padding: 8px;
+    border: solid #b7b7b7 1px;
+}
