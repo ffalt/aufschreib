@@ -1,4 +1,0 @@
-.cloud text:hover { opacity: .7 !important; }
-.cloud_angles line, #angles path, #angles circle { stroke: #666; }
-.cloud_angles text { fill: #333; }
-.cloud_angles path.drag { fill: #666; cursor: move; }

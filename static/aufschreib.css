@@ -404,3 +404,175 @@ a:hover {
     text-align: center;
     position: absolute;
 }
+
+
+/*stats*/
+
+#bbtree rect {
+    stroke: #f00;
+    fill: none;
+}
+
+#bbtree .collide rect {
+    stroke: #fc0;
+}
+
+#bbtree g, #vis text {
+    cursor: pointer;
+}
+
+#bbtree {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.chart {
+    border: 1px groove #C3D3DA;
+}
+
+.navbar {
+    margin-bottom: 0;
+}
+
+pre, code {
+    font-family: "Menlo", monospace;
+}
+
+.html .value,
+.javascript .string,
+.javascript .regexp {
+    color: #756bb1;
+}
+
+.html .tag,
+.css .tag,
+.javascript .keyword {
+    color: #3182bd;
+}
+
+.comment {
+    color: #636363;
+}
+
+.html .doctype,
+.javascript .number {
+    color: #31a354;
+}
+
+.html .attribute,
+.css .attribute,
+.javascript .class,
+.javascript .special {
+    color: #e6550d;
+}
+
+.navsmall .brand {
+    font-size: 13px !important;
+}
+
+.navsmall .nav > li > a {
+    padding: 10px 8px !important;
+}
+
+/*bar*/
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.y.axis line {
+    stroke: #777;
+    stroke-dasharray: 2, 2;
+}
+
+.y.axis path {
+    display: none;
+}
+
+.legend-background {
+    stroke: #777;
+}
+
+.segment {
+    pointer-events: painted;
+    fill-opacity: .9;
+    stroke-opacity: 0;
+
+    transition: fill-opacity 250ms linear, stroke-opacity 250ms linear;
+    -moz-transition: fill-opacity 250ms linear, stroke-opacity 250ms linear;
+    -webkit-transition: fill-opacity 250ms linear, stroke-opacity 250ms linear;
+}
+
+.segment:hover {
+    fill-opacity: .7;
+    stroke: #777;
+}
+
+.bartest rect {
+    text-shadow: 1px 1px 0 #333333;
+    background: -moz-linear-gradient(center top, rgba(255, 255, 255, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%) repeat scroll 0 0 transparent;
+    box-shadow: 2px 2px 2px rgba(255, 255, 255, 0.2) inset, -2px -2px 2px rgba(0, 0, 0, 0.2) inset;
+}
+
+/*cloud*/
+.cloud text:hover { opacity: .7 !important; }
+.cloud_angles line, #angles path, #angles circle { stroke: #666; }
+.cloud_angles text { fill: #333; }
+.cloud_angles path.drag { fill: #666; cursor: move; }
+
+/*graph*/
+
+.graph {
+    height: 600px;
+}
+.graph svg {
+    width: 100%;
+    height: 100%;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+}
+
+/*pie*/
+
+.sector {
+    cursor: pointer;
+}
+
+/*time*/
+
+.axis path, .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.layer {
+    fill-opacity: .9;
+    stroke-opacity: 0;
+
+    transition: fill-opacity 250ms linear, stroke-opacity 250ms linear;
+    -moz-transition: fill-opacity 250ms linear, stroke-opacity 250ms linear;
+    -webkit-transition: fill-opacity 250ms linear, stroke-opacity 250ms linear;
+
+}
+
+.layer:hover {
+    fill-opacity: .7;
+}
+
+.brush .extent {
+    stroke: #fff;
+    fill-opacity: .125;
+    shape-rendering: crispEdges;
+}
