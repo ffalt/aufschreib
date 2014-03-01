@@ -7,6 +7,7 @@
 		"classifier": ">= 0.1.0",
 		"ejs": ">= 0.8.3",
 		"express": ">= 3.1.0",
+		"connect-flash": ">= 0.0.1",
 		"fetch": ">= 0.1.5",
 		"moment": ">= 2.0.0",
 		"passport": ">= 0.1.16",

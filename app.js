@@ -1,6 +1,7 @@
 console.log('[Server] start');
 var express = require('express'),
 	app = express(),
+    flash = require('connect-flash'),
 	server = require('http').createServer(app),
 	io = require('socket.io').listen(server),
 	passportSocketIo = require("passport.socketio"),
@@ -56,7 +57,8 @@ app.configure('all', function () {
 	app.use(express.cookieParser());
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
-	app.use(express.session({ secret: 'keyboard cat is happy', store: sessionstore }));
+    app.use(flash());
+    app.use(express.session({ secret: 'keyboard cat is happy', store: sessionstore }));
 	app.use(passport.initialize());
 	app.use(passport.session());
 	app.use(function (err, req, res, next) {
@@ -96,7 +98,7 @@ app.get('/login', function (req, res) {
 	res.render('login', { user: req.user, message: req.session.messages });
 });
 
-app.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),
+app.post('/login', passport.authenticate('local', { failureRedirect: '/login'}),
 	function (req, res) {
 		cmd.initUser(req, res, function () {
 			console.log('[Server] User login: ' + req.user.name);
