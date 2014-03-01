@@ -32,7 +32,12 @@ The result data is NOT RELIABLE! yet.
 ##Requirements
 
 [http://nodejs.org/](http://nodejs.org/)
+[http://bower.io/](http://bower.io/)
 [http://www.mongodb.org/](http://www.mongodb.org/)
+
+run `npm install` in root folder to install the required node.js-packages
+run `bower install` in `/static/` to install the required client side js-packages
+
 
 ##Usage
 
@@ -104,7 +109,7 @@ if you edit the categroies you need to set the parameter for the Bayesian filter
 
 ### 3. Longify Urls (optional)
 
-run
+run in `\bin`
 
 `node "0 longifyurls.js"`
 
@@ -115,7 +120,7 @@ a file **"urls.json"** with the expanded urls will be created and used
 
 ### 4. Prepare Script (mandatory!)
 
-run
+run in `\bin`
 
 `node "1 prepare.js"`
 
