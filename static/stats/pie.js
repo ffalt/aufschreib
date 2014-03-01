@@ -179,7 +179,7 @@ function Pies() {
             .duration(1000)
             .attrTween("d", tweenOut).remove();
 
-        stats.legendary(svg, stats.getCats(), width, 30, legendwidth);
+        stats.legendary(svg, stats.getCats(), width, legendwidth);
     }
 
     function getColor(d, index) {

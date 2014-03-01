@@ -4,14 +4,16 @@ function Stats(cats, hashBangNotifyDisabeld) {
         data = [], // possibly filtered data by the chart
         svg; //the svg, duh!
 
-    function legendary(graph, catsInView, left, top, width) {
+    function legendary(graph, catsInView, left, width) {
         var legend = graph.selectAll('.legend');
+        var top = 16;
         if (legend.empty()) {
             graph
                 .append('g')
                 .attr('class', 'legend')
                 .append('svg:rect')
                 .attr('class', 'legend-background')
+                .attr('y', 4)
                 .attr('opacity', 0.8)
                 .attr('fill', 'white');
             legend = graph.selectAll('.legend');

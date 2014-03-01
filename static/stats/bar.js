@@ -326,7 +326,8 @@ function Bars() {
                     (d.y === d.total ? '' : 'Insgesamt: ' + "\t" + d.total);
             });
         applyBarType();
-        stats.legendary(bargraph.graphcontainer, bargraph.catsInView, sizes.barwidth - sizes.legendwidth, 10, sizes.legendwidth);
+
+        stats.legendary(bargraph.graphcontainer, bargraph.catsInView, sizes.barwidth - sizes.legendwidth, sizes.legendwidth);
     }
 
     function customXAxis(g) {
