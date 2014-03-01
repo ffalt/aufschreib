@@ -92,6 +92,8 @@ function saveLineJsonAllArray(a) {
     }
 }
 
+
+var invalidtweetids = [];
 var files = [
     {name: 'cleaned.json'},
     {name: 'import/1_import_from_csv.json', repack: fixCVSrepack},
@@ -100,7 +102,7 @@ var files = [
 ];
 
 files.forEach(function (o) {
-    var count = 0, dups = 0;
+    var count = 0, dups = 0, invalid = 0;
     var msgs = JSON.parse(fs.readFileSync(config.datapath + o.name, 'utf8'));
     msgs.forEach(function (t) {
             if (t.error) {
@@ -112,10 +114,13 @@ files.forEach(function (o) {
             if (!t.id_str)
                 t.id_str = t.id;
             if (!t.id_str) {
-                console.log(t);
+                invalid++;
+//                console.log(t);
                 return;
             }
             if (!t.user.screen_name) {
+                invalid++;
+                invalidtweetids.push(t.id_str);
                 console.log(t);
                 return;
             }
@@ -135,7 +140,7 @@ files.forEach(function (o) {
         }
     )
     ;
-    console.log(o.name, ':', count, '(dups:', dups, ')');
+    console.log(o.name, ':', count, 'dups:', dups, 'invalid:', invalid);
 });
 
 list = list.sort(function (a, b) {
@@ -167,5 +172,5 @@ var ids = list.map(function (t) {
     return t.id_str;
 }).filter(function (t) {
     return t;
-});
+}).concat(invalidtweetids);
 fs.writeFileSync(config.datapath + 'tweetids.json', JSON.stringify(ids, null, '\t'), 'utf8');

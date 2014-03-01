@@ -41,8 +41,78 @@ var getApiLimitResetDiff = function (response) {
     return 0;
 };
 
+
+var getUsers = function (ids, callback) {
+    tweeter.get("https://api.twitter.com/1.1/users/lookup.json?" +
+            "user_id=" + ids.join(',') +
+            '&include_entities=false',  //url
+        config.twitter_bot.token,   //oauth_token
+        config.twitter_bot.secret, //oauth_token_secret
+        function (error, data, response) {
+            console.log('Api Call: ' + getApiCallCount(response) + ' users/lookup');
+            if (data) {
+                try {
+                    data = JSON.parse(data);
+                } catch (e) {
+                    error = e;
+                }
+            }
+            if (error) {
+                if ([403, 404].indexOf(error.statusCode) >= 0) {
+                    callback(null, JSON.stringify(error));
+                } else {
+                    console.log(error);
+                    var retry = getApiLimitResetDiff(response);
+                    if (retry > 0) {
+                        console.log('Pause: ' + (retry / 1000).toFixed(2) + 's' + ' for ApiLimit on https://api.twitter.com/1.1/statuses/show.json');
+                        setTimeout(function () {
+                            getUsers(ids, callback);
+                        }, retry);
+                    } else {
+                        console.log('Error: Something is wrong.\n' + JSON.stringify(error));
+                        callback(null, JSON.stringify(error));
+                    }
+                }
+            } else {
+                callback(data);
+            }
+        });
+};
+
+function getUserPackageByIDs(userids, cb) {
+
+    function getUserPackage(ids) {
+        if (ids.length === 0) {
+            cb();
+        } else {
+            var request = ids.splice(0, 100);
+            getUsers(request, function (data) {
+                if (data) {
+                    data.forEach(function (u) {
+                        for (var i = 0; i < tweets.length; i++) {
+                            if ((tweets[i].user) && (tweets[i].user.id_str == u.id_str)) {
+                                tweets[i].user = u;
+                                break;
+                            }
+                        }
+                    })
+                } else {
+                    for (var i = 0; i < tweets.length; i++) {
+                        if ((tweets[i].user) && (request.indexOf(tweets[i].user.id_str) >= 0)) {
+                            tweets[i].user.screen_name = '[Deleted]';
+                        }
+                    }
+                }
+                getUserPackage(ids);
+            });
+        }
+    }
+
+    getUserPackage(userids.slice());
+};
+
 var getTweet = function (id, callback) {
-    tweeter.get("https://api.twitter.com/1.1/statuses/show.json?id=" + id + '&trim_user=true&include_entities=true',  //url
+    tweeter.get("https://api.twitter.com/1.1/statuses/show.json?id=" + id + '&include_entities=true',  //url
         config.twitter_bot.token,   //oauth_token
         config.twitter_bot.secret, //oauth_token_secret
         function (error, data, response) {
@@ -162,6 +232,7 @@ var getRetweetIds = function (id, callback) {
 };
 
 var getNext = function (callback) {
+
     var tweetids = {};
     tweets.forEach(function (t) {
         tweetids[t.id_str] = true;
@@ -205,18 +276,41 @@ function saveLineJsonArray(filename, a) {
     fs.writeFileSync(filename, '[\n' + lines.join(',\n') + '\n]\n', 'utf8');
 }
 
+function cleanUsers(callback) {
+    var missingusers = [];
+    tweets.forEach(function (t) {
+        if (t.user)
+            if (!t.user.screen_name) {
+                missingusers.push(t.user.id_str);
+            }
+    });
+    if (missingusers.length) {
+        console.log('missing users:', missingusers.length);
+        getUserPackageByIDs(missingusers, callback);
+    } else {
+        callback();
+    }
+}
+
 function tick(callback) {
-    getNext(function (tweet) {
-        if (tweet) {
-            prepareCustomFields(tweet);
-            tweets.push(tweet);
+    cleanUsers(function () {
+        saveLineJsonArray(config.datapath + 'cleaned.json', tweets);
+        getNext(function (tweet) {
+            if (tweet) {
+                prepareCustomFields(tweet);
+                tweets.push(tweet);
+                cleanUsers(function () {
+                    saveLineJsonArray(config.datapath + 'cleaned.json', tweets);
 //            console.log(JSON.stringify(tweet));
-            saveLineJsonArray(config.datapath + 'cleaned.json', tweets);
-            callback(false);
-        } else {
-            console.log('all done <3');
-            callback(true);
-        }
+                    callback(false);
+                });
+            } else {
+                cleanUsers(function () {
+                    console.log('all done <3');
+                    callback(true);
+                });
+            }
+        });
     });
 }
 
