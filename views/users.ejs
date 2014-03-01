@@ -1,0 +1,7 @@
+<% users.forEach(function(user) { %>
+<% include user %>
+<% }); %>
+
+<% if (data) {  %>
+<a id="btn-next" value="<%- data.next %>" href="#" onClick="return aufschreib.nextList(this);">Weiter (noch <%- data.left %> Konten)</a>
+<% } %>

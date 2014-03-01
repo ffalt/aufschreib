@@ -451,14 +451,21 @@ var aufschreib = {
         $('li', '#nav-site').removeClass('active');
         $('a[href*=' + mode + ']', '#nav-site').parent().addClass('active');
         $('#nav-edit').toggle((mode === 'edit'));
-        $('#time-filter-pane').toggle(
-            ((mode === 'edit') &&
-                (aufschreib.range.min !== null))
-        );
-//        console.log(aufschreib.range);
-//        console.log(     ((mode === 'edit') &&
-//                (aufschreib.range.min!==null))
-//        );
+        if ((mode === 'edit') &&
+            (aufschreib.range.min !== null)) {
+            $('#time-filter-pane').toggle(true);
+            $("#slider").dateRangeSlider('resize');
+            $("#slider").dateRangeSlider('values',
+                aufschreib.def_range.min,
+                aufschreib.def_range.max
+            );
+        } else {
+            if ($('#time-filter-pane').is(':visible')) {
+                aufschreib.def_range.min = aufschreib.range.min;
+                aufschreib.def_range.max = aufschreib.range.max;
+            }
+            $('#time-filter-pane').toggle(false);
+        }
         $('#nav-stats').toggle((mode === 'stats'));
     },
     setStatsSilent: function (type, mode, kind, cat) {

@@ -1,16 +1,16 @@
-<div class="user" id="<%- user_id %>">
+<div class="user" id="<%- user.user_id %>">
 	<div class="tweets-header">
 		<a class="close user-close" href="#">×</a>
         <span class="user-counts pull-right">
-        <%= tweets.length %> / <%= user_tweet_total_count %>
-        <% if (user_tweet_total_count - tweets.length > 0) { %>
-        <a href="#" title="Alle Tweets von @<%= user_id %> anzeigen" onClick="return aufschreib.loadMore('<%- user_id %>');"> (Alle anzeigen)</a>
+        <%= user.tweets.length %> / <%= user.user_tweet_total_count %>
+        <% if (user.user_tweet_total_count - user.tweets.length > 0) { %>
+        <a href="#" title="Alle Tweets von @<%= user.user_id %> anzeigen" onClick="return aufschreib.loadMore('<%- user.user_id %>');"> (Alle anzeigen)</a>
         <% } %>
         </span>
 		<div>
-			<img class="user-img" src="<%- user_img %>" alt=""/>
-			<a class="user-name" target="_blank" href="https://twitter.com/<%= user_id %>"><%= user_name %></a>
-			<% if (tweets.length>1) { %>
+			<img class="user-img" src="<%- user.user_img %>" alt=""/>
+			<a class="user-name" target="_blank" href="https://twitter.com/<%= user.user_id %>"><%= user.user_name %></a>
+			<% if (user.tweets.length>1) { %>
 			<div class="user-btns">
 					<% consts.cats.forEach(function(cat) {
 					if (cat.id !== consts.unknown) {
