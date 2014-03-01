@@ -107,7 +107,7 @@ function loadUrls(cb) {
 }
 
 var
-    storage = require('./../local/tweets_couch').MyLittleTweets();
+    storage = require('./../lib/tweets_mongo').MyLittleTweets();
 var
     defaultuser = 'admin',
     defaultpass = 'totalsupergehaim';
