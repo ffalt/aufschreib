@@ -7,14 +7,14 @@ var storeurls = {};
 
 function loadRawTweets(cb) {
 	console.log('Load Raw Tweets');
-	var filename = config.datapath() + 'messages.json';
+	var filename = config.datapath + 'tweets.json';
 	fs.exists(filename, function (exists) {
 		var tweets;
 		if (exists) {
 			tweets = JSON.parse(fs.readFileSync(filename, 'utf8'));
 		} else {
 			tweets = [];
-			console.log('well, you need a messages.json file, this will not work');
+			console.log('well, you need a tweets.json file, this will not work');
 		}
 		cb(tweets);
 	});
@@ -71,14 +71,14 @@ function isShortUrlSupportedExt(url) {
 
 function saveUrls(links) {
 	console.log('Saving Links');
-	fs.writeFileSync(config.datapath() + 'urls.json', JSON.stringify(links, null, '\t'), 'utf8');
+	fs.writeFileSync(config.datapath + 'urls.json', JSON.stringify(links, null, '\t'), 'utf8');
 //	var urlsonly = [];
 //	for (var key in links) {
 //		if (links.hasOwnProperty(key)) {
 //			urlsonly.push(links[key]);
 //		}
 //	}
-//	fs.writeFileSync(config.datapath() + 'urls_end.json', urlsonly.join("\n"), 'utf8');
+//	fs.writeFileSync(config.datapath + 'urls_end.json', urlsonly.join("\n"), 'utf8');
 }
 
 function longifyUrls(tweets) {
@@ -248,7 +248,7 @@ function longifyUrls(tweets) {
 }
 
 function loadUrls(cb) {
-	var filename = config.datapath() + 'urls.json';
+	var filename = config.datapath + 'urls.json';
 	fs.exists(filename, function (exists) {
 		if (exists) {
 			storeurls = JSON.parse(fs.readFileSync(filename, 'utf8'));

@@ -1,7 +1,7 @@
 {
 	"name": "aufschreib",
 	"description": "Examining #aufschrei tweets",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"dependencies" : {
 		"async": ">= 0.2.7",
 		"classifier": ">= 0.1.0",
@@ -14,7 +14,8 @@
 		"passport-local": ">= 0.1.6",
 		"resolver": ">= 0.1.8",
 		"socket.io": ">= 0.9.13",
-		"mongodb": ">= 1.2.14"
+		"mongodb": ">= 1.2.14",
+		"oauth": ">= 0.9.10"
 	},
 	"engines": { "node": ">= 0.8.15" }
 }

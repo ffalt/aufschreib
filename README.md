@@ -59,7 +59,7 @@ now change the connection details to your settings
 
 ### 2. Prepare
 
-Put your base JSON file named **"messages.json"** into the **/data/** folder
+Put your base JSON file named **"tweets.json"** into the **/data/** folder
 
 used format of a tweet must be the same twitter uses
 
@@ -77,7 +77,7 @@ used format of a tweet must be the same twitter uses
     ...
     ]
 
-or implement another in file **"1 prepare.js"**
+or implement another in file **"prepare.js"**
 
 
 ### 3. Edit Categories (optional)
@@ -111,7 +111,7 @@ if you edit the categroies you need to set the parameter for the Bayesian filter
 
 run in `\bin`
 
-`node "0 longifyurls.js"`
+`node "longifyurls.js"`
 
 expand twitters short urls (t.co) through [http://www.longurlplease.com/](http://www.longurlplease.com/)
 expanded urls will then be checked for other short urls services, too.
@@ -122,7 +122,7 @@ a file **"urls.json"** with the expanded urls will be created and used
 
 run in `\bin`
 
-`node "1 prepare.js"`
+`node "prepare.js"`
 
 collections are created and data is filled
 aaaaaaandddddd wait until the process finishes
