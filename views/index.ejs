@@ -1,161 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<title>#aufschreib</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- Le styles -->
-	<link type="text/css" href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-	<link type="text/css" href="/static/bower_components/jqrangeslider/css/iThing.css" rel="stylesheet">
-	<link type="text/css" href="/static/aufschreib.css" rel="stylesheet">
-	<script type="text/javascript">
-		var cats = <%- JSON.stringify(consts.cats) %>;
-	</script>
+    <meta charset="utf-8">
+    <title>#aufschreib</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Le styles -->
+    <link type="text/css" href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="/static/bower_components/jqrangeslider/css/iThing.css" rel="stylesheet">
+    <link type="text/css" href="/static/bower_components/nvd3/nv.d3.min.css" rel="stylesheet">
+    <link type="text/css" href="/static/aufschreib.css" rel="stylesheet">
+    <script type="text/javascript">
+        var cats = <%- JSON.stringify(consts.cats) %>;
+    </script>
+    <script type="text/javascript" src="/static/bower_components/jquery/dist/jquery.min.js"></script>
 </head>
 <body>
 <div id="jswarning" class="alert alert-danger">
-	<p></p>
-	<h4 class="alert-heading">Oh snap! You don't have any JavaScript left!</h4>
-	<p>This is so so sad. (But seriously: this site needs JavaScript enabled)</p>
+    <p></p>
+    <h4 class="alert-heading">Oh snap! You don't have any JavaScript left!</h4>
+
+    <p>This is so so sad. (But seriously: this site needs JavaScript enabled)</p>
 </div>
 <div id="overlay" style="display: none">
-	<div class="overlay-img"></div>
+    <div class="overlay-img"></div>
 </div>
 
 <div class="navbar navbar-default navbar-inverse navbar-fixed-top">
-	<!--<div class="container">-->
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-top-content">
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-			<a class="navbar-brand logo">#aufschrei<span>b</span></a>
-		</div>
-		<div id="navbar-top-content" class="navbar-collapse collapse">
-			<ul id="nav-site" class="nav navbar-nav">
-				<li id='start' class="active"><a href="#!/start">Start</a></li>
-				<li id='edit'><a href="#!/edit">Bewerten</a></li>
-				<li id='commands'><a href="#!/commands">Tools</a></li>
-				<li id='stats'><a href="#!/stats">Ergebnisse</a></li>
-			</ul>
-			<ul id="nav-stats" class="nav navbar-nav navbar-right">
-				<% consts.stats.forEach(function(stat) { %>
-				<li><a href="#!/stats/<%- stat.id %>"><i class="glyphicon <%- stat.icon %>"></i> <%= stat.name %></a></li>
-				<% }); %>
-			</ul>
-			<ul id="nav-edit" class="nav navbar-nav navbar-right">
-				<li class="dropdown">
-					<a href="javascript:;" title="Einstellungen" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-wrench"></i> <b class="caret"></b></a>
-					<ul class="dropdown-menu dropdown-menu-form">
-						<li>
-                            <label>
-							    <input type="checkbox" id="option_hideaftervote"/>&nbsp;Eintrag ausblenden wenn alle Tweets bewertet sind
-                            </label>
-						</li>
-					</ul>
-				</li>
-                <li>
-                    <a title="Filter nach Bewertungen" data-toggle="modal" href="#modal-filter"><i class="glyphicon glyphicon-filter"></i></a>
-                </li>
-                <li id="time-filter-toggle">
-                    <a title="Filter nach Zeit" href="javascript:"><i class="glyphicon glyphicon-time"></i></a>
-                </li>
-				<li>
-					<form class="navbar-form navbar-left" role="search">
-						<div class="form-group">
-							<!--<span class="add-on"><i class="icon-search"></i></span>-->
-							<input id="search" type="text" class="form-control" placeholder="Text-Filter">
-						</div>
-					</form>
-				</li>
-			</ul>
-            <ul class="nav navbar-nav">
-                <li>
-                    <a href="/logout" title="Abmelden"><i class="glyphicon glyphicon-log-out"></i></a>
-                </li>
-            </ul>
-		</div><!--/.nav-collapse -->
-	<!--</div>-->
+    <!--<div class="container">-->
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-top-content">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand logo">#aufschrei<span>b</span></a>
+    </div>
+    <div id="navbar-top-content" class="navbar-collapse collapse">
+        <ul id="nav-site" class="nav navbar-nav">
+            <li id='start' class="active"><a href="#!/start">Start</a></li>
+            <li id='edit'><a href="#!/edit">Bewerten</a></li>
+            <li id='commands'><a href="#!/commands">Tools</a></li>
+            <li id='stats'><a href="#!/stats">Ergebnisse</a></li>
+        </ul>
+
+        <ul id="nav-edit" class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a href="javascript:;" title="Einstellungen" class="dropdown-toggle" data-toggle="dropdown"><i
+                            class="glyphicon glyphicon-wrench"></i> <b class="caret"></b></a>
+                <ul class="dropdown-menu dropdown-menu-form">
+                    <li>
+                        <label>
+                            <input type="checkbox" id="option_hideaftervote"/>&nbsp;Eintrag ausblenden wenn alle Tweets
+                            bewertet sind
+                        </label>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a title="Filter nach Bewertungen" data-toggle="modal" href="#modal-filter"><i
+                            class="glyphicon glyphicon-filter"></i></a>
+            </li>
+            <li id="time-filter-toggle">
+                <a title="Filter nach Zeit" href="javascript:"><i class="glyphicon glyphicon-time"></i></a>
+            </li>
+            <li>
+                <form class="navbar-form navbar-left" role="search">
+                    <div class="form-group">
+                        <!--<span class="add-on"><i class="icon-search"></i></span>-->
+                        <input id="search" type="text" class="form-control" placeholder="Text-Filter">
+                    </div>
+                </form>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav">
+            <li>
+                <a href="/logout" title="Abmelden"><i class="glyphicon glyphicon-log-out"></i></a>
+            </li>
+        </ul>
+    </div>
+    <!--/.nav-collapse -->
+    <!--</div>-->
 </div>
 
 <div id="modal-filter" class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Filter nach Bewertung</h4>
-			</div>
-			<div class="modal-body">
-				<p>
-                    Es werden nur Tweets angezeigt, die mindestens einer oder mehreren der unten markierten Bewertungen entsprechen.
-					<form id="form-filter" role="form">
-					<div class="form-group">
-						<label><i class="glyphicon <%- consts.modes[0].icon %>"></i> Deine Bewertungen</label>
-						<% consts.cats.forEach(function (cat) { %>
-						<div class="checkbox">
-							<label>
-								<input type="checkbox"
-									   value="human_<%- cat.id %>"
-									   id="human_<%- cat.id %>"
-									   <%- ( cat.id === consts.unknown ? 'checked="checked"' : '') %>
-								/>&nbsp;
-								<%- cat.name %>
-							</label>
-						</div>
-						<% }); %>
-					</div>
-					<div class="form-group">
-						<label><i class="glyphicon <%- consts.modes[1].icon %>"></i> Maschinelle Bewertungen</label>
-						<% consts.cats.forEach(function (cat) { %>
-						<div class="checkbox">
-							<label>
-								<input type="checkbox"
-									   value="machine_<%- cat.id %>"
-									   id="machine_<%- cat.id %>"
-									   checked="checked" />
-								&nbsp;
-								<%- cat.name %>
-							</label>
-						</div>
-						<% }); %>
-					</div>
-				</form>
-				</p>
-				<p>
-				<a href="javascript:;" class="btn btn-default btn-xs check_all">Alle markieren</a>
-				<a href="javascript:;" class="btn btn-default btn-xs check_none">Markierungen aufheben</a>
-				</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Schliessen</button>
-				<a href="javascript:;" class="btn btn-primary check_apply" data-dismiss="modal">Anwenden</a>
-			</div>
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Filter nach Bewertung</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Es werden nur Tweets angezeigt, die mindestens einer oder mehreren der unten markierten Bewertungen
+                    entsprechen.
+
+                <form id="form-filter" role="form">
+                    <div class="form-group">
+                        <label><i class="glyphicon <%- consts.modes[0].icon %>"></i> Deine Bewertungen</label>
+                        <% consts.cats.forEach(function (cat) { %>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox"
+                                       value="human_<%- cat.id %>"
+                                       id="human_<%- cat.id %>"
+                                        <%- (cat.id === consts.unknown ? 'checked="checked"' : '') %>
+                                        />&nbsp;
+                                <%- cat.name %>
+                            </label>
+                        </div>
+                        <% }); %>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="glyphicon <%- consts.modes[1].icon %>"></i> Maschinelle Bewertungen</label>
+                        <% consts.cats.forEach(function (cat) { %>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox"
+                                       value="machine_<%- cat.id %>"
+                                       id="machine_<%- cat.id %>"
+                                       checked="checked"/>
+                                &nbsp;
+                                <%- cat.name %>
+                            </label>
+                        </div>
+                        <% }); %>
+                    </div>
+                </form>
+                </p>
+                <p>
+                    <a href="javascript:;" class="btn btn-default btn-xs check_all">Alle markieren</a>
+                    <a href="javascript:;" class="btn btn-default btn-xs check_none">Markierungen aufheben</a>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Schliessen</button>
+                <a href="javascript:;" class="btn btn-primary check_apply" data-dismiss="modal">Anwenden</a>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
 </div>
 
 
 <div id="contentcontainer" class="container">
-	<div class="row">
-		<div class="col-md-12">
+
+    <div class="row">
+        <div class="col-md-12">
+            <ul id="nav-stats" class="nav nav-tabs">
+                <% consts.stats.forEach(function(stat) { %>
+                <li><a href="#!/stats/<%- stat.id %>"><i class="glyphicon <%- stat.icon %>"></i> <%= stat.name %></a></li>
+                <% }); %>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
             <div id="time-filter-pane" class="filter-pane">
                 <span>Filter nach Zeit</span>
+
                 <div id="slider" min="<%= range.min %>" max="<%= range.max %>"></div>
             </div>
-		</div>
-	</div>
+        </div>
+    </div>
     <div class="row">
-		<div class="col-md-12">
+        <div class="col-md-12">
             <div class="content" id="content"><h2 class="jumbotron centered">Hallo <%= user.name %></h2></div>
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 </body>
 
 <!-- Le scripts -->
-<script type="text/javascript" src="/static/bower_components/jquery/dist/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $('#jswarning').remove();
+</script>
+
 
 <script type="text/javascript" src="/static/bower_components/jqueryui/ui/jquery-ui.js"></script>
 <script type="text/javascript" src="/static/bower_components/jqueryui/ui/jquery.ui.core.js"></script>
@@ -174,6 +197,7 @@
 
 <script type="text/javascript" src="/static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/static/bower_components/d3/d3.min.js"></script>
+<script type="text/javascript" src="/static/bower_components/nvd3/nv.d3.min.js"></script>
 <script type="text/javascript" src="/static/bower_components/socket.io-client/dist/socket.io.min.js"></script>
 <script type="text/javascript" src="/static/bower_components/vivagraph/dist/vivagraph.min.js"></script>
 <script type="text/javascript" src="/static/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>

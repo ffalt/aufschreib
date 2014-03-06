@@ -17,19 +17,7 @@
         <li><a class="btn btn-default" title="WebGL - Wird von manchen Browser nicht unterstützt" value="webgl" href="#">WebGL</a></li>
     </ul>
 </div>
+
 <% include stats_content %>
 
 <% include stats_foot %>
-
-
-<script type="text/javascript">
-	$(function () {
-		$(document).ready(
-				function () {
-					$('#<%- container_id %>temp').children().appendTo($('#navbar-content'));
-					var graph = new Graph();
-					graph.initGraph('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>', new Stats(cats));
-				}
-		);
-	});
-</script>

@@ -9,12 +9,14 @@
 	</div>
 	<div id="navbar-content" class="collapse navbar-collapse navbar-ex1-collapse">
 
+        <% if (statinfo.usesMode) { %>
 		<ul class="nav navbar-nav" id="<%- container_id %>mode">
 			<li><div class="navbar-desc">Daten:</div></li>
 			<% consts.modes.forEach(function(mode) { %>
 			<li><a class="btn btn-default" href="#" value="<%= mode.id %>" title="<%= mode.name %>"><i class="glyphicon <%- mode.icon %>"></i></a></li>
 			<% }); %>
 		</ul>
+        <% }%>
 
         <% if (statinfo.kinds.length>0) { %>
         <ul class="nav navbar-nav" id="<%- container_id %>kind">

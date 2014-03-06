@@ -245,9 +245,15 @@ a:hover {
     padding: 0;
 }
 
-#stats_time_humanvis .fillrect {
-    fill: #fff;
-    stroke: #fff;
+.pie {
+    max-width: 600px;
+}
+
+.fillrect {
+    fill: #fff !important;
+    stroke: #fff !important;
+    background-color: #fff !important;
+    color: #fff !important;
 }
 
 .off-left-hidden {
@@ -528,8 +534,14 @@ pre, code {
 .cloud_angles text { fill: #333; }
 .cloud_angles path.drag { fill: #666; cursor: move; }
 
-/*graph*/
+/*hashtags */
 
+
+.hashtags  {
+    height: 600px;
+}
+
+/*graph*/
 .graph {
     height: 600px;
 }

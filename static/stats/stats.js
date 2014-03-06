@@ -59,7 +59,22 @@ function Stats(cats, hashBangNotifyDisabeld) {
     }
 
     function requestData(options, callback) {
-        aufschreib.getJson('#' + options.id + 'vis', options.type, options.mode, options.kind, options.forceregenerate, function (rawdata) {
+        var params = {
+            cmd: 'json',
+            type: options.type,
+        };
+        if (options.mode)
+            params.mode = options.mode;
+        if (options.min)
+            params.min = options.min;
+        if (options.max)
+            params.max = options.max;
+        if (options.kind)
+            params.kind = options.kind;
+        if (options.forceregenerate) {
+            params.force = true;
+        }
+        aufschreib.getJson('#' + options.id + 'vis', params, function (rawdata) {
             if (!hashBangNotifyDisabeld)
                 aufschreib.setStatsSilent(options.type, options.mode, options.kind, (options.cat === 'all' ? null : options.cat));
             basedata = rawdata;

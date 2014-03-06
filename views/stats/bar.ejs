@@ -23,18 +23,7 @@
         <!--<li id="<%- container_id %>hidetag" class="active"><a class="btn btn-default" title="Den Hide/Show #aufschrei Entry" href="#" value="false">Eintrag '#aufschrei'</a></li>-->
 	</ul>
 </div>
+
 <% include stats_content %>
 
 <% include stats_foot %>
-
-<script type="text/javascript">
-	$(function () {
-		$(document).ready(
-				function () {
-					$('#<%- container_id %>temp').children().appendTo($('#navbar-content'));
-					var bars = new Bars();
-					bars.initBars('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>', new Stats(cats));
-				}
-		);
-	});
-</script>

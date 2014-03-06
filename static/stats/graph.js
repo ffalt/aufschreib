@@ -1,4 +1,4 @@
-function Graph() {
+function graphView() {
 	var
 		options = {
 			type: 'graph',
@@ -13,7 +13,7 @@ function Graph() {
 	var
 		stats, graph, renderer;
 
-	function initGraph(id, mode, kind, statshelper) {
+	function init(id, mode, kind, statshelper) {
 		stats = statshelper;
 		options.id = id;
 		options.mode = mode;
@@ -160,7 +160,7 @@ function Graph() {
 	}
 
 	return {
-		initGraph: initGraph
+        init: init
 	};
 }
 

@@ -53,21 +53,10 @@ var aufschreib = {
             $('#overlay').fadeOut('fast');
         }
     },
-    getJson: function (sender, type, mode, kind, forceregenerate, successcallback) {
+    getJson: function (sender, params, successcallback) {
         var timeout = setTimeout(function () {
             aufschreib.blendProgressIn(sender);
         }, 2000);
-        var params = {
-            cmd: 'json',
-            type: type,
-            mode: mode
-        };
-        if (kind) {
-            params.kind = kind;
-        }
-        if (forceregenerate) {
-            params.force = true;
-        }
         $.ajax({
             url: '',
             dataType: 'json',
@@ -431,8 +420,8 @@ var aufschreib = {
         });
         return false;
     },
-    sendFile: function () {
-        if (aufschreib.connected) return false;
+    sendFile: function (nr) {
+        if (aufschreib.connected || (!nr)) return false;
         var bulkfile = $("#bulkfile").val();
         if ((!bulkfile) || (bulkfile.trim().length === 0) || (!(/\.(json)$/ig.test(bulkfile)))) {
             $("#output-upload").text("Please choose a .json file!");
@@ -441,6 +430,9 @@ var aufschreib = {
         aufschreib.setProcessing(true, '#output-upload');
         $("#form-file").ajaxSubmit({
             target: '#output-upload',
+            data: {
+                user: nr
+            },
             success: function () {
                 aufschreib.setProcessing(false);
             }

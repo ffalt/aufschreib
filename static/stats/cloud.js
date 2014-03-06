@@ -1,4 +1,4 @@
-function Clouds() {
+function cloudView() {
 
 	//Based on http://www.jasondavies.com/wordcloud/
 
@@ -10,7 +10,7 @@ function Clouds() {
 			cat: 'all',
 
 			hidetag: false,
-			hidestops: false,
+			hidestops: true,
 			spiral: 'archimedean',
 			scale: 'log',
 			casesensitiv: false,
@@ -55,7 +55,7 @@ function Clouds() {
 	var
 		angles;
 
-	function initCloud(id, mode, kind, statshelper) {
+	function init(id, mode, kind, statshelper) {
 
         var detective = new Detector();
         var testfonts = [
@@ -450,6 +450,6 @@ function Clouds() {
 	}
 
 	return {
-		initCloud: initCloud
+        init: init
 	};
 }

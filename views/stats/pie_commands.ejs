@@ -1,12 +1,12 @@
 <div id="<%= container_id %>vis" class="<%- chartparams.type %>chart"></div>
 <script type="text/javascript">
-	$(function () {
-		$(document).ready(
-				function () {
-					var pies = new Pies();
-					pies.initPie('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>',
-							'<%- chartparams.forcegenerate %>', new Stats(cats, true));
-				}
-		);
-	});
+    $(function () {
+        $(document).ready(
+                function () {
+                    var pies = new pieView();
+                    pies.init('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>',
+                            new Stats(cats, true), '<%- chartparams.forcegenerate %>');
+                }
+        );
+    });
 </script>

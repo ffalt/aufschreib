@@ -71,7 +71,14 @@ app.get('/', function (req, res) {
 	if (!req.user) {
 		res.render('login', { user: req.user, url: req.url, message: null});
 	} else {
-		//console.log('[Server] Processing: ' + req.url);
+		cmd.process(req, res);
+	}
+});
+
+app.get('/json/classification/:id.json', function (req, res) {
+	if (!req.user) {
+		res.render('login', { user: req.user, url: req.url, message: null});
+	} else {
 		cmd.process(req, res);
 	}
 });

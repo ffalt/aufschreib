@@ -1,4 +1,4 @@
-function Bars() {
+function barView() {
     var
         options = {
             type: 'bar',
@@ -41,7 +41,7 @@ function Bars() {
             yAxis: null
         };
 
-    function initBars(id, mode, kind, statshelper) {
+    function init(id, mode, kind, statshelper, forceregenerate) {
         stats = statshelper;
         options.id = id;
         options.mode = mode;
@@ -388,7 +388,7 @@ function Bars() {
     }
 
     return {
-        initBars: initBars
+        init: init
     };
 }
 

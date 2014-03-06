@@ -6,7 +6,7 @@
 		"bootstrap": "*",
 		"d3": "*",
 		"jqrangeslider": "*",
-		"jquery": "*",
+		"jquery": "=2.1.0",
 		"jqueryui": "*",
 		"moment": "*",
 		"socket.io-client": "*",

@@ -1,0 +1,5 @@
+node_modules
+ignore
+.idea
+config.js
+bower_components

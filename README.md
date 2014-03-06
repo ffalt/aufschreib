@@ -94,7 +94,7 @@ Edit **"consts.js"**
 	...
 	];    
 
-if you edit the categroies you need to set the parameter for the Bayesian filter, too.
+if you edit the categories you need to set the parameter for the Bayesian filter, too.
 
 'Specify the classification thresholds for each category. To classify an item in a category with a threshold of x the probably that item is in the category has to be more than x times the probability that it's in any other category. Default value is 1.'
 [Source](https://npmjs.org/package/classifier)

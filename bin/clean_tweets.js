@@ -1,6 +1,9 @@
 var fs = require('fs');
 var OAuth = require('oauth').OAuth;
 var config = require('./../config.js');
+var async = require('async');
+var moment = require('moment');
+var tokenizer = require('./../lib/tweet_tokenizer.js').MyLittleTweetTokenizer();
 
 var tweeter = new OAuth(
     "https://api.twitter.com/oauth/request_token", //requestUrl
@@ -14,314 +17,404 @@ var tweeter = new OAuth(
     {"Accept": "*/*", "Connection": "close",
         "User-Agent": config.twitter_bot.user_agent}           //customHeaders
 );
-var ids = JSON.parse(fs.readFileSync(config.datapath + 'tweetids.json', 'utf8'));
-var tweets = JSON.parse(fs.readFileSync(config.datapath + 'cleaned.json', 'utf8'));
 
-var getApiCallCount = function (response) {
-    if (response && (response.headers)) {
-        if ((response.headers["x-rate-limit-remaining"]) && (response.headers["x-rate-limit-remaining"])) {
-            var remain = parseInt(response.headers["x-rate-limit-remaining"], 10);
-            var max = parseInt(response.headers["x-rate-limit-limit"], 10);
-            return remain + '/' + max;
+var Twitter = function () {
+
+    this.api_limits = [];
+
+    this.clearApiLimits = function () {
+        this.api_limits = [];
+    };
+
+    this.getLowestApiLimit = function () {
+        var limit = null;
+        for (var i = 0; i < this.api_limits.length; i++) {
+            var o = this.api_limits[i];
+            if ((!limit) || (limit.retry > o.retry))
+                limit = o;
         }
-    }
-    return "";
-};
+        return limit;
+    };
 
-var getApiLimitResetDiff = function (response) {
-    if (response && (response.headers)) {
-        if (response.headers["x-rate-limit-reset"]) {
-            var time = parseInt(response.headers["x-rate-limit-reset"], 10) * 1000;
-            var dest = new Date(time);
-            var now = new Date();
-            var diff = dest - now;
-            return diff;
-        }
-    }
-    return 0;
-};
-
-
-var getUsers = function (ids, callback) {
-    tweeter.get("https://api.twitter.com/1.1/users/lookup.json?" +
-            "user_id=" + ids.join(',') +
-            '&include_entities=false',  //url
-        config.twitter_bot.token,   //oauth_token
-        config.twitter_bot.secret, //oauth_token_secret
-        function (error, data, response) {
-            console.log('Api Call: ' + getApiCallCount(response) + ' users/lookup');
-            if (data) {
-                try {
-                    data = JSON.parse(data);
-                } catch (e) {
-                    error = e;
-                }
+    this.getApiLimit = function (url) {
+        for (var i = 0; i < this.api_limits.length; i++) {
+            var o = this.api_limits[i];
+            if (o.url == url) {
+                return o;
             }
-            if (error) {
-                if ([403, 404].indexOf(error.statusCode) >= 0) {
-                    callback(null, JSON.stringify(error));
-                } else {
-                    console.log(error);
-                    var retry = getApiLimitResetDiff(response);
-                    if (retry > 0) {
-                        console.log('Pause: ' + (retry / 1000).toFixed(2) + 's' + ' for ApiLimit on https://api.twitter.com/1.1/statuses/show.json');
-                        setTimeout(function () {
-                            getUsers(ids, callback);
-                        }, retry);
+        }
+        return null;
+    };
+
+    this.getApiCallCount = function (response) {
+        if (response && (response.headers) && (response.headers["x-rate-limit-remaining"])) {
+            return parseInt(response.headers["x-rate-limit-remaining"], 10);
+        }
+        return 1;
+    };
+
+    this.getApiCallMax = function (response) {
+        if (response && (response.headers) && (response.headers["x-rate-limit-limit"])) {
+            return parseInt(response.headers["x-rate-limit-limit"], 10);
+        }
+        return 1;
+    };
+
+    this.getApiLimitReset = function (response) {
+        if (response && (response.headers) && (response.headers["x-rate-limit-reset"])) {
+            return parseInt(response.headers["x-rate-limit-reset"], 10) * 1000;
+        }
+        return 0;
+    };
+
+    this.getApiLimitDiff = function (reset) {
+        var dest = new Date(reset);
+        var now = new Date();
+        return dest - now;
+    };
+
+    this.canUseApi = function (url) {
+        var o = this.getApiLimit(url);
+        if (o && (o.count === 0) && (this.getApiLimitDiff(o.retry) > 0)) {
+            return false;
+        }
+        return true;
+    };
+
+    this.fillApiCall = function (o, response) {
+        o.retry = this.getApiLimitReset(response);
+        o.count = this.getApiCallCount(response);
+        o.max = this.getApiCallMax(response);
+    };
+
+    this.get = function (url, params, callback) {
+        var caller = this;
+        if (!caller.canUseApi(url)) {
+            callback(null, 'rate limit', true);
+            return;
+        }
+        tweeter.get("https://api.twitter.com/1.1/" + url + params,  //url
+            config.twitter_bot.token,   //oauth_token
+            config.twitter_bot.secret, //oauth_token_secret
+            function (error, data, response) {
+                var o = caller.getApiLimit(url);
+                if (!o) {
+                    o = {url: url};
+                    caller.api_limits.push(o);
+                }
+                caller.fillApiCall(o, response);
+                console.log('Api Call: ' + o.url + ' ' + o.count + '/' + o.max + ' reset ' + moment(o.retry).format('HH:mm:ss'));
+                if (error) {
+                    if ([403, 404].indexOf(error.statusCode) >= 0) {
+                        var s = null;
+                        if (error.data) {
+                            var d = JSON.parse(error.data);
+                            if (d.errors && d.errors[0] && d.errors[0].message)
+                                s = d.errors[0].message;
+                        }
+                        callback(null, s ? s : JSON.stringify(error), false, true);
                     } else {
-                        console.log('Error: Something is wrong.\n' + JSON.stringify(error));
-                        callback(null, JSON.stringify(error));
+                        callback(null, JSON.stringify(error), true);
                     }
-                }
-            } else {
-                callback(data);
-            }
-        });
-};
-
-function getUserPackageByIDs(userids, cb) {
-
-    function getUserPackage(ids) {
-        if (ids.length === 0) {
-            cb();
-        } else {
-            var request = ids.splice(0, 100);
-            getUsers(request, function (data) {
-                if (data) {
-                    data.forEach(function (u) {
-                        for (var i = 0; i < tweets.length; i++) {
-                            if ((tweets[i].user) && (tweets[i].user.id_str == u.id_str)) {
-                                tweets[i].user = u;
-                                break;
-                            }
-                        }
-                    })
+                } else if (data) {
+                    try {
+                        data = JSON.parse(data);
+                    } catch (e) {
+                        error = e;
+                    }
+                    callback(data);
                 } else {
-                    for (var i = 0; i < tweets.length; i++) {
-                        if ((tweets[i].user) && (request.indexOf(tweets[i].user.id_str) >= 0)) {
-                            tweets[i].user.screen_name = '[Deleted]';
-                        }
-                    }
+                    callback(null, 'No data error');
                 }
-                getUserPackage(ids);
             });
-        }
-    }
+    };
 
-    getUserPackage(userids.slice());
 };
 
-var getTweet = function (id, callback) {
-    tweeter.get("https://api.twitter.com/1.1/statuses/show.json?id=" + id + '&include_entities=true',  //url
-        config.twitter_bot.token,   //oauth_token
-        config.twitter_bot.secret, //oauth_token_secret
-        function (error, data, response) {
-            console.log('Api Call: ' + getApiCallCount(response) + ' statuses/statuses/show: ' + id);
-            if (data) {
-                try {
-                    data = JSON.parse(data);
-                } catch (e) {
-                    error = e;
-                }
-            }
-            if (error) {
-                if ([403, 404].indexOf(error.statusCode) >= 0) {
-                    callback({id_str: id, error: error});
-                } else {
-                    console.log(error);
-                    var retry = getApiLimitResetDiff(response);
-                    if (retry > 0) {
-                        console.log('Pause: ' + (retry / 1000).toFixed(2) + 's' + ' for ApiLimit on https://api.twitter.com/1.1/statuses/show.json');
-                        setTimeout(function () {
-                            getTweet(id, callback);
-                        }, retry);
-                    } else {
-                        console.log('Error: Something is wrong.\n' + JSON.stringify(error));
-                        callback(null, JSON.stringify(error));
-                    }
-                }
-            } else {
-                callback(data);
-            }
-        });
-};
-
-var needsRetweetCheck = function (id, callback) {
-    tweeter.get("https://api.twitter.com/1.1/statuses/retweets/" + id + ".json?count=100",  //url
-        config.twitter_bot.token,   //oauth_token
-        config.twitter_bot.secret, //oauth_token_secret
-        function (error, data, response) {
-            if ((!error) && (data)) {
-                try {
-                    data = JSON.parse(data);
-                    if (data.length) {
-                        data.forEach(function (tweet) {
-                            var tweetids = {};
-                            tweets.forEach(function (t) {
-                                tweetids[t.id_str] = true;
-                            });
-                            if (!tweetids[tweet.id_str]) {
-                                console.log('   New Tweet by Retweet Check: ' + tweet.id_str);
-                                prepareCustomFields(tweet);
-                                tweets.push(tweet);
-                            }
-                        });
-                    }
-                    callback((data.length > 0));
-                    return;
-                } catch (e) {
-                }
-            }
-            callback(true);
-        }
-    );
-};
+var twitter = new Twitter();
+var request_ids = JSON.parse(fs.readFileSync(config.datapath + 'tweetids.json', 'utf8'));
+var tweets = [];//JSON.parse(fs.readFileSync(config.datapath + 'cleaned.json', 'utf8'));
 
 var prepareCustomFields = function (tweet) {
-    if (!tweet.retweet_ids)
-        tweet.retweet_ids = [];
     tweet.timestamp = new Date().valueOf();
 };
 
-var getRetweetIdsCursor = function (id, cursor, list, callback) {
-    tweeter.get("https://api.twitter.com/1.1/statuses/retweeters/ids.json?id=" + id + '&stringify_ids=true' + (cursor ? '&cursor=' + cursor : ''),  //url
-        config.twitter_bot.token,   //oauth_token
-        config.twitter_bot.secret, //oauth_token_secret
-        function (error, data, response) {
-            console.log('   Api Call: ' + getApiCallCount(response) + ' statuses/retweeters/ids: ' + id);
-            if (data) {
-                try {
-                    data = JSON.parse(data);
-                } catch (e) {
-                    error = e;
-                }
-            }
-            if (error) {
-                if ([403, 404].indexOf(error.statusCode) >= 0) {
-                    callback([]);
-                } else {
-                    var retry = getApiLimitResetDiff(response);
-                    if (retry > 0) {
-                        console.log('   Pause: ' + (retry / 1000).toFixed(2) + 's' + ' for ApiLimit on https://api.twitter.com/1.1/retweeters/ids.json');
-                        setTimeout(function () {
-                            getRetweetIdsCursor(id, cursor, list, callback);
-                        }, retry);
-                    } else {
-                        console.log('Error: Something is wrong with retweeters.\n' + JSON.stringify(error));
-                        callback(null, JSON.stringify(error));
-                    }
-                }
-            } else {
-                if (data.ids) {
-                    list = list.concat(data.ids);
-                }
-                if (!data.next_cursor_str) {
-                    return;
-                }
-                if (data.next_cursor_str != "0") {
-                    getRetweetIdsCursor(id, data.next_cursor_str, list, callback);
-                } else {
-                    callback(list);
-                }
+var Scanner = function () {
+
+    this.save = function (cb) {
+        tokenizer.storeDayJsonFiles(tweets, config.datapath + 'import/cleaned/', cb);
+//        var filename = config.datapath + 'cleaned.json';
+//        var lines = tweets.map(function (t) {
+//            return (JSON.stringify(t));
+//        });
+//        console.log('Saving...')
+//        fs.writeFileSync(filename, '[\n' + lines.join(',\n') + '\n]\n', 'utf8');
+    };
+
+    this.scanTweets = function (cb) {
+        if (!twitter.canUseApi('statuses/show.json')) {
+            return cb(false, false);
+        }
+        var tweetids = {};
+        tweets.forEach(function (t) {
+            tweetids[t.id_str] = true;
+            if (t.retweet_ids) {
+                t.retweet_ids.forEach(function (id) {
+                    if (request_ids.indexOf(id) < 0)
+                        request_ids.push(id);
+                })
             }
         });
-};
 
-var getRetweetIds = function (id, callback) {
-    getRetweetIdsCursor(id, null, [], callback);
-};
+        var ids = request_ids.filter(function (id) {
+            return (!tweetids[id])
+        });
 
-var getNext = function (callback) {
-
-    var tweetids = {};
-    tweets.forEach(function (t) {
-        tweetids[t.id_str] = true;
-    });
-    var nextids = ids.filter(function (id) {
-        return (!tweetids[id])
-    });
-    if (nextids.length) {
-        getTweet(nextids[0], function (tweet, error) {
-            if (tweet) {
-                if (tweet.retweeted_status) {
-                    tweet.retweet_ids = [];
-                    callback(tweet);
-                } else {
-                    needsRetweetCheck(nextids[0], function (needscheck) {
-                        console.log('  Check Retweets: ' + nextids[0] + ' = ' + needscheck);
-                        if (!needscheck) {
-                            tweet.retweet_ids = [];
-                            callback(tweet);
+        var ratelimit = false;
+        var q = async.queue(function (id, callback) {
+            if (ratelimit)
+                setImmediate(callback);
+            else
+                twitter.get('statuses/show.json', '?id=' + id + '&include_entities=true', function (tweet, e, rl, na) {
+                        if (tweet) {
+                            prepareCustomFields(tweet);
+                            tweets.push(tweet);
+                        } else if (rl) {
+                            ratelimit = true;
                         } else {
-                            getRetweetIds(nextids[0], function (ids, error) {
-                                if (ids) {
-                                    tweet.retweet_ids = ids;
-                                    callback(tweet);
-                                }
-                            });
+                            var tweet = {id_str: id};
+                            prepareCustomFields(tweet);
+                            tweet.error = e;
+                            tweets.push(tweet);
+                            console.log(e);
                         }
-                    });
-                }
-            }
+                        callback();
+                    }
+                )
+        }, 1);
+        q.drain = function () {
+            cb(!ratelimit, true);
+        };
+        if (ids.length === 0) {
+            cb(true, false);
+        } else {
+            console.log('scanTweets', ids.length);
+            q.push(ids);
+        }
+    };
+
+    this.scanRetweetIds = function (cb) {
+        if (!twitter.canUseApi('statuses/retweeters/')) {
+            return cb(false, false);
+        }
+        var tweetids = {};
+        tweets.forEach(function (t) {
+            tweetids[t.id_str] = true;
         });
-    } else {
-        callback(null);
-    }
-};
+        var tws = tweets.filter(function (t) {
+            return ((!t.retweet_ids) && (!t.retweeted_status));
+        });
+        var ratelimit = false;
 
-function saveLineJsonArray(filename, a) {
-    var lines = a.map(function (t) {
-        return (JSON.stringify(t));
-    });
-    fs.writeFileSync(filename, '[\n' + lines.join(',\n') + '\n]\n', 'utf8');
-}
+        var getRetweetIds = function (tweet, cursor, list, callback) {
+            twitter.get('statuses/retweeters/', 'ids.json?id=' + tweet.id_str + '&stringify_ids=true' + (cursor ? '&cursor=' + cursor : ''), function (data, e, rl, na) {
+                    if (data) {
+                        if (data.ids) {
+                            list = list.concat(data.ids);
+                        }
+                        if ((data.next_cursor_str) && (data.next_cursor_str != "0")) {
+                            getRetweetIdsCursor(tweet, data.next_cursor_str, list, callback);
+                        } else
+                            callback(list);
+                        return;
+                    } else if (rl) {
+                        ratelimit = true;
+                    } else {
+                        if (na)
+                            tweet.retweet_ids = [];
+                        console.log(e);
+                    }
+                    callback(null);
+                }
+            )
+        };
 
-function cleanUsers(callback) {
-    var missingusers = [];
-    tweets.forEach(function (t) {
-        if (t.user)
-            if (!t.user.screen_name) {
+        var q = async.queue(function (tweet, callback) {
+            if (ratelimit)
+                setImmediate(callback);
+            else
+                getRetweetIds(tweet, null, [], function (list) {
+                    if (list)
+                        tweet.retweet_ids = list;
+                    callback();
+                });
+        }, 1);
+        q.drain = function () {
+            cb(!ratelimit, true);
+        };
+        if (tws.length === 0) {
+            cb(true, false);
+        } else {
+            console.log('scanRetweetIds', tws.length);
+            q.push(tws);
+        }
+    };
+
+    this.scanRetweets = function (cb) {
+        if (!twitter.canUseApi('statuses/retweets/')) {
+            return cb(false, false);
+        }
+        var tweetids = {};
+        tweets.forEach(function (t) {
+            tweetids[t.id_str] = true;
+        });
+        var tws = tweets.filter(function (t) {
+            return ((!t.retweet_ids) && (!t.retweeted_status));
+        });
+        var ratelimit = false;
+        var q = async.queue(function (tweet, callback) {
+            if (ratelimit)
+                setImmediate(callback);
+            else
+                twitter.get('statuses/retweets/', tweet.id_str + ".json?count=100", function (tw, e, rl, na) {
+                        if (tw) {
+                            if (tw.length) {
+                                tw.forEach(function (t) {
+                                    if (!tweetids[t.id_str]) {
+                                        console.log('New Tweet by Retweet Check: ' + t.id_str);
+                                        prepareCustomFields(t);
+                                        tweets.push(t);
+                                    }
+                                });
+                            } else {
+                                tweet.retweet_ids = [];
+                            }
+                        } else if (rl) {
+                            ratelimit = true;
+                        } else {
+                            if (na)
+                                tweet.retweet_ids = [];
+                            console.log(e);
+                        }
+                        callback();
+                    }
+                )
+        }, 1);
+        q.drain = function () {
+            cb(!ratelimit, true);
+        };
+        if (tws.length === 0) {
+            cb(true, false);
+        } else {
+            console.log('scanRetweets', tws.length);
+            q.push(tws);
+        }
+    };
+
+    this.scanUsers = function (cb) {
+        if (!twitter.canUseApi('users/lookup.json')) {
+            return cb(false, false);
+        }
+        var missingusers = [];
+        tweets.forEach(function (t) {
+            if ((t.user) && (!t.user.screen_name)) {
                 missingusers.push(t.user.id_str);
             }
-    });
-    if (missingusers.length) {
-        console.log('missing users:', missingusers.length);
-        getUserPackageByIDs(missingusers, callback);
-    } else {
-        callback();
-    }
-}
+        });
+        var ratelimit = false;
 
-function tick(callback) {
-    cleanUsers(function () {
-        saveLineJsonArray(config.datapath + 'cleaned.json', tweets);
-        getNext(function (tweet) {
-            if (tweet) {
-                prepareCustomFields(tweet);
-                tweets.push(tweet);
-                cleanUsers(function () {
-                    saveLineJsonArray(config.datapath + 'cleaned.json', tweets);
-//            console.log(JSON.stringify(tweet));
-                    callback(false);
-                });
+        var getUsers = function (ids, callback) {
+            twitter.get("users/lookup.json", "?user_id=" + ids.join(',') + '&include_entities=false', function (users, e, rl, na) {
+                if (users) {
+                    users.forEach(function (u) {
+                        for (var i = 0; i < tweets.length; i++) {
+                            if ((tweets[i].user) && (tweets[i].user.id_str == u.id_str)) {
+                                tweets[i].user = u;
+                            }
+                        }
+                    })
+                    for (var i = 0; i < tweets.length; i++) {
+                        if ((tweets[i].user) && (!tweets[i].user.screen_name) && (ids.indexOf(tweets[i].user.id_str) >= 0)) {
+                            tweets[i].user.screen_name = '[Unknown]';
+                        }
+                    }
+                } else if (rl) {
+                    ratelimit = true;
+                } else {
+                    console.log(e);
+                }
+                callback();
+            });
+        };
+
+        function getUserPackage(ids) {
+            if (ratelimit) {
+                cb(false, true);
+            } else if (ids.length === 0) {
+                cb(true, true);
             } else {
-                cleanUsers(function () {
-                    console.log('all done <3');
-                    callback(true);
+                var request = ids.splice(0, 100);
+                getUsers(request, function () {
+                    getUserPackage(ids);
                 });
             }
-        });
-    });
-}
-
-function startTick() {
-    tick(function (done) {
-        if (!done) {
-            setTimeout(function () {
-                startTick();
-            }, 1 * 1000);
         }
-    });
-}
 
-startTick();
+        if (missingusers.length === 0) {
+            cb(true, false);
+        } else {
+            console.log('scanUsers', missingusers.length);
+            getUserPackage(missingusers.slice());
+        }
+    };
+
+    this.scan = function (cb) {
+        var caller = this;
+        var done = true;
+        caller.scanTweets(function (d, c) {
+            done = done && d;
+            caller.scanRetweets(function (d, c) {
+                done = done && d;
+                caller.scanRetweetIds(function (d, c) {
+                    done = done && d;
+                    caller.scanUsers(function (d, c) {
+                        done = done && d;
+                        caller.save(function () {
+                            cb(done);
+                        });
+                    });
+                });
+            });
+        });
+    };
+
+};
+
+var scanner = new Scanner();
+
+var scanResult = function (done) {
+    var o = twitter.getLowestApiLimit();
+    var diff = 3000;
+    if (done) {
+        console.log('all done');
+        return;
+    } else if (o && (o.retry > 0)) {
+        diff = twitter.getApiLimitDiff(o.retry);
+        console.log('Pause: ' + moment(o.retry).format('HH:mm:ss') + ' (' + (diff / 1000).toFixed(2) + 's)' + ' for ApiLimit ' + o.url);
+    } else {
+        console.log('Restart');
+    }
+    setTimeout(function () {
+        scanner.scan(scanResult);
+    }, Math.max(1000, diff));
+};
+
+//if (fs.existsSync(config.datapath + 'cleaned.json')) {
+//    tweets = JSON.parse(fs.readFileSync(config.datapath + 'cleaned.json', 'utf8'));
+//    scanner.scan(scanResult);
+//} else {
+tokenizer.loadDayJsonFiles(config.datapath + 'import/cleaned/', function (cleaned) {
+    tweets = cleaned;
+    scanner.scan(scanResult);
+});
+//}

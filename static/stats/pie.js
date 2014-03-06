@@ -1,6 +1,6 @@
 //based on http://bl.ocks.org/marcbc/3281521
 
-function Pies() {
+function pieView() {
     var
         options = {
             type: 'pie',
@@ -21,7 +21,7 @@ function Pies() {
         legendwidth = 120,
         radius = Math.min(width - margin, height - margin) / 2;
 
-    function initPie(id, mode, kind, forceregenerate, statshelper) {
+    function init(id, mode, kind, statshelper, forceregenerate) {
         stats = statshelper;
         options.id = id;
         options.mode = mode;
@@ -213,7 +213,7 @@ function Pies() {
     }
 
     return {
-        initPie: initPie
+        init: init
     };
 }
 

@@ -5,8 +5,6 @@
     <li class="active"><a href="#" data-target="cmd-machine" data-toggle="tab">Maschinelle Vorschläge</a></li>
     <li><a href="#" data-target="cmd-stats" data-toggle="tab">Zwischenspeicher aktualisieren</a></li>
     <% if (user.id === 1) { %>
-    <li><a href="#" data-target="cmd-import" data-toggle="tab">Import Votes</a></li>
-    <li><a href="#" data-target="cmd-export" data-toggle="tab">Export Votes</a></li>
     <li><a href="#" data-target="cmd-admin" data-toggle="tab">Admin area</a></li>
     <% } %>
 </ul>
@@ -66,45 +64,6 @@
         </div>
         <div id="statcache-result"></div>
     </div>
-    <div class="off-left-hidden" id="div-cmd-import">
-        <div class="cmd-well">
-            <h4>Bulk insert User Classification Json File</h4>
-
-            <form action="/bulk" method="post"
-                  class="form-inline" enctype="multipart/form-data"
-                  encoding="multipart/form-data"
-                  id="form-file">
-                <input id="bulkfile" type="file" name="file" size="40" placeholder="Choose JSON file"/>
-                <br/>
-                <button id="btn-act-bulk" class="btn btn-primary" onclick="return aufschreib.sendFile()">Upload File
-                </button>
-            </form>
-        </div>
-        <div class="row">
-            <% var container_id = chart_human_params.getChartContainerId() + '_before'; %>
-            <% var chartparams = chart_human_params; %>
-            <div class="col-md-6"><h4>Human Classification Before</h4>
-                <% include stats/pie_commands %>
-            </div>
-            <div class="col-md-6"><h4>Human Classification After</h4>
-
-                <div id="output-upload"></div>
-            </div>
-        </div>
-    </div>
-    <div class="off-left-hidden" id="div-cmd-export">
-        <div class="cmd-well">
-            <h4>Download Classification JSON</h4>
-            <% for (var i = 0; i < consts.modes.length; i++) { var mode = consts.modes[i]; %>
-            <a target="_blank" title="Download <%= mode.name %> Classification JSON data"
-               class="btn btn-primary" alt="Raw <%= mode.name %> JSON"
-               href="?cmd=classifiction&mode=<%= mode.id %>"><i class="glyphicon <%= mode.icon %>"></i> <%= mode.name %>
-            </a>
-            <% } %>
-        </div>
-        <div class="row">
-        </div>
-    </div>
 
     <% if (user.id === 1) { %>
     <div class="off-left-hidden" id="div-cmd-admin">
@@ -151,6 +110,7 @@
                     <th>Bewertet</th>
                     <th>Unbewertet</th>
                     <th>Total</th>
+                    <th>JSON</th>
                 </tr>
                 </thead>
 
@@ -161,10 +121,47 @@
                     <td><%= u.count - u.unknowncount %></td>
                     <td><%= u.unknowncount %></td>
                     <td><%= u.count %></td>
+                    <td>
+                        <a target="_blank" title="Download User Classification JSON data"
+                           class="btn " alt="Download Raw JSON"
+                           href="json/classification/<%= u.id %>.json?cmd=classifiction&mode=human&user=<%= u.id %>"><i
+                                    class="glyphicon glyphicon-download"></i></a>
+                        <a target="_blank" title="Upload User Classification JSON data"
+                           class="btn btn-cmd-upload" alt="Upload Raw JSON"
+                           href="javascript:" onclick="return aufschreib.sendFile(<%= u.id %>)"><i class="glyphicon glyphicon-upload"></i></a>
+                    </td>
                 </tr>
                 <% }) %>
             </table>
         </div>
+        <div class="cmd-well col-md-12">
+
+            <h4>Bulk insert User Classification Json File</h4>
+
+            <form action="/bulk" method="post"
+                  class="form-inline" enctype="multipart/form-data"
+                  encoding="multipart/form-data"
+                  id="form-file">
+                <input id="bulkfile" type="file" name="file" size="40" placeholder="Choose JSON file"/>
+                <br/>
+                <!--<button id="btn-act-bulk" class="btn btn-primary" onclick="return aufschreib.sendFile()">Upload File</button>-->
+            </form>
+
+            <div id="output-upload"></div>
+
+            <!--<div class="row">-->
+                <!--<% var container_id = chart_human_params.getChartContainerId() + '_before'; %>-->
+                <!--<% var chartparams = chart_human_params; %>-->
+                <!--<div class="col-md-6"><h4>Human Classification Before</h4>-->
+                    <!--<% include stats/pie_commands %>-->
+                <!--</div>-->
+                <!--<div class="col-md-6"><h4>Human Classification After</h4>-->
+
+                <!--</div>-->
+            <!--</div>-->
+
+        </div>
+
     </div>
     <% } %>
 </div>

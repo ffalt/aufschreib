@@ -10,16 +10,3 @@
 <% include stats_content %>
 
 <% include stats_foot %>
-
-<script type="text/javascript">
-	$(function () {
-		$(document).ready(
-				function () {
-                    $('#<%- container_id %>temp').children().appendTo($('#navbar-content'));
-                    var pies = new Pies();
-					pies.initPie('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>',
-							'<%- chartparams.forcegenerate %>', new Stats(cats));
-				}
-		);
-	});
-</script>
