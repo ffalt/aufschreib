@@ -82,15 +82,7 @@ function transform(rawTweets) {
 
 function loadRaw(cb) {
     console.log('[Prepare] Load Raw Tweets');
-    var filename = config.datapath + 'tweets.json';
-    fs.exists(filename, function (exists) {
-        var tweets;
-        if (exists) {
-            tweets = JSON.parse(fs.readFileSync(filename, 'utf8'));
-        } else {
-            tweets = [];
-            console.log('well, you need a tweets.json file, this will not work');
-        }
+    tokenizer.loadDayJsonFiles(config.datapath + 'tweets/', function (tweets) {
         console.log('[Prepare] Raw Tweets loaded: ' + tweets.length);
         cb(tweets);
     });

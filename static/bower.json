@@ -6,9 +6,11 @@
 		"bootstrap": "*",
 		"d3": "*",
 		"jqrangeslider": "*",
+		"datetimepicker": "*",
 		"jquery": "=2.1.0",
 		"jqueryui": "*",
 		"moment": "*",
+        "nvd3":"*",
 		"socket.io-client": "*",
 		"typeahead.js": "*",
 		"vivagraph": "*"

@@ -588,3 +588,9 @@ canvas {
     fill-opacity: .125;
     shape-rendering: crispEdges;
 }
+
+/*counts*/
+
+#count_pie svg {
+    height: 400px;
+}
