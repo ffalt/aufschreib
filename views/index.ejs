@@ -4,16 +4,12 @@
     <meta charset="utf-8">
     <title>#aufschreib</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Le styles -->
     <link type="text/css" href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link type="text/css" href="/static/bower_components/jqrangeslider/css/iThing.css" rel="stylesheet">
-    <link type="text/css" href="/static/bower_components/datetimepicker/jquery.datetimepicker.css" rel="stylesheet">
-    <link type="text/css" href="/static/bower_components/nvd3/nv.d3.min.css" rel="stylesheet">
-    <link type="text/css" href="/static/aufschreib.css" rel="stylesheet">
+    <link type="text/css" href="/static/aufschreib.min.css" rel="stylesheet">
     <script type="text/javascript">
         var cats = <%- JSON.stringify(consts.cats) %>;
     </script>
-    <script type="text/javascript" src="/static/bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/aufschreib.min.js"></script>
 </head>
 <body>
 <div id="jswarning" class="alert alert-danger">
@@ -185,49 +181,9 @@
 
 </body>
 
-<!-- Le scripts -->
-
 <script type="text/javascript">
     $('#jswarning').remove();
 </script>
-
-
-<script type="text/javascript" src="/static/bower_components/jqueryui/ui/jquery-ui.js"></script>
-<script type="text/javascript" src="/static/bower_components/datetimepicker/jquery.datetimepicker.js"></script>
-
-<!--<script type="text/javascript" src="/static/bower_components/jqrangeslider/dist/jQDateRangeSlider-withRuler-min.js"></script>-->
-<script type="text/javascript" src="/static/bower_components/jqrangeslider/jQRangeSlider.js"></script>
-<script type="text/javascript" src="/static/bower_components/jqrangeslider/jQRangeSliderMouseTouch.js"></script>
-<script type="text/javascript" src="/static/bower_components/jqrangeslider/jQRangeSliderDraggable.js"></script>
-<script type="text/javascript" src="/static/bower_components/jqrangeslider/jQRangeSliderHandle.js"></script>
-<script type="text/javascript" src="/static/bower_components/jqrangeslider/jQRangeSliderBar.js"></script>
-<script type="text/javascript" src="/static/bower_components/jqrangeslider/jQRangeSliderLabel.js"></script>
-<script type="text/javascript" src="/static/bower_components/jqrangeslider/jQRuler.js"></script>
-<script type="text/javascript" src="/static/bower_components/jqrangeslider/jQDateRangeSliderHandle.js"></script>
-<script type="text/javascript" src="/static/bower_components/jqrangeslider/jQDateRangeSlider.js"></script>
-
-
-<script type="text/javascript" src="/static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/static/bower_components/d3/d3.min.js"></script>
-<script type="text/javascript" src="/static/bower_components/nvd3/nv.d3.min.js"></script>
-<script type="text/javascript" src="/static/bower_components/socket.io-client/dist/socket.io.min.js"></script>
-<script type="text/javascript" src="/static/bower_components/vivagraph/dist/vivagraph.min.js"></script>
-<script type="text/javascript" src="/static/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
-<script type="text/javascript" src="/static/bower_components/moment/min/moment.min.js"></script>
-
-<!--<link type="text/css" href="/static/bower_components/typeahead.js/typeahead.js-bootstrap.css" rel="stylesheet">-->
-
-<!--<link type="text/css" href="/static/utils/typeahead.js-bootstrap.css" rel="stylesheet">-->
-<script src="/static/utils/fontdetect.js"></script>
-<!--<script src="/static/utils/typeahead.min.js"></script>-->
-<script src="/static/utils/d3.layout.cloud.min.js"></script>
-
-
-<script type="text/javascript" src="/static/aufschreib.js"></script>
-
-<script type="text/javascript" src="/static/utils/jquery.form.min.js"></script>
-<script type="text/javascript" src="/static/stats/stats.js"></script>
-<script type="text/javascript" src="/static/stats/pie.js"></script>
 
 </html>
 
