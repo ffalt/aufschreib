@@ -399,9 +399,13 @@ a:hover {
     display: none;
     padding-left: 60px;
     padding-right: 60px;
-    padding-bottom: 20px;
+    padding-bottom: 4px;
     border: solid #bdbdbd 1px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+}
+
+.filter-pane form {
+    margin-top: 8px;
 }
 
 .filter-pane span {
@@ -587,10 +591,4 @@ canvas {
     stroke: #fff;
     fill-opacity: .125;
     shape-rendering: crispEdges;
-}
-
-/*counts*/
-
-#count_pie svg {
-    height: 400px;
 }
