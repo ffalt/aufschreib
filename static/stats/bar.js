@@ -52,6 +52,10 @@ function barView() {
         stats.requestData(options, generate);
     }
 
+    function request() {
+        stats.requestData(options, generate);
+    }
+
     function linkUI() {
         d3.selectAll('.navbar-form input').on('change', change);
         d3.selectAll('#' + options.id + 'bars a').on('click', toggleBars);
@@ -388,7 +392,8 @@ function barView() {
     }
 
     return {
-        init: init
+        init: init,
+        request:request
     };
 }
 

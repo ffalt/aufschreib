@@ -216,6 +216,7 @@ function hashtagsView() {
 //    }
 
     return {
-        init: init
+        init: init,
+        request:request
     };
 }

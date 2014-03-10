@@ -34,6 +34,10 @@ function timeView() {
         stats.selectActives(options, ['mode', 'view']);
         stats.requestData(options, generate);
     }
+    function request() {
+        stats.requestData(options, generate);
+    }
+
 
     function initSVG() {
         svg = stats.initSVG(options.id, width + margin.left + margin.right, height);
@@ -276,6 +280,7 @@ function timeView() {
     }
 
     return {
-        init: init
+        init: init,
+        request:request
     };
 }

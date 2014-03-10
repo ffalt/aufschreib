@@ -65,10 +65,10 @@ function Stats(cats, hashBangNotifyDisabeld) {
         };
         if (options.mode)
             params.mode = options.mode;
-        if (options.min)
-            params.min = options.min;
-        if (options.max)
-            params.max = options.max;
+        if (aufschreib.range.min)
+            params.min = aufschreib.range.min.valueOf();
+        if (aufschreib.range.max)
+            params.max = aufschreib.range.max.valueOf();
         if (options.kind)
             params.kind = options.kind;
         if (options.forceregenerate) {

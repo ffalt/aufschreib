@@ -10,6 +10,7 @@ var aufschreib = {
         min: null,
         max: null
     },
+    range_enabled: false,
     stats: {
         mode: 'human',
         type: 'pie',
@@ -248,7 +249,7 @@ var aufschreib = {
         if (aufschreib.search.length > 0) {
             result.search = encodeURIComponent(aufschreib.search);
         }
-        if ((aufschreib.range.min) && (aufschreib.range.max)) {
+        if (aufschreib.range_enabled && (aufschreib.range.min) && (aufschreib.range.max)) {
             result.rangegte = aufschreib.range.min.valueOf();
             result.rangelte = aufschreib.range.max.valueOf();
         }
@@ -443,19 +444,16 @@ var aufschreib = {
         $('li', '#nav-site').removeClass('active');
         $('a[href*=' + mode + ']', '#nav-site').parent().addClass('active');
         $('#nav-edit').toggle((mode === 'edit'));
-        if ((mode === 'edit') &&
-            (aufschreib.range.min !== null)) {
-            $('#time-filter-pane').toggle(true);
-            $("#slider").dateRangeSlider('resize');
-            $("#slider").dateRangeSlider('values',
-                aufschreib.def_range.min,
-                aufschreib.def_range.max
-            );
-        } else {
-            if ($('#time-filter-pane').is(':visible')) {
-                aufschreib.def_range.min = aufschreib.range.min;
-                aufschreib.def_range.max = aufschreib.range.max;
+        if ((mode == 'stats') || ((mode == 'edit') && aufschreib.range_enabled)) {
+            if ($('#time-filter-pane').is(':hidden')) {
+                $('#time-filter-pane').toggle(true);
+                $("#slider").dateRangeSlider('resize');
+                $("#slider").dateRangeSlider('values',
+                    aufschreib.range.min,
+                    aufschreib.range.max
+                );
             }
+        } else {
             $('#time-filter-pane').toggle(false);
         }
         $('#nav-stats').toggle((mode === 'stats'));
@@ -595,6 +593,8 @@ var aufschreib = {
 
         aufschreib.def_range.min = new Date(parseInt($("#slider").attr("min")));
         aufschreib.def_range.max = new Date(parseInt($("#slider").attr("max")));
+        aufschreib.range.min = aufschreib.def_range.min;
+        aufschreib.range.max = aufschreib.def_range.max;
         $("#slider").dateRangeSlider({
             defaultValues: aufschreib.def_range,
             bounds: aufschreib.def_range,
@@ -622,33 +622,57 @@ var aufschreib = {
             if ($('#time-filter-pane').is(':visible')) {
                 aufschreib.range.min = data.values.min;
                 aufschreib.range.max = data.values.max;
-                aufschreib.request();
+                $('#count_edit_min').datetimepicker({
+                    value: moment(data.values.min).format("DD.MM.YY HH:mm")
+                });
+                $('#count_edit_max').datetimepicker({
+                    value: moment(data.values.max).format("DD.MM.YY HH:mm")
+                });
+                if (aufschreib.current == 'vote')
+                    aufschreib.request();
+                else if (aufschreib.statsrequest) {
+                    aufschreib.statsrequest();
+                }
             }
         });
 
+        $('#count_edit_min').datetimepicker({
+            format: 'd.m.y H:i',
+            value: moment(aufschreib.range.min).format("D.MM.YY HH:mm"),
+            onChangeDateTime: function (dp, $input) {
+                aufschreib.range.min = dp;
+                $("#slider").dateRangeSlider('values',
+                    dp,
+                    aufschreib.range.max
+                );
+            }
+        });
+
+        $('#count_edit_max').datetimepicker({
+            format: 'd.m.y H:i',
+            value: moment(aufschreib.range.min).format("D.MM.YY HH:mm"),
+            onChangeDateTime: function (dp, $input) {
+                aufschreib.range.max = dp;
+                $("#slider").dateRangeSlider('values',
+                    aufschreib.range.min,
+                    dp
+                );
+            }
+        });
+
+
         $('#time-filter-toggle a').click(function (event) {
-
-            $('#time-filter-toggle').toggleClass('active',
-                $('#time-filter-pane').is(':hidden')
-            );
-
-            if ($('#time-filter-pane').is(':hidden')) {
-                aufschreib.range.min = aufschreib.def_range.min;
-                aufschreib.range.max = aufschreib.def_range.max;
-                $('#time-filter-pane').toggle();
+            aufschreib.range_enabled = !aufschreib.range_enabled;
+            $('#time-filter-toggle').toggleClass('active', aufschreib.range_enabled);
+            $('#time-filter-pane').toggle(aufschreib.range_enabled);
+            if (aufschreib.range_enabled) {
                 $("#slider").dateRangeSlider('resize');
                 $("#slider").dateRangeSlider('values',
-                    aufschreib.def_range.min,
-                    aufschreib.def_range.max
+                    aufschreib.range.min,
+                    aufschreib.range.max
                 );
-            } else {
-                aufschreib.def_range.min = aufschreib.range.min;
-                aufschreib.def_range.max = aufschreib.range.max;
-                aufschreib.range.max = null;
-                aufschreib.range.min = null;
-                $('#time-filter-pane').toggle();
             }
-            aufschreib.request();
+                aufschreib.request();
             event.stopPropagation();
         });
 

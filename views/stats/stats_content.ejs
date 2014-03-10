@@ -3,3 +3,35 @@
 		<div id="<%= container_id %>vis" class="<%- chartparams.type %> chart"></div>
 	</div>
 </div>
+
+<nav class="navbar navbar-stats-footer hidden" role="navigation">
+    <ul class="nav navbar-nav">
+        <li id="<%- container_id %>current-json">
+            <a class="btn btn-default" title="Daten als JSON im Browser anzeigen" href="#">Daten als JSON anzeigen</a>
+        </li>
+        <li><a class="btn btn-default" title="Daten als JSON herunterladen" id="<%- container_id %>download-json"
+               href="#" target="_blank"><i class="icon-download-alt"></i>
+                Daten als JSON herunterladen</a></li>
+        <li><a class="btn btn-default" title="Grafik als SVG herunterladen" id="<%- container_id %>download-svg"
+               href="#" target="_blank"><i class="icon-download-alt"></i>
+                Grafik als SVG herunterladen</a></li>
+    </ul>
+</nav>
+
+<div id="table"></div>
+
+<pre id="<%- container_id %>json" style="display:none">></pre>
+
+<script type="text/javascript" src="/static/stats/<%- chartparams.type %>.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $(document).ready(
+                function () {
+                    $('#<%- container_id %>temp').children().appendTo($('#navbar-content'));
+                    var view = new <%- chartparams.type %>View();
+                    view.init('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>', new Stats(cats), '<%- chartparams.forcegenerate %>');
+                    aufschreib.statsrequest = view.request;
+                }
+        );
+    });
+</script>

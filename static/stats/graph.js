@@ -22,7 +22,12 @@ function graphView() {
 		stats.requestData(options, generate);
 	}
 
-	function change() {
+    function request() {
+        stats.requestData(options, generate);
+    }
+
+
+    function change() {
 		if (!isNaN(this.value)) {
 			options.min = this.value;
 			generate();
@@ -160,7 +165,8 @@ function graphView() {
 	}
 
 	return {
-        init: init
+        init: init,
+        request:request
 	};
 }
 

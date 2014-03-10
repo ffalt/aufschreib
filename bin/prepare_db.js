@@ -66,6 +66,7 @@ function transform(rawTweets) {
             userimg: tweet.user.profile_image_url,
             user: tweet.user.screen_name,
             text: tweet.text,
+            cleantext : tokenizer.tokenize(tweet.text),
             longurls: longurls
         }
     });

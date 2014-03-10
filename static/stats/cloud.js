@@ -119,7 +119,11 @@ function cloudView() {
 		stats.requestData(options, generate);
 	}
 
-	function generate() {
+    function request() {
+        stats.requestData(options, generate);
+    }
+
+    function generate() {
 		var data = stats.getBaseData();
 		var tags = {};
 		data.forEach(function (entry) {
@@ -450,6 +454,7 @@ function cloudView() {
 	}
 
 	return {
-        init: init
+        init: init,
+        request:request
 	};
 }

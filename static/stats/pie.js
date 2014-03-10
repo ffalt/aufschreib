@@ -32,6 +32,11 @@ function pieView() {
         stats.requestData(options, generate);
     }
 
+    function request() {
+        stats.requestData(options, generate);
+    }
+
+
     function linkUI() {
         stats.linkUIDefault(options.id);
         stats.linkUIReloads(options, ['mode'], generate);
@@ -213,7 +218,8 @@ function pieView() {
     }
 
     return {
-        init: init
+        init: init,
+        request:request
     };
 }
 

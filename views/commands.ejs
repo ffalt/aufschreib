@@ -39,6 +39,8 @@
             <div id="classify-result"></div>
         </div>
     </div>
+    <% if (user.id === 1) { %>
+
     <div class="off-left-hidden" id="div-cmd-stats">
         <div class="cmd-well">
             <h4>Ergebnisse-Zwischenspeicher</h4>
@@ -65,7 +67,6 @@
         <div id="statcache-result"></div>
     </div>
 
-    <% if (user.id === 1) { %>
     <div class="off-left-hidden" id="div-cmd-admin">
         <div class="cmd-well col-md-12">
             <h4>Create User</h4>
