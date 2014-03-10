@@ -636,15 +636,29 @@ var aufschreib = {
             }
         });
 
+        $(".poi-link").click(function (event) {
+            var min = new Date(parseInt($(this).attr('min')));
+            var max = new Date(parseInt($(this).attr('max')));
+            aufschreib.range.min = min;
+            aufschreib.range.max = max;
+            $("#slider").dateRangeSlider('values',
+                min,
+                max
+            );
+//            event.stopPropagation();
+        });
+
         $('#count_edit_min').datetimepicker({
             format: 'd.m.y H:i',
             value: moment(aufschreib.range.min).format("D.MM.YY HH:mm"),
             onChangeDateTime: function (dp, $input) {
-                aufschreib.range.min = dp;
-                $("#slider").dateRangeSlider('values',
-                    dp,
-                    aufschreib.range.max
-                );
+                if (aufschreib.range.min.valueOf() !== dp.valueOf()) {
+                    aufschreib.range.min = dp;
+                    $("#slider").dateRangeSlider('values',
+                        dp,
+                        aufschreib.range.max
+                    );
+                }
             }
         });
 
@@ -652,11 +666,13 @@ var aufschreib = {
             format: 'd.m.y H:i',
             value: moment(aufschreib.range.min).format("D.MM.YY HH:mm"),
             onChangeDateTime: function (dp, $input) {
-                aufschreib.range.max = dp;
-                $("#slider").dateRangeSlider('values',
-                    aufschreib.range.min,
-                    dp
-                );
+                if (aufschreib.range.max.valueOf() !== dp.valueOf()) {
+                    aufschreib.range.max = dp;
+                    $("#slider").dateRangeSlider('values',
+                        aufschreib.range.min,
+                        dp
+                    );
+                }
             }
         });
 
@@ -672,7 +688,7 @@ var aufschreib = {
                     aufschreib.range.max
                 );
             }
-                aufschreib.request();
+            aufschreib.request();
             event.stopPropagation();
         });
 

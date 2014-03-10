@@ -1,5 +1,5 @@
 var fs = require('fs');
-var tokenizer = require('./../lib/tweet_tokenizer.js').MyLittleTweetTokenizer();
+var tokenizer = require('./../lib/utils.js').Utils();
 var fetchUrl = require("fetch").fetchUrl;
 var resolver = require("resolver");
 var config = require('./../config.js');

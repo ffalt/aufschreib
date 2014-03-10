@@ -3,7 +3,7 @@ var OAuth = require('oauth').OAuth;
 var config = require('./../config.js');
 var async = require('async');
 var moment = require('moment');
-var tokenizer = require('./../lib/tweet_tokenizer.js').MyLittleTweetTokenizer();
+var tokenizer = require('./../lib/utils.js').Utils();
 
 var tweeter = new OAuth(
     "https://api.twitter.com/oauth/request_token", //requestUrl

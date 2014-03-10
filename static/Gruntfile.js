@@ -4,7 +4,7 @@ module.exports = function (grunt) {
         uglify: {
             my_target: {
                 files: {
-                    'aufschreib.min.js': [
+                    'aufschreib.comps.min.js': [
                         'bower_components/jquery/dist/jquery.min.js',
                         'bower_components/datetimepicker/jquery.datetimepicker.js',
                         'bower_components/jqueryui/ui/jquery-ui.js',
@@ -26,7 +26,9 @@ module.exports = function (grunt) {
                         'bower_components/moment/min/moment.min.js',
                         'utils/fontdetect.js',
                         'utils/d3.layout.cloud.min.js',
-                        'utils/jquery.form.min.js',
+                        'utils/jquery.form.min.js'
+                    ],
+                    'aufschreib.min.js': [
                         'aufschreib.js',
                         'stats/stats.js',
                         'stats/pie.js',
@@ -46,10 +48,13 @@ module.exports = function (grunt) {
         cssmin: {
             combine: {
                 files: {
-                    'aufschreib.min.css': [
+                    'aufschreib.comps.min.css': [
                         'bower_components/jqrangeslider/css/iThing.css',
                         'bower_components/datetimepicker/jquery.datetimepicker.css',
-                        'bower_components/nvd3/nv.d3.min.css',
+                        'bower_components/nvd3/nv.d3.min.css'
+                     //   'aufschreib.css'
+                    ],
+                    'aufschreib.min.css': [
                         'aufschreib.css'
                     ]
                 }

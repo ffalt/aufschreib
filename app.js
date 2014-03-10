@@ -53,6 +53,7 @@ app.configure('all', function () {
     app.use('/static', express.static(__dirname + '/static'));
     if (config.debug) {
         app.use(express.logger('dev'));
+        console.log('Debugging Mode');
     }
     app.use(express.cookieParser());
     app.use(express.bodyParser());

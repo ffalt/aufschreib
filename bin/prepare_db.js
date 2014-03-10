@@ -5,7 +5,7 @@
  */
 
 var fs = require('fs');
-var tokenizer = require('./../lib/tweet_tokenizer.js').MyLittleTweetTokenizer();
+var tokenizer = require('./../lib/utils.js').Utils();
 var consts = require('./../lib/consts');
 var config = require('./../config');
 var async = require('async');

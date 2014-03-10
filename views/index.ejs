@@ -5,11 +5,28 @@
     <title>#aufschreib</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link type="text/css" href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="/static/aufschreib.comps.min.css" rel="stylesheet">
+    <% if (debug) { %>
+    <link type="text/css" href="/static/aufschreib.css" rel="stylesheet">
+    <% } else { %>
     <link type="text/css" href="/static/aufschreib.min.css" rel="stylesheet">
+    <% } %>
     <script type="text/javascript">
         var cats = <%- JSON.stringify(consts.cats) %>;
     </script>
+    <script type="text/javascript" src="/static/aufschreib.comps.min.js"></script>
+    <% if (debug) { %>
+    <script type="text/javascript" src="/static/aufschreib.js"></script>
+    <script type="text/javascript" src="/static/stats/bar.js"></script>
+    <script type="text/javascript" src="/static/stats/cloud.js"></script>
+    <script type="text/javascript" src="/static/stats/graph.js"></script>
+    <script type="text/javascript" src="/static/stats/hashtags.js"></script>
+    <script type="text/javascript" src="/static/stats/pie.js"></script>
+    <script type="text/javascript" src="/static/stats/time.js"></script>
+    <script type="text/javascript" src="/static/stats/stats.js"></script>
+    <% } else { %>
     <script type="text/javascript" src="/static/aufschreib.min.js"></script>
+    <% } %>
 </head>
 <body>
 <div id="jswarning" class="alert alert-danger">
@@ -146,7 +163,8 @@
         <div class="col-md-12">
             <ul id="nav-stats" class="nav nav-tabs">
                 <% consts.stats.forEach(function(stat) { %>
-                <li><a href="#!/stats/<%- stat.id %>"><i class="glyphicon <%- stat.icon %>"></i> <%= stat.name %></a></li>
+                <li><a href="#!/stats/<%- stat.id %>"><i class="glyphicon <%- stat.icon %>"></i> <%= stat.name %></a>
+                </li>
                 <% }); %>
             </ul>
         </div>
@@ -159,16 +177,26 @@
 
                 <div id="slider" min="<%= range.min %>" max="<%= range.max %>"></div>
 
-                    <form role="form" class="form-inline">
-                        <div class="form-group">
-                            <label for="count_edit_min">Von</label>
-                            <input id="count_edit_min" class="form-control hasDatepicker" type="text"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="count_edit_max">Bis</label>
-                            <input id="count_edit_max" class="form-control hasDatepicker" type="text"/>
-                        </div>
-                    </form>
+                <form role="form" class="form-inline">
+                    <div class="form-group">
+                        <label for="count_edit_min">Von</label>
+                        <input id="count_edit_min" class="form-control hasDatepicker" type="text"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="count_edit_max">Bis</label>
+                        <input id="count_edit_max" class="form-control hasDatepicker" type="text"/>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            Points of Interest </span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <% consts.pois.forEach(function (poi) { %>
+                            <li><a class="poi-link" href="javascript:;" min="<%= moment(poi.min).valueOf() %>" max="<%= moment(poi.max).valueOf() %>"><%= poi.name %> (<%= poi.min %> - <%= poi.max %>)</a></li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

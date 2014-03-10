@@ -1,7 +1,7 @@
 var fs = require('fs');
 var moment = require('moment');
 var config = require('./../config.js');
-var tokenizer = require('./../lib/tweet_tokenizer.js').MyLittleTweetTokenizer();
+var utils = require('./../lib/utils.js').Utils();
 
 var done = {};
 
@@ -77,7 +77,7 @@ function saveIDs(list) {
     fs.writeFileSync(config.datapath + 'tweetids.json', JSON.stringify(ids, null, '\t'), 'utf8');
 }
 
-tokenizer.loadDayJsonFiles(config.datapath + 'import/cleaned/', function (cleaned) {
+utils.loadDayJsonFiles(config.datapath + 'import/cleaned/', function (cleaned) {
 
     var list = [];
 
@@ -127,7 +127,7 @@ tokenizer.loadDayJsonFiles(config.datapath + 'import/cleaned/', function (cleane
         importTweets(msgs, o);
     });
 
-    tokenizer.storeDayJsonFiles(list, config.datapath + 'tweets/', function () {
+    utils.storeDayJsonFiles(list, config.datapath + 'tweets/', function () {
         saveIDs(list);
     });
 
