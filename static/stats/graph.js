@@ -74,9 +74,9 @@ function graphView() {
 				graph.addLink(link.source, link.target);
 			}
 		});
-		console.log('Nodes: ' + graph.getNodesCount());
-		console.log('Links: ' + graph.getLinksCount());
-		console.log('Min: ' + options.min);
+//		console.log('Nodes: ' + graph.getNodesCount());
+//		console.log('Links: ' + graph.getLinksCount());
+//		console.log('Min: ' + options.min);
 
 		stats.setData(graphdata); //todo report filtered data
 

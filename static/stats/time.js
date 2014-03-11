@@ -163,8 +163,8 @@ function timeView() {
         var catsInView = [];
         var usedCat = [];
         var collect = {};
-        var mi = data[0].time;
-        var ma = data[0].time;
+        var mi = data.length==0?0:data[0].time;
+        var ma = data.length==0?0:data[0].time;
         data.forEach(function (entry) {
             for (var key in entry.counts) {
                 if (usedCat.indexOf(key) < 0) {
@@ -229,6 +229,9 @@ function timeView() {
 
         chart.selectAll(".layer")
             .data(layers)
+            .exit().remove();
+        chart.selectAll(".layer")
+            .data(layers)
             .enter().append("path")
             .attr("class", "layer");
 
@@ -244,6 +247,9 @@ function timeView() {
             .attr('title', function (d, i) {
                 return catsInView[i].name;
             });
+
+        focus_chart.selectAll(".focuslayer")
+            .data(layers).exit().remove();
 
         focus_chart.selectAll(".focuslayer")
             .data(layers)
