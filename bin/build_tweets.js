@@ -4,6 +4,7 @@ var config = require('./../config.js');
 var utils = require('./../lib/utils.js').Utils();
 
 var done = {};
+var invalidtweetids = [];
 
 function repack(t) {
     return   {
@@ -22,6 +23,22 @@ function repack(t) {
 
 function fixCouchrepack(t) {
     return repack(t.value);
+}
+
+function fixSqliterepack(t) {
+    if (t.text.toLowerCase().indexOf('#aufschrei') < 0) {
+        return null;
+    }
+    var t1 = repack(t);
+    t1.user = {
+        "name": t["from_user_name"],
+        "id_str": t["from_user_id_str"],
+        "id": t["from_user_id"],
+        "screen_name": t["from_user"],
+        "profile_image_url_https": t["profile_image_url_https"],
+        "profile_image_url": t["profile_image_url"]
+    };
+    return t1;
 }
 
 function fixCVSrepack(t) {
@@ -60,11 +77,11 @@ function fixCVSrepack(t) {
     return newt;
 }
 
-var invalidtweetids = [];
 var files = [
     {name: 'import/1_import_from_csv.json', repack: fixCVSrepack},
     {name: 'import/2_import_unknown_collection.json'},
-    {name: 'import/3_import_tweetstorm_all_docs.json', repack: fixCouchrepack}
+    {name: 'import/3_import_tweetstorm_all_docs.json', repack: fixCouchrepack},
+    {name: 'import/4_import_from_sqlite.json', repack: fixSqliterepack}
 ];
 
 function saveIDs(list) {
@@ -84,7 +101,7 @@ utils.loadDayJsonFiles(config.datapath + 'import/cleaned/', function (cleaned) {
     var importTweets = function (msgs, o) {
         var count = 0, dups = 0, invalid = 0;
         msgs.forEach(function (t) {
-            if (t.error) {
+            if ((!t) || (t.error)) {
 //            console.log(t);
                 return;
             }
@@ -97,12 +114,7 @@ utils.loadDayJsonFiles(config.datapath + 'import/cleaned/', function (cleaned) {
 //                console.log(t);
                 return;
             }
-            if (!t.user.screen_name) {
-                invalid++;
-                invalidtweetids.push(t.id_str);
-                console.log(t);
-                return;
-            }
+
             if (done[t.id_str]) {
 //            console.log('dup', t, done[t.id_str]);
                 dups++;
@@ -113,8 +125,19 @@ utils.loadDayJsonFiles(config.datapath + 'import/cleaned/', function (cleaned) {
                     packed = o.repack(t);
                 else
                     packed = repack(t);
-                done[t.id_str] = packed;
-                list.push(packed);
+                if (packed) {
+                    if ((!packed.user) || (!packed.user.screen_name)) {
+                        invalid++;
+                        invalidtweetids.push(packed.id_str);
+                        console.log('invalid user in tweet found');
+                        return;
+                    }
+                    done[t.id_str] = packed;
+                    list.push(packed);
+                } else {
+                    invalid++;
+                    invalidtweetids.push(t.id_str);
+                }
             }
         });
         console.log(o.name, ':', count, 'dups:', dups, 'invalid:', invalid);
