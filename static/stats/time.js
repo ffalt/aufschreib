@@ -10,7 +10,7 @@ function timeView() {
         };
     var
         margin = {top: 20, right: 30, bottom: 30, left: 80},
-        focus_height = 80,
+        focus_height = 100,
         charts_padding = 50,
         legendwidth = 120,
         width = 1300 - margin.left - margin.right,
@@ -18,7 +18,7 @@ function timeView() {
         chart_height = height - charts_padding - margin.top - margin.bottom - focus_height
         ;
     var
-        default_in_view = 3600000 * 24; // 1 day
+        default_in_view = 3600000 * 24 * 2; // 2 days
     var
         stats;
     var
@@ -34,6 +34,7 @@ function timeView() {
         stats.selectActives(options, ['mode', 'view']);
         stats.requestData(options, generate);
     }
+
     function request() {
         stats.requestData(options, generate);
     }
@@ -91,13 +92,13 @@ function timeView() {
 
         var
             formatDate = d3.time.format("%d"),
-            formatHour = d3.time.format("%H"),
-            formatDay = d3.time.format("%a %d"),
+            formatDay = d3.time.format("%d.%m"),
             formatTime = function (d) {
-                if (d.getHours() === 0)
+                var h = d.getHours();
+                if (h === 0)
                     return formatDay(d);
                 else
-                    return formatHour(d);
+                    return h;//formatHour(d);
             };
 
         xAxis = d3.svg.axis()
@@ -109,7 +110,9 @@ function timeView() {
             .scale(x2)
             .orient("bottom")
             .ticks(d3.time.days)
-            .tickFormat(formatDate);
+            .tickFormat(formatDay);
+
+
         yAxis = d3.svg.axis()
             .scale(y)
             .orient("left");
@@ -120,17 +123,10 @@ function timeView() {
             .call(xAxis);
 
         focus_chartgroup.append("g")
-            .attr("class", "x axis focus")
+            .attr("class", "xaxis x axis focus")
             .attr("transform", "translate(0," + focus_height + ")")
             .call(xAxis2);
 
-//        focus_chartgroup.selectAll("text")
-//            .style("text-anchor", "end")
-//            .attr("dx", "-.8em")
-//            .attr("dy", ".15em")
-//            .attr("transform", function(d) {
-//                return "rotate(-65)"
-//            });
 
         var g = chartgroup.append("g")
         g.append('rect')
@@ -163,6 +159,19 @@ function timeView() {
         stats.linkUIDefault(options.id);
         stats.linkUIReloads(options, ['mode'], generate);
         stats.linkUIRegens(options, ['view'], generate);
+    }
+
+
+    function rotateLabels() {
+        chartgroup.selectAll(".x.axis text")
+            .style("text-anchor", "end")
+            .attr("dx", "0.55em")
+            .attr("dy", "2.1em")
+            .attr("transform", function(d) {
+                return "translate(" + this.getBBox().height*-2 + "," + this.getBBox().height + ")rotate(-90)";
+            }).append('title').text(function(d){
+                return moment(d).format('ddd DD.MM.YY HH:mm');
+            });
     }
 
     function generate() {
@@ -235,6 +244,18 @@ function timeView() {
         chartgroup.select(".y.axis").call(yAxis);
         focus_chartgroup.select(".x.axis").call(xAxis2);
 
+        rotateLabels();
+
+        focus_chartgroup.selectAll(".x.axis text")
+            .style("text-anchor", "end")
+            .attr("dx", "0.55em")
+            .attr("dy", "2.15em")
+            .attr("transform", function(d) {
+                return "translate(" + this.getBBox().height*-2 + "," + this.getBBox().height + ")rotate(-90)";
+            }).append('title').text(function(d){
+                return moment(d).format('ddd DD.MM.YY');
+            });
+
         chart.selectAll(".layer")
             .data(layers)
             .exit().remove();
@@ -291,6 +312,7 @@ function timeView() {
         x.domain(brush.empty() ? x2.domain() : brush.extent());
         chart.selectAll("path").attr("d", area);
         chartgroup.select(".x.axis").call(xAxis);
+        rotateLabels();
     }
 
     return {
