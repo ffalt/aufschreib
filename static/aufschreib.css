@@ -26,6 +26,9 @@ body {
 .glyphicon-custom-app:before {
     content: "\2328";
 }
+.glyphicon-custom-mention:before {
+    content: "@";
+}
 
 /* Popup Overlay */
 

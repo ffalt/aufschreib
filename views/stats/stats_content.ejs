@@ -28,7 +28,7 @@
                 function () {
                     $('#<%- container_id %>temp').children().appendTo($('#navbar-content'));
                     var view = new <%- chartparams.type %>View();
-                    view.init('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>', new Stats(cats), '<%- chartparams.forcegenerate %>');
+                    view.init('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>', new Stats(cats));
                     aufschreib.statsrequest = view.request;
                 }
         );

@@ -21,12 +21,11 @@ function pieView() {
         legendwidth = 120,
         radius = Math.min(width - margin, height - margin) / 2;
 
-    function init(id, mode, kind, statshelper, forceregenerate) {
+    function init(id, mode, kind, statshelper) {
         stats = statshelper;
         options.id = id;
         options.mode = mode;
         options.kind = kind;
-        options.forceregenerate = forceregenerate;
         initSVG();
         linkUI();
         stats.requestData(options, generate);

@@ -41,7 +41,7 @@ function barView() {
             yAxis: null
         };
 
-    function init(id, mode, kind, statshelper, forceregenerate) {
+    function init(id, mode, kind, statshelper) {
         stats = statshelper;
         options.id = id;
         options.mode = mode;

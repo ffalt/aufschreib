@@ -71,9 +71,8 @@ function Stats(cats, hashBangNotifyDisabeld) {
             params.max = aufschreib.range.max.valueOf();
         if (options.kind)
             params.kind = options.kind;
-        if (options.forceregenerate) {
-            params.force = true;
-        }
+        if (options.cat)
+            params.cat = options.cat;
         aufschreib.getJson('#' + options.id + 'vis', params, function (rawdata) {
             if (!hashBangNotifyDisabeld)
                 aufschreib.setStatsSilent(options.type, options.mode, options.kind, (options.cat === 'all' ? null : options.cat));

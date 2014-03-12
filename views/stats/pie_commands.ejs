@@ -5,7 +5,7 @@
                 function () {
                     var pies = new pieView();
                     pies.init('<%- container_id %>', '<%- chartparams.mode %>', '<%- chartparams.kind %>',
-                            new Stats(cats, true), '<%- chartparams.forcegenerate %>');
+                            new Stats(cats, true));
                 }
         );
     });
