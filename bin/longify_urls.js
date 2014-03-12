@@ -3,6 +3,7 @@ var utils = require('./../lib/utils.js').Utils();
 var resolver = require("resolver");
 var async = require("async");
 var config = require('./../config.js');
+var request = require('request');
 var storeurls = {};
 
 function loadRawTweets(cb) {
@@ -12,6 +13,29 @@ function loadRawTweets(cb) {
         cb(tweets);
     });
 }
+
+
+function resolveWithResolve(url, cb) {
+    resolver.resolve(url, function (err, shorturl, filename, contentType) {
+        cb(err, shorturl);
+    });
+}
+
+function resolveWithExpandURL(url, cb) {
+    request(
+        {url: 'http://expandurl.me/expand?url=' + encodeURI(url), json: true}
+        , function (error, response, body) {
+            if (!error && (response.statusCode == 200) && (body) && (body.status == 'OK') && (body.end_url)) {
+                //console.log(body);
+                cb(null, body.end_url);
+            } else {
+                console.log(body);
+                console.log(error);
+                cb(error || response.statusCode);
+            }
+        });
+}
+
 
 function longifyUrls(tweets, cb) {
     var links = {};
@@ -44,7 +68,7 @@ function longifyUrls(tweets, cb) {
     collect();
     var count = 0;
     var q = async.queue(function (url, callback) {
-        resolver.resolve(url, function (err, shorturl, filename, contentType) {
+        resolveWithExpandURL(url, function (err, shorturl) {
             count++;
             if (shorturl && (shorturl.length) && (url !== shorturl)) {
                 console.log(count + '/' + unresolvedlinks.length + ' resolved ' + url + ' ' + shorturl);
