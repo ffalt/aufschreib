@@ -613,7 +613,7 @@ var aufschreib = {
                         return moment(value).add('days', 1);
                     },
                     label: function (value) {
-                        return moment(value).date();
+                        return '';//moment(value).date();
                     }
                 }
             ]

@@ -192,7 +192,10 @@
                         </button>
                         <ul class="dropdown-menu" role="menu">
                             <% consts.pois.forEach(function (poi) { %>
-                            <li><a class="poi-link" href="javascript:;" min="<%= moment(poi.min).valueOf() %>" max="<%= moment(poi.max).valueOf() %>"><%= poi.name %> (<%= poi.min %> - <%= poi.max %>)</a></li>
+                            <li><a class="poi-link" href="javascript:;"
+                                   title="<%= poi.name %> <%= poi.info %>"
+                                   min="<%= moment(poi.min).valueOf() %>"
+                                   max="<%= moment(poi.max).valueOf() %>"><%= poi.name %> <small>(<%= moment(poi.min).format('D.M.YY HH:mm') %> - <%= moment(poi.max).format('D.M.YY HH:mm') %>)</small></a></li>
                             <% }); %>
                         </ul>
                     </div>

@@ -124,6 +124,14 @@ function timeView() {
             .attr("transform", "translate(0," + focus_height + ")")
             .call(xAxis2);
 
+//        focus_chartgroup.selectAll("text")
+//            .style("text-anchor", "end")
+//            .attr("dx", "-.8em")
+//            .attr("dy", ".15em")
+//            .attr("transform", function(d) {
+//                return "rotate(-65)"
+//            });
+
         var g = chartgroup.append("g")
         g.append('rect')
             .attr("class", "fillrect")
