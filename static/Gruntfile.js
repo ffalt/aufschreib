@@ -35,6 +35,7 @@ module.exports = function (grunt) {
                         'stats/bar.js',
                         'stats/graph.js',
                         'stats/hashtags.js',
+                        'stats/links.js',
                         'stats/time.js'
                     ]
                 }
