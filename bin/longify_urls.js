@@ -62,7 +62,11 @@ function longifyUrls(tweets, cb) {
             var arr = utils.extractLinks(tweet.text);
             for (var j = arr.length - 1; j >= 0; j--) {
                 var url = arr[j];
-                if (!storeurls[url]) {
+                var oldurl = storeurls[url];
+                if ((!oldurl)
+//                    || (oldurl.indexOf('http://bit.ly/') == 0)
+//                    || (oldurl.indexOf('http://via.me/') == 0)
+                    ) {
                     if (unresolvedlinks.indexOf(url) < 0)
                         unresolvedlinks.push(url);
                 } else {
