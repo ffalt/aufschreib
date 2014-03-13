@@ -197,6 +197,13 @@
                                    min="<%= moment(poi.min).valueOf() %>"
                                    max="<%= moment(poi.max).valueOf() %>"><%= poi.name %> <small>(<%= moment(poi.min).format('D.M.YY HH:mm') %> - <%= moment(poi.max).format('D.M.YY HH:mm') %>)</small></a></li>
                             <% }); %>
+                            <li class="divider"></li>
+                            <li><a class="poi-link" href="javascript:;"
+                                   title="Gesamter Zeitraum"
+                                   min="<%= range.min %>"
+                                   max="<%= range.max %>">Gesamter Zeitraum</a></li>
+
+
                         </ul>
                     </div>
                 </form>
