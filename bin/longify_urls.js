@@ -16,8 +16,8 @@ function loadRawTweets(cb) {
 
 
 function resolveWithResolve(url, cb) {
-    resolver.resolve(url, function (err, shorturl, filename, contentType) {
-        cb(err, shorturl);
+    resolver.resolve(url, function (err, longurl, filename, contentType) {
+        cb(err, longurl);
     });
 }
 
@@ -25,7 +25,7 @@ function resolveWithExpandURL(url, cb) {
     request(
         {url: 'http://expandurl.me/expand?url=' + encodeURI(url), json: true}
         , function (error, response, body) {
-            if (!error && (response.statusCode == 200) && (body) && (body.status == 'OK') && (body.end_url)) {
+            if (!error && (response.statusCode == 200) && (body) && /*(body.status == 'OK') &&*/ (body.end_url)) {
                 //console.log(body);
                 cb(null, body.end_url);
             } else {
@@ -34,6 +34,20 @@ function resolveWithExpandURL(url, cb) {
                 cb(error || response.statusCode);
             }
         });
+}
+
+function validShortUrl(url, longurl) {
+    return (longurl && (longurl.length) && (url !== longurl));
+}
+
+function resolve(url, cb) {
+    resolveWithResolve(url, function (err, longurl) {
+        if (!validShortUrl(url, longurl)) {
+            resolveWithExpandURL(url, cb);
+        } else {
+            cb(err, longurl);
+        }
+    });
 }
 
 
@@ -67,19 +81,25 @@ function longifyUrls(tweets, cb) {
 
     collect();
     var count = 0;
+
     var q = async.queue(function (url, callback) {
-        resolveWithExpandURL(url, function (err, shorturl) {
+        resolve(url, function (err, longurl) {
             count++;
-            if (shorturl && (shorturl.length) && (url !== shorturl)) {
-                console.log(count + '/' + unresolvedlinks.length + ' resolved ' + url + ' ' + shorturl);
-                links[url] = shorturl;
+            if (validShortUrl(url, longurl)) {
+                console.log(count + '/' + unresolvedlinks.length + ' resolved ' + url + ' ' + longurl);
+                links[url] = longurl;
                 if (count % 100 == 0) {
                     saveUrls(links);
                 }
                 callback();
             } else {
-                console.log('could not resolve ' + url, err);
-                cb(links);
+                console.log(count + '/' + unresolvedlinks.length + ' NOT resolved ' + url, err);
+                if (err) {
+                    cb(links);
+                } else {
+                    links[url] = url; //do not check again
+                    callback();
+                }
             }
         });
 
