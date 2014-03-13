@@ -50,14 +50,14 @@ function hashtagsView() {
 //                    return formatHour(d);
             };
 
-        chart = nv.models.lineWithFocusChart();
+        chart = nv.models.lineChart();
         chart.xAxis
             .ticks(d3.time.hours)
             .tickFormat(formatTime);
 
-        chart.x2Axis
-            .ticks(d3.time.days)
-            .tickFormat(formatTime);
+//        chart.x2Axis
+//            .ticks(d3.time.days)
+//            .tickFormat(formatTime);
     }
 
     function linkUI() {

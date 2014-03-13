@@ -444,9 +444,9 @@ a:hover {
     user-select: none;
 }
 
-.chart {
-    border: 1px groove #C3D3DA;
-}
+/*.chart {*/
+    /*border: 1px groove #C3D3DA;*/
+/*}*/
 
 .navbar {
     margin-bottom: 0;
@@ -492,49 +492,6 @@ pre, code {
     padding: 10px 8px !important;
 }
 
-/*bar*/
-
-.axis path,
-.axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
-}
-
-.y.axis line {
-    stroke: #777;
-    stroke-dasharray: 2, 2;
-}
-
-.y.axis path {
-    display: none;
-}
-
-.legend-background {
-    stroke: #777;
-}
-
-.segment {
-    pointer-events: painted;
-    fill-opacity: .9;
-    stroke-opacity: 0;
-
-    transition: fill-opacity 250ms linear, stroke-opacity 250ms linear;
-    -moz-transition: fill-opacity 250ms linear, stroke-opacity 250ms linear;
-    -webkit-transition: fill-opacity 250ms linear, stroke-opacity 250ms linear;
-}
-
-.segment:hover {
-    fill-opacity: .7;
-    stroke: #777;
-}
-
-.bartest rect {
-    text-shadow: 1px 1px 0 #333333;
-    background: -moz-linear-gradient(center top, rgba(255, 255, 255, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%) repeat scroll 0 0 transparent;
-    box-shadow: 2px 2px 2px rgba(255, 255, 255, 0.2) inset, -2px -2px 2px rgba(0, 0, 0, 0.2) inset;
-}
-
 /*cloud*/
 .cloud text:hover { opacity: .7 !important; }
 .cloud_angles line, #angles path, #angles circle { stroke: #666; }
@@ -545,10 +502,11 @@ pre, code {
 
 
 .hashtags  {
-    height: 600px;
+    height: 400px;
 }
 
 /*graph*/
+
 .graph {
     height: 600px;
 }
@@ -572,6 +530,12 @@ canvas {
 
 .time  {
     height: 400px;
+}
+
+/*bar*/
+
+.bar  {
+    height: 500px;
 }
 
 
