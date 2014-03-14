@@ -33,6 +33,7 @@ module.exports = function (grunt) {
                         'stats/stats.js',
                         'stats/pie.js',
                         'stats/bar.js',
+                        'stats/cloud.js',
                         'stats/graph.js',
                         'stats/hashtags.js',
                         'stats/links.js',
