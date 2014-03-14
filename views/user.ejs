@@ -1,10 +1,10 @@
 <div class="user" id="<%- user.user_id %>">
 	<div class="tweets-header">
-		<a class="close user-close" href="#">×</a>
+		<a class="close user-close" href="javascript:;">×</a>
         <span class="user-counts pull-right">
         <%= user.tweets.length %> / <%= user.user_tweet_total_count %>
         <% if (user.user_tweet_total_count - user.tweets.length > 0) { %>
-        <a href="#" title="Alle Tweets von @<%= user.user_id %> anzeigen" onClick="return aufschreib.loadMore('<%- user.user_id %>');"> (Alle anzeigen)</a>
+        <a href="javascript:;" title="Alle Tweets von @<%= user.user_id %> anzeigen" onClick="return aufschreib.loadMore('<%- user.user_id %>');"> (Alle anzeigen)</a>
         <% } %>
         </span>
 		<div>
@@ -15,7 +15,7 @@
 					<% consts.cats.forEach(function(cat) {
 					if (cat.id !== consts.unknown) {
 					%>
-					<a class="btn btn-default btn-user btn-tweet-vote" value="<%= cat.id %>" href="#">
+					<a class="btn btn-default btn-user btn-tweet-vote" value="<%= cat.id %>" href="javascript:;">
 						<i class="glyphicon <%- cat.icon %>"></i> <%= cat.name %></a>
 					<% } }); %>
 			</div>

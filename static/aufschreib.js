@@ -131,18 +131,10 @@ var aufschreib = {
     setActiveCat: function (div, cat) {
         div.find('a[class*=active]').removeClass('active').removeClass('btn-primary');
         div.find('a[value*=' + cat + ']').addClass('active').addClass('btn-primary');
-//		if (cats) { //from global namespace
-//			cats.forEach(function (c) {
-//				if (c.id == cat) {
-//					cat = c.name;
-//				}
-//			})
-//		}
         if ((!cat) || (cat == 'unknown') || (cat == ''))
             div.find('.tweet-classy').removeClass('hidden');
         else
             div.find('.tweet-classy').addClass('hidden');
-//		div.find('.tweet-human').text(cat);
     },
     voteTweet: function (sender, cat) {
         var div = $(sender).closest(".tweet");
@@ -594,7 +586,7 @@ var aufschreib = {
         aufschreib.def_range.min = new Date(parseInt($("#slider").attr("min")));
         aufschreib.def_range.max = new Date(parseInt($("#slider").attr("max")));
         aufschreib.range.min = aufschreib.def_range.min;
-        aufschreib.range.max = aufschreib.def_range.max;
+        aufschreib.range.max = new Date(parseInt($("#slider").attr("min")) + (1000 * 60 * 60 * 24 * 60));// aufschreib.def_range.max;
         $("#slider").dateRangeSlider({
             defaultValues: aufschreib.def_range,
             bounds: aufschreib.def_range,
@@ -664,7 +656,7 @@ var aufschreib = {
 
         $('#count_edit_max').datetimepicker({
             format: 'd.m.y H:i',
-            value: moment(aufschreib.range.min).format("D.MM.YY HH:mm"),
+            value: moment(aufschreib.range.max).format("D.MM.YY HH:mm"),
             onChangeDateTime: function (dp, $input) {
                 if (aufschreib.range.max.valueOf() !== dp.valueOf()) {
                     aufschreib.range.max = dp;

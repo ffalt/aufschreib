@@ -76,11 +76,44 @@ function timeView() {
 
     function generate() {
         var data = stats.getBaseData();
+
+
+        var table = {
+            head: [ 'Zeit', 'Anzahl'].concat(
+                (options.cat === 'all') ?
+                    stats.getCats().map(function (c) {
+                        return '<i title="' + c.name + '" class="glyphicon ' + c.icon + '"></i>';// + c.name;// JSON.stringify(c);
+                    })
+                    : []
+            ),
+            values: []
+//            foot: ['', data.length]
+        };
+
+        if (data.length > 0) {
+            data[0].values.forEach(function (e) {
+                table.values.push([moment(e[0]).format('ddd‚ DD.MM.YY HH:mm'), 0]);
+            });
+            data.forEach(function (entry) {
+                var c = 0;
+                entry.values.forEach(function (e) {
+                    table.values[c][1] += e[1];
+                    table.values[c].push([e[1]]);
+                    c++;
+                });
+            })
+        }
+
+        stats.buildTable('#table', table);
+
         stats.setData(data);
-        svg
-            .datum(data)
-            .transition().duration(500).call(chart);
-        nv.utils.windowResize(chart.update);
+
+        setTimeout(function () {
+            svg
+                .datum(data)
+                .transition().duration(500).call(chart);
+            nv.utils.windowResize(chart.update);
+        }, 100);
     }
 
     return {
